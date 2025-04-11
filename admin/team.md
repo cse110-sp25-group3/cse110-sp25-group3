@@ -4,7 +4,7 @@
 Our team name is **303 Found**. It's a play on the "404 Not Found" error but since our team number is 3 and we would like to be found, our team was born. In retrospect, it is a bit silly since the actual 303 error is when the original URL cannot be found but who cares. 
 
 ### Our logo
-![Team Logo](logo.jpg)
+<img src="logo.jpg" alt="Team Logo" width="200"/>
 
 ### Our values
 1. Check the Slack. Please.
