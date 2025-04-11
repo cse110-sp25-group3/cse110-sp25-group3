@@ -1,18 +1,31 @@
+<div align="center">
+
 # 303 Found (Team 3)
 
-### Our brand
+</div>
+
+---
+
+### 🔰 Our brand
 Our team name is **303 Found**. It's a play on the "404 Not Found" error but since our team number is 3 and we would like to be found, our team was born. In retrospect, it is a bit silly since the actual 303 error is when the original URL cannot be found but who cares. 
 
-### Our logo
-<img src="logo.jpg" alt="Team Logo" width="200"/>
+---
 
-### Our values
-1. Check the Slack. Please.
-2. Finish your assigned work. 
-3. Be kind. 
+### 🧋 Our logo
+<div align="center">
+<img src="logo.jpg" alt="Team Logo" width="400"/>
 
-### Team roster
-| Team Member| Self Introduction |
+---
+
+### 💬 Our values
+1. ✅ Check the Slack. Please.
+2. 🛠️ Finish your assigned work. 
+3. 💛 Be kind. 
+
+---
+
+### 👥 Meet the Team
+| 🧑‍💻 Team Member| 🎤 Self Introduction |
 | :---------------- | :------- | 
 | Sree Ansh Kalakoti        |   I’m a 3rd year math-cs major and I love Stephen Curry; https://github.com/anshreddy1| 
 | Mehak Gupta           |   Hi, my name is Mehak. I am a senior and math-computer science major. I love the song ROSES by the chainsmokers. Here is my github: https://github.com/megupta06   | 
@@ -23,5 +36,17 @@ Our team name is **303 Found**. It's a play on the "404 Not Found" error but sin
 | Aaron Chiuwei |  I’m a second year CS major. One of my favorite songs is Die Trying by PARTYNEXTDOOR. My github profile is: https://github.com/aaronchiuwei   | 
 | Danny Nguyen |  I'm a senior computer science major. One of my favorite songs right now is Never Tell by Luke Chiang. My Github profile is https://github.com/dan123098   | 
 | Natalie Ti |  I'm a third year Cognitive Science Design/Interaction major but I'm minoring in CS. My current favorite song is CTRL by Mysie. My GitHub is https://github.com/nataliehti  | 
-| Yilin Cai |  Hii, I am second year in CS major. I love everthing in Matcha flavor. I'm a huge fan of matcha and bubble tea. My favorite song is Golden Hour by JVKE. Here 's my Github: https://github.com/yilincaii  | 
+| Yilin Cai |  Hii, I am second year in CS major. I'm a huge fan of matcha and bubble tea. My favorite song is Golden Hour by JVKE. Here 's my Github: https://github.com/yilincaii  | 
 | Kelsie Lloyd |  desc   | 
+
+---
+
+## 🎬 Intro Video
+
+our team intro video here: {need to upload the video in admin}
+
+---
+
+## 📸 Team Bonding Moment
+
+![Team Bonding](../admin/teambonding.jpg)
