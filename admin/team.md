@@ -45,7 +45,7 @@ Our team name is **303 Found**. It's a play on the "404 Not Found" error but sin
 
 our team intro video here:
 
-<video src="../admin/CSE110-sp25-group3-introVideo.mp4" width="640" height="480" controls></video>
+<video src="../admin/videos/teamintro.mp4" width="320" height="240" controls></video>
 
 ---
 
