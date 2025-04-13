@@ -13,7 +13,7 @@ Our team name is **303 Found**. It's a play on the "404 Not Found" error but sin
 
 ### 🧋 Our logo
 <div align="center">
-<img src="logo.jpg" alt="Team Logo" width="400"/>
+<img src="../admin/branding/logo.jpg" alt="Team Logo" width="400"/>
 
 ---
 
