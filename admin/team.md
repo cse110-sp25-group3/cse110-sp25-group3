@@ -37,7 +37,7 @@ Our team name is **303 Found**. It's a play on the "404 Not Found" error but sin
 | Danny Nguyen |  I'm a senior computer science major. One of my favorite songs right now is Never Tell by Luke Chiang. My Github profile is https://github.com/dan123098   | 
 | Natalie Ti |  I'm a third year Cognitive Science Design/Interaction major but I'm minoring in CS. My current favorite song is CTRL by Mysie. My GitHub is https://github.com/nataliehti  | 
 | Yilin Cai |  Hii, I am second year in CS major. I'm a huge fan of matcha and bubble tea. My favorite song is Golden Hour by JVKE. Here 's my Github: https://github.com/yilincaii  | 
-| Kelsie Lloyd |  desc   | 
+| Kelsie Lloyd |  Heyo! I'm a fourth-year ICAM major and CSE minor. One of my favorite songs is a nice little pleasant tune called "Hydrophobia" from Demolition Hammer. Github: https://github.com/klloyd0   | 
 
 ---
 
