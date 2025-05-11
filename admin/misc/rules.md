@@ -1,78 +1,128 @@
-# Group Contract
+# Team Charter
 
-## Goals
-- Develop a basic but functional running product.
-- Ensure all team members gain experience with both frontend and backend development.
-- Learn what it's like to work in a team coding environment, mimicking post-graduation software engineering scenarios.
+## 1. Team Purpose and Objectives
 
-## Core Values
-- **Respect** for one another’s input and time.
-- **Psychological safety** to share ideas and ask questions freely.
-- **Team collaboration** as a learning goal — we’re all here to gain experience working in teams, so cooperation is key.
+### Purpose
+To collaboratively design and develop a job application platform that simplifies the job-hunting experience through a swipe-based interface. The product will allow users to easily browse and apply for jobs, with a focus on simplicity and speed.
 
-## Strengths and Weaknesses
-
-### Strengths
-- Team members possess diverse skills across various technical areas.
-
-### Weaknesses
-- **Scheduling Conflicts:** Difficult communication due to conflicting schedules.
-  - **Action:** Use meeting notes to keep everyone updated.
-- **Lack of Coordination:** Uncertainty around how to best utilize everyone’s skills.
-  - **Action:** Reference course suggestions for team organization and task delegation.
-
-## Team Organization
-
-- Leaning toward **feature-based roles**.
-  - Members working on a specific feature will have clear goals and tasks.
-  - Splitting frontend and backend tasks separately has led to delays and miscommunication.
+### Objectives
+- Build a **minimum viable product (MVP)** that is functional and user-friendly.
+- Ensure **all team members** contribute to both **frontend and backend** to gain full-stack experience.
+- Practice **team-based software development** to prepare for real-world engineering roles post-graduation.
+- Design filtering and job recommendation logic that accounts for **edge cases and avoids overfiltering**.
+- Mimic the intuitive experience of popular apps by making **job applications as simple as swiping**.
 
 ---
 
-# Task Order
+## 2. Common Values and Standards
 
-## Task 1
-- Create mock data + UI for Screens 1 and 2 (5 ppl)
-- Implement search feature and filtering by preferences (6 ppl)
+### Core Values
+- **Respect:** Every voice is heard and valued.
+- **Psychological Safety:** Safe space to share ideas, ask questions, and make mistakes.
+- **Collaboration:** We prioritize teamwork and shared success over individual glory.
+- **Transparency:** Decisions and updates are clearly communicated.
 
-## Task 2
-- Data scraping (3 ppl)
-- Data processing (4 ppl)
-- Auto-apply functionality (4 ppl)
-
-## Task 3
-- UI for settings (5 ppl)
-- User authentication (6 ppl)
-
----
-
-# Competitor App Insights
-
-## Monster
-- LinkedIn integration for autofill
-- Job alerts
-- Career quiz and salary comparisons
-
-## swipejobs
-- Matching-based feed (recruiters or algorithm)
-- Users unsure if applications were rejected
-- Overfiltering leads to empty feed
-
-## Snagajob
-- Large listing base with filters
-- Applications occasionally submitted accidentally
-- Repetitive listings
-- Poor location filtering
+### Team Standards
+- Come prepared to meetings.
+- Stay engaged with your assigned feature or task.
+- Use shared tools consistently (e.g., Git, meeting notes, Slack/Discord).
+- Submit updates or blockers before each meeting, even if you cannot attend.
 
 ---
 
-# MVP Goals
+## 3. Roles, Responsibilities, and Accountability
 
-- Deliver a **mindless scroll** user experience:  
-  Just **swipe to apply** or **swipe to dismiss**.
-- Minimal emphasis on post-application tracking:
-  - We likely won't be able to track rejection or acceptance (especially via email).
-  - Can include links to external application sites.
-- Focus heavily on the **filtering system**:
-  - Address edge cases
-  - Build safeguards to prevent overfiltering
+### Structure
+- **Feature-Based Teams:** Each member works on a defined feature (e.g., filtering, UI, auto-apply).
+- **Shared Responsibilities:** Everyone touches both frontend and backend code as needed.
+
+### Roles (rotating or shared as necessary)
+- **Project Lead:** Coordinates task delegation, sets meeting agendas, oversees progress.
+- **Tech Lead(s):** Ensures code quality, advises on technical decisions, handles merges and pull requests.
+- **Scrum Master (optional):** Keeps meetings on track and ensures blockers are addressed.
+- **Note-Taker/Communicator:** Records meeting notes and shares summaries with the team.
+
+### Accountability
+- Tasks must be completed by the deadline unless communicated otherwise.
+- If a task is delayed, notify the group proactively and propose a plan to catch up.
+- Team members should **review each other’s code** to ensure knowledge sharing and maintain quality.
+
+---
+
+## 4. Conflict-Resolution Strategies
+
+### Potential Issues
+- Miscommunication due to conflicting schedules.
+- Unclear ownership of tasks or responsibilities.
+- Disagreements on implementation choices.
+- Uneven workload distribution.
+
+### Conflict-Resolution Approach
+1. **Address Privately First:** Individuals involved discuss the issue one-on-one.
+2. **Bring to Group:** If unresolved, raise in a team meeting for collaborative resolution.
+3. **Mediation:** If needed, a neutral team member (or TA/instructor if applicable) mediates.
+4. **Actionable Steps:** Define concrete actions to resolve the issue and avoid recurrence.
+
+---
+
+## 5. Addressing Rule Violations
+
+If someone is not following agreed-upon expectations (e.g., missing updates, not contributing):
+
+- Step 1: Have a direct, respectful conversation with the individual.
+- Step 2: If the issue persists, raise it with the team and define consequences (e.g., reassignment of tasks).
+- Step 3: Escalate if necessary (to TA, instructor, or mentor if part of a course).
+
+Everyone is expected to hold each other accountable in a constructive and supportive way.
+
+---
+
+## 6. Communication Protocols
+
+### Tools
+- **GitHub** for version control and issue tracking.
+- **Slack/Discord** for daily communication.
+- **Google Docs** for meeting notes and planning.
+
+### Protocols
+- Share daily or weekly updates, especially if you are blocked or will miss a deadline.
+- Meeting notes should be shared in a central location after every meeting.
+- Questions should be asked early rather than waiting — someone else may have the same one.
+
+---
+
+## Task Overview
+
+### Task 1
+- **Mock data + UI for Screens 1 and 2** (5 ppl)
+- **Search and filtering by preference** (6 ppl)
+
+### Task 2
+- **Data scraping** (3 ppl)
+- **Data processing** (4 ppl)
+- **Auto-apply functionality** (4 ppl)
+
+### Task 3
+- **UI for settings** (5 ppl)
+- **User authentication** (6 ppl)
+
+---
+
+## Competitor Insights Summary
+
+- **Monster**: Strong LinkedIn integration, job alerts, and career tools.
+- **swipejobs**: Match-based, lacks rejection feedback, often overfilters.
+- **Snagajob**: Filter-heavy, no swipe interface, repetitive listings and poor location matching.
+
+### Key Takeaways for Our MVP
+- Focus on a **swipe-to-apply** experience with low friction.
+- Prioritize **effective filtering** and **user-friendly UI**.
+- Deprioritize post-application tracking (due to technical constraints).
+- Use feedback from competitor shortcomings to guide feature prioritization.
+
+---
+
+## Final Notes
+
+This team charter is a living document. It should be revisited and adjusted as the project evolves.
+
