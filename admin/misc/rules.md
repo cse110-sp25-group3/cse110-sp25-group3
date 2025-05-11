@@ -1,4 +1,4 @@
-# Project Overview
+# Group Contract
 
 ## Goals
 - Develop a basic but functional running product.
