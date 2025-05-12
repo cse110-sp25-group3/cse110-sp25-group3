@@ -9,8 +9,8 @@ jobs: # the things being executed
     steps:
       - uses: actions/checkout@v4 # using version 4 of Actions
       
-      - name: Install Dependencies
-        run: npm install
+      #- name: Install Dependencies (change this into actual commmand once we have json dependencies to install)
+      # run: npm install
         
       - name: Lint
         run: npm run lint       # ESLint/Prettier
