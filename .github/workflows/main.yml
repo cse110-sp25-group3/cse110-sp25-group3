@@ -9,11 +9,13 @@ jobs: # the things being executed
     steps:
       - uses: actions/checkout@v4 # using version 4 of Actions
       
-      #- name: Install Dependencies (change this into actual commmand once we have json dependencies to install)
-      # run: npm install
+      - name: Install Dependencies
+        run: npm install
+        if: ${{ hashFiles('**/package.json') != '' }}
         
       - name: Lint
         run: npm run lint       # ESLint/Prettier
+        if: ${{ hashFiles('**/package.json') != '' }}
 
       - name: CodeClimate (static analysis)
         uses: paambaati/codeclimate-action@v5
@@ -22,9 +24,11 @@ jobs: # the things being executed
         
       - name: Unit Test
         run: npm test -- --ci # the actual testing line (now is only using auto detect)
+        if: ${{ hashFiles('**/package.json') != '' }}
         
       - name: Generate docs
         run: npm run docs       # jsdoc → docs/
+        if: ${{ hashFiles('**/package.json') != '' }}
         
       - name: Upload docs
         uses: actions/upload-artifact@v4
