@@ -39,7 +39,6 @@ jobs: # the things being executed
 
   e2e:
     name: Cypress E2E
-    if: ${{ hashFiles('**/package.json') != '' }}
     needs: tests            # only run if the first job passed
     runs-on: ubuntu-latest
   
@@ -51,9 +50,12 @@ jobs: # the things being executed
         with:
           node-version: 20
           cache: npm
+        if: ${{ hashFiles('**/package.json') != '' }}
   
       - name: Install dependencies (incl. Cypress)
         run: npm ci
+        if: ${{ hashFiles('**/package.json') != '' }}
         
       - name: Cypress run
         uses: cypress-io/github-action@v6   # official GH Action :contentReference[oaicite:0]{index=0}
+        if: ${{ hashFiles('**/package.json') != '' }}
