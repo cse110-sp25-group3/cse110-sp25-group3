@@ -1,0 +1,53 @@
+name: Unit Tests # name of the test
+
+on: [push] # the Github Action will activate "on" the event that you "push" to the repo
+
+jobs: # the things being executed
+  tests: # the name of your status check, will become important when you do branch protection
+    name: Lint • Unit • Docs
+    runs-on: ubuntu-latest # which device on Github's server that you are running the Actions on
+    steps:
+      - uses: actions/checkout@v4 # using version 4 of Actions
+      
+      - name: Install Dependencies
+        run: npm ci
+        
+      - name: Lint
+        run: npm run lint       # ESLint/Prettier
+
+      - name: CodeClimate (static analysis)
+        uses: paambaati/codeclimate-action@v5
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+        
+      - name: Unit Test
+        run: npm test -- --ci # the actual testing line (now is only using auto detect)
+        
+      - name: Generate docs
+        run: npm run docs       # jsdoc → docs/
+        
+      - name: Upload docs
+        uses: actions/upload-artifact@v4
+        with:
+          name: jsdoc-html
+          path: docs            # later phases → GitHub Pages
+
+  e2e:
+    name: Cypress E2E
+    needs: tests            # only run if the first job passed
+    runs-on: ubuntu-latest
+  
+    steps:
+      - uses: actions/checkout@v4
+  
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+  
+      - name: Install dependencies (incl. Cypress)
+        run: npm ci
+        
+      - name: Cypress run
+        uses: cypress-io/github-action@v6   # official GH Action :contentReference[oaicite:0]{index=0}
