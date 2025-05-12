@@ -39,6 +39,7 @@ jobs: # the things being executed
 
   e2e:
     name: Cypress E2E
+    if: ${{ hashFiles('**/package.json') != '' }}
     needs: tests            # only run if the first job passed
     runs-on: ubuntu-latest
   
