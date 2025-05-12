@@ -10,7 +10,7 @@ jobs: # the things being executed
       - uses: actions/checkout@v4 # using version 4 of Actions
       
       - name: Install Dependencies
-        run: npm ci
+        run: npm install
         
       - name: Lint
         run: npm run lint       # ESLint/Prettier
