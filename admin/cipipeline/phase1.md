@@ -34,6 +34,7 @@ npm ci          # install
 npm run lint    # ESLint
 npm test        # Jest
 npm run docs    # JSDoc → /docs
+```
 
 ## 5. Notes
 See `.github/workflows/main.yml` for full pipeline logic.
