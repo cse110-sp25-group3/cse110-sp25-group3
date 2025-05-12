@@ -1,6 +1,6 @@
 # CI/CD Pipeline – Phase 1 Status (Spring 2025)
 
-![Pipeline diagram](temp.drawio.png)
+![Pipeline diagram](phase1.png)
 
 ## 1. Purpose
 Phase 1 hardens our developer workflow: every push or pull‑request triggers an automated build that **lints, tests, analyses, and documents** our code base within ~60 s.  
