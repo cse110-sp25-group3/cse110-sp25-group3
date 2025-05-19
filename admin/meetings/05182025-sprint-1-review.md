@@ -9,7 +9,7 @@
 - Yilin
 
 ## Figma Wireframes:
-Located in `/admin/meetings/05182025_images`:
+Figma Link: https://www.figma.com/design/518954xLuyYWAGOPKvNbYw/Wireframes?node-id=71-2&t=i4jmVkMScW5u0KSg-1
 - Danny: completed **Manage Documents** page
 - Yilin: completed **Job Preferences** page
 - Yangyang: completed **Job Feed** page
