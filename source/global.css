@@ -1,0 +1,44 @@
+:root {
+    --color-icon-gray:        #6B7280;
+  
+    /*button colors*/
+    --color-green-outline:    #80C775;
+    --color-green-fill:       #E6F4E3;
+    --color-red-outline:      #CC7777;
+    --color-red-fill:         #F4E3E3;
+  
+    /* buttons */
+    --color-light-blue-fill:  #EFF6FF;
+    --color-light-blue-outline: #DBEAFE;
+    --color-dark-blue:        #2563EB;
+    --color-dark-blue-light:  #B5C5F4;
+  
+    /* accent */
+    --color-star:             #F59E0B;
+  }
+
+html,body{
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.phone{
+    width: 375px;
+    height: 667px;
+
+    max-width: 100vw;
+    max-height: 100vh;
+
+    box-shadow: 0 0 0 1px var(--color-icon-gray);
+    border-radius: 20px;
+    overflow:hidden;
+
+    display: flex;
+    flex-direction: column;
+}

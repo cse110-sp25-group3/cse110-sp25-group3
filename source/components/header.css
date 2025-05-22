@@ -1,0 +1,84 @@
+/* header flex container */
+.site-header {
+    position: relative;          /* for absolute children */
+    display: flex;               /* lay children in a row */
+    align-items: center;         /* vertically center */
+    justify-content: flex-start; /* left align */
+    padding: 0.75rem 1rem;
+    z-index: 11;
+    gap: 10px;
+
+    border-bottom: solid;
+    border-width: 1px;
+  }
+  
+  /* hamburger styling */
+  /* make sure the button is a fixed square and center-align its content */
+.hamburger-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: transform 0.4s ease;  /* ← add transition */
+  }
+  /* rotated state */
+  .hamburger-btn.rotated {
+    transform: rotate(90deg);        /* ← spin 90° (tweak as you like) */
+  }
+  /* hover color */
+  .hamburger-btn:hover {
+    color: var(--color-dark-blue);
+  }
+  
+  
+  /* title styling */
+  .site-title {
+    font-size: 1.25rem;
+    font-weight: 500;
+  }
+  
+  /* nav menu pulled out of flow */
+  #nav-menu {
+    position: absolute;  /* remove from normal flow */
+    top: 100%;           /* sit just below header */
+    left: 0;
+    width: 100%;
+    background: white;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    z-index: 9;
+  }
+  
+  /* hide/show */
+  .hidden {
+    display: none !important;
+  }
+  
+  #nav-menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  #nav-menu li {
+    border-top: 1px solid var(--color-icon-gray);
+  }
+  #nav-menu a {
+    display: block;
+    padding: 1rem 1.5rem;
+    color: black;
+    text-decoration: none;
+  }
+  #nav-menu a:hover {
+    background: var(--color-light-blue-fill);
+    border-color: var(--color-light-blue-outline);
+  }
+  
+  #nav-menu a.active {
+    color: var(--color-dark-blue);
+    background: var(--color-light-blue-fill);
+    font-weight: 600;
+  }

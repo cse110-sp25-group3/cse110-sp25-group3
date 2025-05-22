@@ -1,0 +1,377 @@
+[
+  {
+    "companyName": "Innovatech Solutions",
+    "companyLogo": "https://via.placeholder.com/100x50.png?text=Innovatech",
+    "industry": "Technology",
+    "jobRole": "Software Engineer",
+    "nature": 1,
+    "workModel": 3,
+    "location": "San Francisco, CA",
+    "pay": "$120,000/year",
+    "datePosted": "2025-05-15",
+    "companyInfo": "Innovatech Solutions is a leading provider of cloud computing and AI-driven solutions.",
+    "jobDescription": "Develop and maintain web applications using modern JavaScript frameworks.",
+    "jobRequirements": [
+      "Bachelor's degree in Computer Science or related field",
+      "2+ years of experience with JavaScript and React",
+      "Experience with RESTful APIs"
+    ],
+    "relevantSkills": [
+      "JavaScript",
+      "React",
+      "Node.js"
+    ],
+    "htmlFile": "innovatech-software-engineer.html",
+    "applicationLink": "https://example.com/apply/innovatech-software-engineer"
+  },
+  {
+    "companyName": "ShopSmart Mart",
+    "companyLogo": "https://via.placeholder.com/100x50.png?text=ShopSmart",
+    "industry": "Retail",
+    "jobRole": "Retail Associate",
+    "nature": 2,
+    "workModel": 2,
+    "location": "Los Angeles, CA",
+    "pay": "$15/hour",
+    "datePosted": "2025-05-10",
+    "companyInfo": "ShopSmart Mart is a nationwide retail chain offering quality products at affordable prices.",
+    "jobDescription": "Assist customers with purchases and maintain store appearance.",
+    "jobRequirements": [
+      "High school diploma or equivalent",
+      "Excellent customer service skills",
+      "Ability to lift up to 50 lbs"
+    ],
+    "relevantSkills": [
+      "Customer Service",
+      "Cash Handling",
+      "Merchandising"
+    ],
+    "htmlFile": "shopsmart-retail-associate.html",
+    "applicationLink": "https://example.com/apply/shopsmart-retail-associate"
+  },
+  {
+    "companyName": "SecureLife Insurance",
+    "companyLogo": "https://via.placeholder.com/100x50.png?text=SecureLife",
+    "industry": "Insurance",
+    "jobRole": "Insurance Underwriter",
+    "nature": 1,
+    "workModel": 1,
+    "location": "Chicago, IL",
+    "pay": "$80,000/year",
+    "datePosted": "2025-05-12",
+    "companyInfo": "SecureLife Insurance provides comprehensive life and health insurance solutions.",
+    "jobDescription": "Evaluate insurance applications and determine coverage eligibility.",
+    "jobRequirements": [
+      "Bachelor's degree in Finance or related field",
+      "3+ years underwriting experience",
+      "Strong analytical skills"
+    ],
+    "relevantSkills": [
+      "Risk Assessment",
+      "Data Analysis",
+      "Regulatory Compliance"
+    ],
+    "htmlFile": "securelife-insurance-underwriter.html",
+    "applicationLink": "https://example.com/apply/securelife-insurance-underwriter"
+  },
+  {
+    "companyName": "Alpha Financial",
+    "companyLogo": "https://via.placeholder.com/100x50.png?text=Alpha+Financial",
+    "industry": "Finance",
+    "jobRole": "Financial Analyst",
+    "nature": 1,
+    "workModel": 3,
+    "location": "New York, NY",
+    "pay": "$90,000/year",
+    "datePosted": "2025-05-08",
+    "companyInfo": "Alpha Financial offers investment management and financial advisory services.",
+    "jobDescription": "Analyze financial data and prepare reports for clients.",
+    "jobRequirements": [
+      "Bachelor's degree in Finance or Economics",
+      "Proficiency in Excel and financial modeling",
+      "Excellent communication skills"
+    ],
+    "relevantSkills": [
+      "Financial Modeling",
+      "Excel",
+      "Data Analysis"
+    ],
+    "htmlFile": "alphafinancial-financial-analyst.html",
+    "applicationLink": "https://example.com/apply/alphafinancial-financial-analyst"
+  },
+  {
+    "companyName": "Healthy Living Clinic",
+    "companyLogo": "https://via.placeholder.com/100x50.png?text=Healthy+Living",
+    "industry": "Healthcare",
+    "jobRole": "Registered Nurse",
+    "nature": 1,
+    "workModel": 2,
+    "location": "Houston, TX",
+    "pay": "$70,000/year",
+    "datePosted": "2025-05-05",
+    "companyInfo": "Healthy Living Clinic provides patient-centered healthcare services.",
+    "jobDescription": "Provide nursing care to patients in a clinical setting.",
+    "jobRequirements": [
+      "Valid RN license",
+      "2+ years clinical experience",
+      "Strong patient care skills"
+    ],
+    "relevantSkills": [
+      "Patient Care",
+      "Medication Administration",
+      "EMR"
+    ],
+    "htmlFile": "healthyliving-registered-nurse.html",
+    "applicationLink": "https://example.com/apply/healthyliving-registered-nurse"
+  },
+  {
+    "companyName": "Bright Minds Academy",
+    "companyLogo": "https://via.placeholder.com/100x50.png?text=Bright+Minds",
+    "industry": "Education",
+    "jobRole": "Elementary School Teacher",
+    "nature": 1,
+    "workModel": 2,
+    "location": "Seattle, WA",
+    "pay": "$55,000/year",
+    "datePosted": "2025-05-18",
+    "companyInfo": "Bright Minds Academy is dedicated to innovative K-5 education.",
+    "jobDescription": "Teach and develop curriculum for elementary students.",
+    "jobRequirements": [
+      "Teaching credential",
+      "Classroom management experience",
+      "Lesson planning skills"
+    ],
+    "relevantSkills": [
+      "Lesson Planning",
+      "Classroom Management",
+      "Curriculum Development"
+    ],
+    "htmlFile": "brightminds-elementary-teacher.html",
+    "applicationLink": "https://example.com/apply/brightminds-elementary-teacher"
+  },
+  {
+    "companyName": "Precision Manufacturing Co.",
+    "companyLogo": "https://via.placeholder.com/100x50.png?text=Precision+Manufacturing",
+    "industry": "Manufacturing",
+    "jobRole": "CNC Machinist",
+    "nature": 1,
+    "workModel": 2,
+    "location": "Detroit, MI",
+    "pay": "$25/hour",
+    "datePosted": "2025-05-14",
+    "companyInfo": "Precision Manufacturing Co. specializes in custom metal parts.",
+    "jobDescription": "Operate CNC machines to produce precision components.",
+    "jobRequirements": [
+      "CNC programming experience",
+      "Blueprint reading skills",
+      "Attention to detail"
+    ],
+    "relevantSkills": [
+      "CNC Programming",
+      "Blueprint Reading",
+      "Quality Control"
+    ],
+    "htmlFile": "precision-cnc-machinist.html",
+    "applicationLink": "https://example.com/apply/precision-cnc-machinist"
+  },
+  {
+    "companyName": "QuickShip Logistics",
+    "companyLogo": "https://via.placeholder.com/100x50.png?text=QuickShip",
+    "industry": "Logistics",
+    "jobRole": "Logistics Coordinator",
+    "nature": 3,
+    "workModel": 3,
+    "location": "Atlanta, GA",
+    "pay": "$45,000/year",
+    "datePosted": "2025-05-11",
+    "companyInfo": "QuickShip Logistics provides end-to-end supply chain solutions.",
+    "jobDescription": "Coordinate shipping schedules and track deliveries.",
+    "jobRequirements": [
+      "Experience with logistics software",
+      "Strong organizational skills",
+      "Communication skills"
+    ],
+    "relevantSkills": [
+      "Logistics Management",
+      "Scheduling",
+      "Tracking"
+    ],
+    "htmlFile": "quickship-logistics-coordinator.html",
+    "applicationLink": "https://example.com/apply/quickship-logistics-coordinator"
+  },
+  {
+    "companyName": "BrandWave Marketing",
+    "companyLogo": "https://via.placeholder.com/100x50.png?text=BrandWave",
+    "industry": "Marketing",
+    "jobRole": "Marketing Specialist",
+    "nature": 1,
+    "workModel": 1,
+    "location": "Boston, MA",
+    "pay": "$65,000/year",
+    "datePosted": "2025-05-07",
+    "companyInfo": "BrandWave Marketing delivers innovative brand strategies.",
+    "jobDescription": "Develop marketing campaigns and analyze performance metrics.",
+    "jobRequirements": [
+      "Experience with digital marketing tools",
+      "Analytical skills",
+      "Content creation experience"
+    ],
+    "relevantSkills": [
+      "SEO",
+      "Google Analytics",
+      "Content Marketing"
+    ],
+    "htmlFile": "brandwave-marketing-specialist.html",
+    "applicationLink": "https://example.com/apply/brandwave-marketing-specialist"
+  },
+  {
+    "companyName": "Comfort Suites Hotel",
+    "companyLogo": "https://via.placeholder.com/100x50.png?text=Comfort+Suites",
+    "industry": "Hospitality",
+    "jobRole": "Front Desk Clerk",
+    "nature": 2,
+    "workModel": 2,
+    "location": "Orlando, FL",
+    "pay": "$14/hour",
+    "datePosted": "2025-05-09",
+    "companyInfo": "Comfort Suites Hotel offers comfortable lodging across the US.",
+    "jobDescription": "Assist guests with check-in/check-out and inquiries.",
+    "jobRequirements": [
+      "Customer service experience",
+      "Basic computer skills",
+      "Multitasking ability"
+    ],
+    "relevantSkills": [
+      "Customer Service",
+      "Reservation Systems",
+      "Communication"
+    ],
+    "htmlFile": "comfortsuites-front-desk-clerk.html",
+    "applicationLink": "https://example.com/apply/comfortsuites-front-desk-clerk"
+  },
+  {
+    "companyName": "AutoDrive Motors",
+    "companyLogo": "https://via.placeholder.com/100x50.png?text=AutoDrive",
+    "industry": "Automotive",
+    "jobRole": "Automotive Technician",
+    "nature": 1,
+    "workModel": 2,
+    "location": "Dallas, TX",
+    "pay": "$30/hour",
+    "datePosted": "2025-05-13",
+    "companyInfo": "AutoDrive Motors is a full-service automotive repair shop.",
+    "jobDescription": "Perform diagnostics and repairs on vehicle systems.",
+    "jobRequirements": [
+      "ASE certification",
+      "Diagnostic tool proficiency",
+      "Mechanical aptitude"
+    ],
+    "relevantSkills": [
+      "Diagnostics",
+      "Repair",
+      "Maintenance"
+    ],
+    "htmlFile": "autodrive-automotive-technician.html",
+    "applicationLink": "https://example.com/apply/autodrive-automotive-technician"
+  },
+  {
+    "companyName": "GreenPower Energy",
+    "companyLogo": "https://via.placeholder.com/100x50.png?text=GreenPower",
+    "industry": "Energy",
+    "jobRole": "Solar Panel Installer",
+    "nature": 3,
+    "workModel": 2,
+    "location": "Phoenix, AZ",
+    "pay": "$28/hour",
+    "datePosted": "2025-05-16",
+    "companyInfo": "GreenPower Energy specializes in residential solar installations.",
+    "jobDescription": "Install and maintain solar panel systems.",
+    "jobRequirements": [
+      "Experience with electrical systems",
+      "Roof safety training",
+      "Physical stamina"
+    ],
+    "relevantSkills": [
+      "Electrical Installation",
+      "Safety Compliance",
+      "Mounting"
+    ],
+    "htmlFile": "greenpower-solar-installer.html",
+    "applicationLink": "https://example.com/apply/greenpower-solar-installer"
+  },
+  {
+    "companyName": "ConnectPlus Telecom",
+    "companyLogo": "https://via.placeholder.com/100x50.png?text=ConnectPlus",
+    "industry": "Telecommunications",
+    "jobRole": "Network Engineer",
+    "nature": 1,
+    "workModel": 1,
+    "location": "Denver, CO",
+    "pay": "$100,000/year",
+    "datePosted": "2025-05-06",
+    "companyInfo": "ConnectPlus Telecom delivers cutting-edge network solutions.",
+    "jobDescription": "Design and maintain enterprise network infrastructure.",
+    "jobRequirements": [
+      "CCNA or higher",
+      "Experience with routing protocols",
+      "Troubleshooting skills"
+    ],
+    "relevantSkills": [
+      "Network Design",
+      "Cisco",
+      "Troubleshooting"
+    ],
+    "htmlFile": "connectplus-network-engineer.html",
+    "applicationLink": "https://example.com/apply/connectplus-network-engineer"
+  },
+  {
+    "companyName": "Urban Nest Realty",
+    "companyLogo": "https://via.placeholder.com/100x50.png?text=UrbanNest",
+    "industry": "Real Estate",
+    "jobRole": "Real Estate Agent",
+    "nature": 2,
+    "workModel": 3,
+    "location": "Miami, FL",
+    "pay": "$50,000/year + commission",
+    "datePosted": "2025-05-04",
+    "companyInfo": "Urban Nest Realty connects buyers and sellers in urban markets.",
+    "jobDescription": "Assist clients in buying and selling residential properties.",
+    "jobRequirements": [
+      "Real estate license",
+      "Negotiation skills",
+      "Local market knowledge"
+    ],
+    "relevantSkills": [
+      "Negotiation",
+      "Client Relations",
+      "Market Analysis"
+    ],
+    "htmlFile": "urbannest-real-estate-agent.html",
+    "applicationLink": "https://example.com/apply/urbannest-real-estate-agent"
+  },
+  {
+    "companyName": "GlobalAid Foundation",
+    "companyLogo": "https://via.placeholder.com/100x50.png?text=GlobalAid",
+    "industry": "Nonprofit",
+    "jobRole": "Program Coordinator",
+    "nature": 1,
+    "workModel": 1,
+    "location": "Washington, DC",
+    "pay": "$60,000/year",
+    "datePosted": "2025-05-02",
+    "companyInfo": "GlobalAid Foundation works on international development projects.",
+    "jobDescription": "Manage program logistics and coordinate with stakeholders.",
+    "jobRequirements": [
+      "Project management experience",
+      "Strong communication skills",
+      "Multi-cultural experience"
+    ],
+    "relevantSkills": [
+      "Project Management",
+      "Stakeholder Engagement",
+      "Reporting"
+    ],
+    "htmlFile": "globalaid-program-coordinator.html",
+    "applicationLink": "https://example.com/apply/globalaid-program-coordinator"
+  }
+]
