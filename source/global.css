@@ -42,3 +42,8 @@ html,body{
     display: flex;
     flex-direction: column;
 }
+
+#app {
+  min-height: 100%;
+  overflow-y: auto;
+}
