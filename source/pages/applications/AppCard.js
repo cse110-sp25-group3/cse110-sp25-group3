@@ -25,8 +25,88 @@ class AppCard extends HTMLElement {
         // Create a <style> tag to encapsulate component-specific styles
         let style = document.createElement('style');
 
-        // TODO
-        style.textContent = ``;
+        // Add styles to the <style> tag
+        style.textContent = `
+            article {
+                border: 1px solid #ddd;
+                border-radius: 1em;
+                padding: 16px;
+                background: white;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+                transition: all 0.3s ease;
+            }
+            
+            /* Header styles */
+            header{
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .text-info {
+                display: flex;
+                flex-direction: column;
+                margin-right: 0%
+                width: 10px;
+            }
+
+            .company-meta {
+                display: flex;
+                align-items: center;
+                gap: 1em;
+                margin-right: 0%;
+                padding-right: 0%;
+            }
+
+            img {
+                max-width: 15%;
+            }
+
+            .name {
+                color: var(--color-dark-blue-outline);
+                font-weight: medium;
+                font-size: 1.1em;
+                flex: none;
+            }
+            
+            button {
+                background: var(--color-light-blue-fill);
+                border: 1px solid var(--color-light-blue-outline);
+                box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+                border-radius: 0.5em;
+                max-width: 30%;
+                padding: 0.3em 0.8em;
+                font-size: 0.8em;
+                transition: all 0.3s ease;
+                color: var(--color-dark-blue-outline);
+            }
+            
+            button:hover {
+                background: var(--color-dark-blue-fill);
+                border-color: rgba(196, 199, 254, 0.1);
+                color: rgba(19, 25, 192, 0.5);
+                cursor: pointer;
+            }
+
+            /* Job title styles */
+            h2 {
+                font-size: 1.1em;
+            }
+
+            /* Meta styling */
+            .meta {
+                display: flex;
+                gap: 1em;
+                margin: 0.5em 0;
+                font-size: 0.7em;
+            }
+            .meta span {
+                display: flex;
+                align-items: center;
+                font-size: 0.3em;
+                gap: 1em;
+            }
+        `;
 
         // Append the <style> and <article> elements to the shadow DOM
         this.shadowRoot.append(style);
@@ -71,7 +151,7 @@ class AppCard extends HTMLElement {
         this.article.innerHTML = `
             <header>
                 <div class="company-meta">
-                    <div>LOGO</div>
+                    <img class="logo" src="${data.companyLogo}" alt="${data.companyName} logo">
                     <div class="text-info">
                         <span class="name">${data.companyName}</span>
                         <span class="industry">${data.industry}</span>
@@ -79,16 +159,16 @@ class AppCard extends HTMLElement {
                 </div>
 
                 <button class="toggle" id="toggle-${detailId}" aria-expanded="false" aria-controls="${detailId}">
-                    View details
+                    Details
                 </button>
-            <header>
+            </header>
 
             <h2 class="job-title">${data.jobRole}</h2>
 
             <div class="meta">
-                <span>📍 ${data.location}</span>
-                <span>💲 ${data.pay}</span>
-                <span>✅ Applied on <time datetime="${data.submittedDate}">${data.submittedDate}</time></span>
+                <span><img src='assets/location.svg'>${data.location}</span>
+                <span><img src='assets/pay.svg'>${data.pay}</span>
+                <span><img src='assets/check.svg'> Applied on <time datetime="${data.submittedDate}">${data.submittedDate}</time></span>
             </div>
 
             <section class="details" id="${detailId}" hidden>
