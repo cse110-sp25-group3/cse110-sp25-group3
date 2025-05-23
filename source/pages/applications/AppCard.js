@@ -20,7 +20,7 @@ class AppCard extends HTMLElement {
         let shadow = this.attachShadow({ mode: 'open' });
 
         // Create root container for component's visual content
-        this.article = document.createElement();
+        this.article = document.createElement('article');
 
         // Create a <style> tag to encapsulate component-specific styles
         let style = document.createElement('style');
@@ -29,8 +29,8 @@ class AppCard extends HTMLElement {
         style.textContent = ``;
 
         // Append the <style> and <article> elements to the shadow DOM
-        this.shadowRoot.append(style, article);
-        this.article = article;
+        this.shadowRoot.append(style);
+        this.shadowRoot.appendChild(this.article);
     }
 
     /**
@@ -49,6 +49,7 @@ class AppCard extends HTMLElement {
      *   "location": "string",                  // Job location
      *   "pay": "string",                       // Pay information
      *   "datePosted": "string",                // Date the job was posted
+     *   "dateSubmitted": "string",             // Date the application was submitted
      *   "companyInfo": "string",               // Date the user applied
      *   "jobDescription": "string"             // Overview of job responsibilities
      *   "jobRequirements": [ "string", ... ],  // Array of job requirements
@@ -67,6 +68,8 @@ class AppCard extends HTMLElement {
         const workModel = workModelMap[data.workModel] || 'Unknown';
         const detailId = `details-${Math.random().toString(36).substring(2, 9)}`;
 
-        this.article.innerHTML = ``
+        this.article.innerHTML = `TODO`;
     }
 }
+
+customElements.define('app-card', AppCard);
