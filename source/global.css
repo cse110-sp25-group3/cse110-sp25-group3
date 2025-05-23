@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Open-Sans:wght@300;400;500;700&display=swap');
+
 :root {
     --color-icon-gray:        #6B7280;
   
@@ -10,14 +12,17 @@
     /* buttons */
     --color-light-blue-fill:  #EFF6FF;
     --color-light-blue-outline: #DBEAFE;
-    --color-dark-blue:        #2563EB;
-    --color-dark-blue-light:  #B5C5F4;
+    --color-dark-blue-outline:        #2563EB;
+    --color-dark-blue-fill:  #B5C5F4;
+    --color-light-gray-fill: #F2F4FD;
   
     /* accent */
     --color-star:             #F59E0B;
   }
 
 html,body{
+    font-family: 'Open-Sans', sans-serif;
+
     margin: 0;
     padding: 0;
     width: 100%;
@@ -26,6 +31,10 @@ html,body{
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+button{
+    font-family: 'Open-Sans', sans-serif;
 }
 
 .phone{
