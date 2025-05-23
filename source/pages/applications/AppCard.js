@@ -68,7 +68,44 @@ class AppCard extends HTMLElement {
         const workModel = workModelMap[data.workModel] || 'Unknown';
         const detailId = `details-${Math.random().toString(36).substring(2, 9)}`;
 
-        this.article.innerHTML = `TODO`;
+        this.article.innerHTML = `
+            <header>
+                <div class="company-meta">
+                    <div>LOGO</div>
+                    <div class="text-info">
+                        <span class="name">${data.companyName}</span>
+                        <span class="industry">${data.industry}</span>
+                    </div>
+                </div>
+
+                <button class="toggle" id="toggle-${detailId}" aria-expanded="false" aria-controls="${detailId}">
+                    View details
+                </button>
+            <header>
+
+            <h2 class="job-title">${data.jobRole}</h2>
+
+            <div class="meta">
+                <span>📍 ${data.location}</span>
+                <span>💲 ${data.pay}</span>
+                <span>✅ Applied on <time datetime="${data.submittedDate}">${data.submittedDate}</time></span>
+            </div>
+
+            <section class="details" id="${detailId}" hidden>
+                <p><strong>About:</strong> ${data.companyInfo}</p>
+                <p><strong>Description:</strong> ${data.jobDescription}</p>
+                <p><strong>Requirements:</strong></p>
+                <ul>
+                    ${data.jobRequirements.map(req => `<li>${req}</li>`).join('')}
+                </ul>
+                <p><strong>Skills:</strong></p>
+                <div class="skills">
+                    ${data.relevantSkills.map(skill => `<span class="skill">${skill}</span>`).join('')}
+                </div>
+                <a class="apply-link" href="${data.applicationLink}" target="_blank" rel="noopener">Link to Application</a>
+            </section>
+            </section>
+        `;
     }
 }
 
