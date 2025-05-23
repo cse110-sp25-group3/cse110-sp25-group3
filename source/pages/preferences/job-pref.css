@@ -1,0 +1,116 @@
+/* job-preferences.css */
+
+/* Container for the tag selector */
+.tag-selector {
+  margin-bottom: 1rem;
+}
+
+/* Area displaying selected tags */
+.selected-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+/* "+ add" button */
+.add-button {
+  background: var(--color-light-gray-fill);
+  padding: 3px;
+  opacity: 0.8;
+  font-size: 0.9rem;
+  border-radius: 0.25rem;
+}
+.add-button:hover {
+  background: var(--color-dark-blue-fill);
+}
+
+/* Text input for typing tags */
+.tag-input {
+  display: block;
+  width: 100%;
+  padding: 0.5rem;
+  box-sizing: border-box;
+  margin-bottom: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 0.25rem;
+}
+
+/* Hides elements */
+.hidden {
+  display: none !important;
+}
+
+/* Container for suggestion pills */
+.tag-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Suggestion pill styling */
+.tag-suggestion-pill {
+  background: #eef;
+  border: 1px solid #99c;
+  border-radius: 0.25rem;
+  padding: 0.3rem 0.75rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-size: 0.9rem;
+}
+.tag-suggestion-pill:hover {
+  background: #dde;
+}
+
+/* Styling for selected tag pills */
+.tag-pill {
+  background: var(--color-light-blue-outline);
+  padding: 3px 10px;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.tag-pill:hover {
+  opacity: 0.9;
+}
+
+/* Checkbox group container */
+.checkbox-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* Individual checkbox item */
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* Preference section wrapper */
+.pref-section { 
+  display: grid;
+  grid-template-columns: 145px 1fr;
+  column-gap: 15px;
+  margin-bottom: 15px;
+  align-items: first baseline;
+  border-bottom: solid 0.2px;
+}
+
+/* Save Preferences button */
+.saveBtn {
+  background: #007bff;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+.saveBtn:hover {
+  background: #0056b3;
+}
