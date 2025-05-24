@@ -34,6 +34,7 @@ class AppCard extends HTMLElement {
                 background: white;
                 box-shadow: 0 2px 6px rgba(0,0,0,0.05);
                 transition: all 0.3s ease;
+                margin-bottom: 1.2em;
             }
             
             /* Header styles */
