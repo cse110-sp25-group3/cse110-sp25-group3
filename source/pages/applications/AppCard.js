@@ -125,13 +125,88 @@ class AppCard extends HTMLElement {
             .details {
                 max-height: 0;
                 overflow: hidden;
-                opacity: 0;
-                transition: max-height 0.4s ease, opacity 0.3s ease;
+                transition: max-height 0.4s ease;
             }
 
             .details.expanded {
-                opacity: 1;
                 max-height: 1000px; /* large enough to show content */
+            }
+            
+            .details {
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.4s ease, opacity 0.3s ease;
+                opacity: 0;
+                margin-top: 1em;
+                font-size: 0.85em;
+                line-height: 1.5;
+                color: #333;
+            }
+
+            .details.expanded {
+                max-height: 1000px;
+                opacity: 1;
+            }
+
+            /* Section spacing */
+            .details p {
+                margin: 0.6em 0;
+            }
+
+            .details strong {
+                font-weight: 600;
+                color: var(--color-dark-blue-outline);
+            }
+
+            /* Requirement list */
+            .details ul {
+                padding-left: 1.2em;
+                margin: 0.4em 0 1em;
+            }
+
+            .details ul li {
+                margin-bottom: 0.3em;
+                list-style: disc;
+            }
+
+            .details ul li::marker {
+                color: var(--color-dark-blue-outline); /* Or any specific color like #1d4ed8 */
+            } 
+
+            /* Skills */
+            .skills {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.5em;
+                margin-top: 0.5em;
+            }
+
+            .skill {
+                background: var(--color-light-blue-fill);
+                color: var(--color-dark-blue-outline);
+                padding: 0.3em 0.7em;
+                border-radius: 0.5em;
+                font-size: 0.75em;
+                white-space: nowrap;
+            }
+
+            /* Application link */
+            a.apply-link {
+                display: inline-block;
+                margin-top: 1em;
+                padding: 0.5em 1em;
+                background: var(--color-dark-blue-outline);
+                color: white;
+                text-decoration: none;
+                border-radius: 0.5em;
+                font-weight: bold;
+                font-size: 0.85em;
+                transition: opacity 0.3s ease;
+            }
+
+            a.apply-link:hover {
+                // background: var(--color-dark-blue-fill);
+                opacity: 0.8;
             }
         `;
 
