@@ -57,6 +57,7 @@ class AppCard extends HTMLElement {
                 gap: 1em;
                 margin-right: 0%;
                 padding-right: 0%;
+                max-width: 70%;
             }
 
             img {
@@ -118,6 +119,19 @@ class AppCard extends HTMLElement {
             span img {
                 width: 16px;
                 height: 16px;
+            }
+
+            /* Details section */
+            .details {
+                max-height: 0;
+                overflow: hidden;
+                opacity: 0;
+                transition: max-height 0.4s ease, opacity 0.3s ease;
+            }
+
+            .details.expanded {
+                opacity: 1;
+                max-height: 1000px; /* large enough to show content */
             }
         `;
 
@@ -189,7 +203,7 @@ class AppCard extends HTMLElement {
                 </div>
             </div>
 
-            <section class="details" id="${detailId}" hidden>
+            <section class="details" id="${detailId}">
                 <p><strong>About:</strong> ${data.companyInfo}</p>
                 <p><strong>Description:</strong> ${data.jobDescription}</p>
                 <p><strong>Requirements:</strong></p>
@@ -203,6 +217,17 @@ class AppCard extends HTMLElement {
                 <a class="apply-link" href="${data.applicationLink}" target="_blank" rel="noopener">Link to Application</a>
             </section>
         `;
+
+        const toggleBtn = this.article.querySelector(`#toggle-${detailId}`);
+        const detailSection = this.article.querySelector(`#${detailId}`);
+
+        toggleBtn.addEventListener('click', () => {
+            const isExpanded = toggleBtn.getAttribute('aria-expanded') === 'true';
+
+            detailSection.classList.toggle('expanded', !isExpanded);
+            toggleBtn.setAttribute('aria-expanded', !isExpanded);
+            toggleBtn.textContent = isExpanded ? 'Details' : 'Hide';
+        });
     }
 }
 
