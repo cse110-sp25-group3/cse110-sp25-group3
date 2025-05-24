@@ -96,15 +96,27 @@ class AppCard extends HTMLElement {
             /* Meta styling */
             .meta {
                 display: flex;
+                flex-direction: row;
                 gap: 1em;
-                margin: 0.5em 0;
                 font-size: 0.7em;
             }
+
+            .meta column {
+                display: flex;
+                gap: 20%;
+                align-items: center;
+            }
+
             .meta span {
                 display: flex;
                 align-items: center;
-                font-size: 0.3em;
-                gap: 1em;
+                gap: 0.5em;
+                margin-bottom: 0.7em;
+            }
+
+            span img {
+                width: 16px;
+                height: 16px;
             }
         `;
 
@@ -166,9 +178,14 @@ class AppCard extends HTMLElement {
             <h2 class="job-title">${data.jobRole}</h2>
 
             <div class="meta">
-                <span><img src='assets/location.svg'>${data.location}</span>
-                <span><img src='assets/pay.svg'>${data.pay}</span>
-                <span><img src='assets/check.svg'> Applied on <time datetime="${data.submittedDate}">${data.submittedDate}</time></span>
+                <div class="column">
+                    <span><img src='assets/location.svg'>${data.location}</span>
+                    <span><img src='assets/${workModelMap[data.workModel]}.svg'>${workModelMap[data.workModel]}</span>
+                </div>
+                <div class="column">
+                    <span><img src='assets/pay.svg'>${data.pay}</span>
+                    <span><img src='assets/check.svg'>Applied on <time datetime="${data.submittedDate}">${data.submittedDate}</time></span>
+                </div>
             </div>
 
             <section class="details" id="${detailId}" hidden>
@@ -183,7 +200,6 @@ class AppCard extends HTMLElement {
                     ${data.relevantSkills.map(skill => `<span class="skill">${skill}</span>`).join('')}
                 </div>
                 <a class="apply-link" href="${data.applicationLink}" target="_blank" rel="noopener">Link to Application</a>
-            </section>
             </section>
         `;
     }
