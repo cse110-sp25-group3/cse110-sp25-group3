@@ -57,7 +57,7 @@ class AppCard extends HTMLElement {
                 gap: 1em;
                 margin-right: 0%;
                 padding-right: 0%;
-                max-width: 70%;
+                max-width: 75%;
             }
 
             img {
