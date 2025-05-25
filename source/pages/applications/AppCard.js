@@ -86,7 +86,6 @@ class AppCard extends HTMLElement {
             button:hover {
                 background: var(--color-dark-blue-fill);
                 border-color: rgba(196, 199, 254, 0.1);
-                color: rgba(19, 25, 192, 0.5);
                 cursor: pointer;
             }
 
