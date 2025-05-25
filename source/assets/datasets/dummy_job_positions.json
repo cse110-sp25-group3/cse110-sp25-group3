@@ -16,11 +16,7 @@
       "2+ years of experience with JavaScript and React",
       "Experience with RESTful APIs"
     ],
-    "relevantSkills": [
-      "JavaScript",
-      "React",
-      "Node.js"
-    ],
+    "relevantSkills": ["JavaScript", "React", "Node.js"],
     "htmlFile": "innovatech-software-engineer.html",
     "applicationLink": "https://example.com/apply/innovatech-software-engineer"
   },
@@ -41,11 +37,7 @@
       "Excellent customer service skills",
       "Ability to lift up to 50 lbs"
     ],
-    "relevantSkills": [
-      "Customer Service",
-      "Cash Handling",
-      "Merchandising"
-    ],
+    "relevantSkills": ["Customer Service", "Cash Handling", "Merchandising"],
     "htmlFile": "shopsmart-retail-associate.html",
     "applicationLink": "https://example.com/apply/shopsmart-retail-associate"
   },
@@ -91,11 +83,7 @@
       "Proficiency in Excel and financial modeling",
       "Excellent communication skills"
     ],
-    "relevantSkills": [
-      "Financial Modeling",
-      "Excel",
-      "Data Analysis"
-    ],
+    "relevantSkills": ["Financial Modeling", "Excel", "Data Analysis"],
     "htmlFile": "alphafinancial-financial-analyst.html",
     "applicationLink": "https://example.com/apply/alphafinancial-financial-analyst"
   },
@@ -116,11 +104,7 @@
       "2+ years clinical experience",
       "Strong patient care skills"
     ],
-    "relevantSkills": [
-      "Patient Care",
-      "Medication Administration",
-      "EMR"
-    ],
+    "relevantSkills": ["Patient Care", "Medication Administration", "EMR"],
     "htmlFile": "healthyliving-registered-nurse.html",
     "applicationLink": "https://example.com/apply/healthyliving-registered-nurse"
   },
@@ -191,11 +175,7 @@
       "Strong organizational skills",
       "Communication skills"
     ],
-    "relevantSkills": [
-      "Logistics Management",
-      "Scheduling",
-      "Tracking"
-    ],
+    "relevantSkills": ["Logistics Management", "Scheduling", "Tracking"],
     "htmlFile": "quickship-logistics-coordinator.html",
     "applicationLink": "https://example.com/apply/quickship-logistics-coordinator"
   },
@@ -216,11 +196,7 @@
       "Analytical skills",
       "Content creation experience"
     ],
-    "relevantSkills": [
-      "SEO",
-      "Google Analytics",
-      "Content Marketing"
-    ],
+    "relevantSkills": ["SEO", "Google Analytics", "Content Marketing"],
     "htmlFile": "brandwave-marketing-specialist.html",
     "applicationLink": "https://example.com/apply/brandwave-marketing-specialist"
   },
@@ -266,11 +242,7 @@
       "Diagnostic tool proficiency",
       "Mechanical aptitude"
     ],
-    "relevantSkills": [
-      "Diagnostics",
-      "Repair",
-      "Maintenance"
-    ],
+    "relevantSkills": ["Diagnostics", "Repair", "Maintenance"],
     "htmlFile": "autodrive-automotive-technician.html",
     "applicationLink": "https://example.com/apply/autodrive-automotive-technician"
   },
@@ -316,11 +288,7 @@
       "Experience with routing protocols",
       "Troubleshooting skills"
     ],
-    "relevantSkills": [
-      "Network Design",
-      "Cisco",
-      "Troubleshooting"
-    ],
+    "relevantSkills": ["Network Design", "Cisco", "Troubleshooting"],
     "htmlFile": "connectplus-network-engineer.html",
     "applicationLink": "https://example.com/apply/connectplus-network-engineer"
   },
@@ -341,11 +309,7 @@
       "Negotiation skills",
       "Local market knowledge"
     ],
-    "relevantSkills": [
-      "Negotiation",
-      "Client Relations",
-      "Market Analysis"
-    ],
+    "relevantSkills": ["Negotiation", "Client Relations", "Market Analysis"],
     "htmlFile": "urbannest-real-estate-agent.html",
     "applicationLink": "https://example.com/apply/urbannest-real-estate-agent"
   },

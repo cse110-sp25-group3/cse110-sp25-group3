@@ -1,0 +1,107 @@
+.job-card-front {
+  background: white;
+  border-radius: 24px;
+  padding: 24px 20px;
+  width: 320px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  font-family: "Open Sans", sans-serif;
+  text-align: center;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.donut {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: conic-gradient(#8b7dff 0deg, #eee 0deg); /* default placeholder */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  position: relative;
+}
+
+.donut-text {
+  position: absolute;
+  font-weight: 700;
+  font-size: 18px;
+  background: white;
+  width: 60px;
+  height: 60px;
+  line-height: 60px;
+  border-radius: 50%;
+  text-align: center;
+  box-shadow: inset 0 0 0 2px #fff;
+}
+
+.skills {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 15px;
+}
+
+.skills p {
+  margin: 0;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 48px;
+  margin: 12px 0 8px 0;
+}
+
+.actions button {
+  font-size: 24px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+
+.actions button:hover {
+  transform: scale(1.1);
+}
+
+.skip {
+  background-color: #ffe5e5;
+  color: #d33;
+}
+
+.apply {
+  background-color: #e5ffe5;
+  color: #2c9;
+}
+
+.progress-bar {
+  position: relative;
+  height: 8px;
+  background: #eee;
+  border-radius: 4px;
+  margin-top: 4px;
+  overflow: hidden;
+}
+
+.progress-bar .filled {
+  height: 100%;
+  background: #7b6fff;
+  border-radius: 4px;
+  transition: width 0.3s ease-in-out;
+}
+
+.progress-bar .progress-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: #7b6fff;
+  position: absolute;
+  right: 0;
+  bottom: 110%;
+}
