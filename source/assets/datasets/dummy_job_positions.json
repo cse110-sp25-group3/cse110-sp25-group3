@@ -1,7 +1,7 @@
 [
   {
     "companyName": "Innovatech Solutions",
-    "companyLogo": "https://via.placeholder.com/100x50.png?text=Innovatech",
+    "companyLogo": "https://placehold.co/100x50?text=Innovatech",
     "industry": "Technology",
     "jobRole": "Software Engineer",
     "nature": 1,
@@ -26,7 +26,7 @@
   },
   {
     "companyName": "ShopSmart Mart",
-    "companyLogo": "https://via.placeholder.com/100x50.png?text=ShopSmart",
+    "companyLogo": "https://placehold.co/100x50?text=ShopSmart",
     "industry": "Retail",
     "jobRole": "Retail Associate",
     "nature": 2,
@@ -51,7 +51,7 @@
   },
   {
     "companyName": "SecureLife Insurance",
-    "companyLogo": "https://via.placeholder.com/100x50.png?text=SecureLife",
+    "companyLogo": "https://placehold.co/100x50?text=SecureLife",
     "industry": "Insurance",
     "jobRole": "Insurance Underwriter",
     "nature": 1,
@@ -76,7 +76,7 @@
   },
   {
     "companyName": "Alpha Financial",
-    "companyLogo": "https://via.placeholder.com/100x50.png?text=Alpha+Financial",
+    "companyLogo": "https://placehold.co/100x50?text=Alpha+Financial",
     "industry": "Finance",
     "jobRole": "Financial Analyst",
     "nature": 1,
@@ -101,7 +101,7 @@
   },
   {
     "companyName": "Healthy Living Clinic",
-    "companyLogo": "https://via.placeholder.com/100x50.png?text=Healthy+Living",
+    "companyLogo": "https://placehold.co/100x50?text=Healthy+Living",
     "industry": "Healthcare",
     "jobRole": "Registered Nurse",
     "nature": 1,
@@ -126,7 +126,7 @@
   },
   {
     "companyName": "Bright Minds Academy",
-    "companyLogo": "https://via.placeholder.com/100x50.png?text=Bright+Minds",
+    "companyLogo": "https://placehold.co/100x50?text=Bright+Minds",
     "industry": "Education",
     "jobRole": "Elementary School Teacher",
     "nature": 1,
@@ -151,7 +151,7 @@
   },
   {
     "companyName": "Precision Manufacturing Co.",
-    "companyLogo": "https://via.placeholder.com/100x50.png?text=Precision+Manufacturing",
+    "companyLogo": "https://placehold.co/100x50?text=Precision+Manufacturing",
     "industry": "Manufacturing",
     "jobRole": "CNC Machinist",
     "nature": 1,
@@ -176,7 +176,7 @@
   },
   {
     "companyName": "QuickShip Logistics",
-    "companyLogo": "https://via.placeholder.com/100x50.png?text=QuickShip",
+    "companyLogo": "https://placehold.co/100x50?text=QuickShip",
     "industry": "Logistics",
     "jobRole": "Logistics Coordinator",
     "nature": 3,
@@ -201,7 +201,7 @@
   },
   {
     "companyName": "BrandWave Marketing",
-    "companyLogo": "https://via.placeholder.com/100x50.png?text=BrandWave",
+    "companyLogo": "https://placehold.co/100x50?text=BrandWave",
     "industry": "Marketing",
     "jobRole": "Marketing Specialist",
     "nature": 1,
@@ -226,7 +226,7 @@
   },
   {
     "companyName": "Comfort Suites Hotel",
-    "companyLogo": "https://via.placeholder.com/100x50.png?text=Comfort+Suites",
+    "companyLogo": "https://placehold.co/100x50?text=Comfort+Suites",
     "industry": "Hospitality",
     "jobRole": "Front Desk Clerk",
     "nature": 2,
@@ -251,7 +251,7 @@
   },
   {
     "companyName": "AutoDrive Motors",
-    "companyLogo": "https://via.placeholder.com/100x50.png?text=AutoDrive",
+    "companyLogo": "https://placehold.co/100x50?text=AutoDrive",
     "industry": "Automotive",
     "jobRole": "Automotive Technician",
     "nature": 1,
@@ -276,7 +276,7 @@
   },
   {
     "companyName": "GreenPower Energy",
-    "companyLogo": "https://via.placeholder.com/100x50.png?text=GreenPower",
+    "companyLogo": "https://placehold.co/100x50?text=GreenPower",
     "industry": "Energy",
     "jobRole": "Solar Panel Installer",
     "nature": 3,
@@ -301,7 +301,7 @@
   },
   {
     "companyName": "ConnectPlus Telecom",
-    "companyLogo": "https://via.placeholder.com/100x50.png?text=ConnectPlus",
+    "companyLogo": "https://placehold.co/100x50?text=ConnectPlus",
     "industry": "Telecommunications",
     "jobRole": "Network Engineer",
     "nature": 1,
@@ -326,7 +326,7 @@
   },
   {
     "companyName": "Urban Nest Realty",
-    "companyLogo": "https://via.placeholder.com/100x50.png?text=UrbanNest",
+    "companyLogo": "https://placehold.co/100x50?text=UrbanNest",
     "industry": "Real Estate",
     "jobRole": "Real Estate Agent",
     "nature": 2,
@@ -351,7 +351,7 @@
   },
   {
     "companyName": "GlobalAid Foundation",
-    "companyLogo": "https://via.placeholder.com/100x50.png?text=GlobalAid",
+    "companyLogo": "https://placehold.co/100x50?text=GlobalAid",
     "industry": "Nonprofit",
     "jobRole": "Program Coordinator",
     "nature": 1,
