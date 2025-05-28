@@ -1,0 +1,297 @@
+/* Styling for the main feed container */
+#job-cards-container {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+    /* Ensure it takes up available height for centering */
+    min-height: calc(100vh - var(--header-height, 60px) - 20px); /* Adjust header-height if needed */
+    justify-content: center; /* Center cards vertically in the container */
+}
+
+/* Base card container */
+.job-card {
+    width: 320px; /* As per your example */
+    height: 500px; /* Adjust height to fit content */
+    perspective: 1000px; /* For 3D effect */
+    cursor: pointer;
+    position: relative; /* Needed for absolute positioning of flip button */
+}
+
+/* Inner container for flipping */
+.card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s; /* Smooth flip animation */
+    transform-style: preserve-3d; /* Keep children in 3D space */
+}
+
+/* Flip effect */
+.job-card.flipped .card-inner {
+    transform: rotateY(180deg);
+}
+
+/* Card faces (front and back) */
+.card-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden; /* Hide the back of the element when facing away */
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 1em; /* Matches JobFeedCard.js */
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05); /* Matches JobFeedCard.js */
+    padding: 16px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Space out content and buttons */
+    overflow-y: auto; /* Enable scrolling if content overflows */
+}
+
+.card-front {
+    z-index: 2; /* Ensures front is on top when not flipped */
+    display: flex; /* Override for centering */
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.card-back {
+    transform: rotateY(180deg); /* Position back face */
+}
+
+/* Styles for elements within the card */
+h1, h2, h3, p {
+  margin: 0 0 8px 0;
+}
+
+/* Header styles for the back of the card */
+.card-back header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.8em;
+}
+
+.company-meta {
+    display: flex;
+    align-items: center;
+    gap: 1em;
+    max-width: 75%;
+}
+
+.company-meta .logo {
+    max-width: 15%;
+    height: auto;
+}
+
+.text-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.company-name {
+    color: var(--color-dark-blue-outline);
+    font-weight: 500;
+    font-size: 1.1em;
+}
+
+.industry {
+    font-size: 0.8em;
+    color: #666;
+}
+
+.job-title-back { /* Use a specific class to differentiate from h2 on front */
+    font-size: 1.2em;
+    font-weight: 600;
+    margin: 0.5em 0;
+}
+
+.meta {
+    display: flex;
+    flex-direction: row;
+    gap: 1.5em;
+    font-size: 0.75em;
+    color: #555;
+    margin-bottom: 1em;
+}
+
+.meta .column {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+}
+
+.meta span {
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+}
+
+.meta img {
+    width: 16px;
+    height: 16px;
+}
+
+.details {
+    margin-top: 1em;
+    font-size: 0.9em;
+    line-height: 1.5;
+    color: #333;
+}
+
+.details p {
+    margin: 0.6em 0;
+}
+
+.details strong {
+    font-weight: 600;
+    color: var(--color-dark-blue-outline);
+}
+
+.details ul {
+    padding-left: 1.5em;
+    margin: 0.4em 0 1em;
+}
+
+.details ul li {
+    margin-bottom: 0.3em;
+    list-style: disc;
+}
+
+.skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+    margin-top: 0.5em;
+}
+
+.skill {
+    background: var(--color-light-blue-fill);
+    color: var(--color-dark-blue-outline);
+    padding: 0.3em 0.7em;
+    border-radius: 0.5em;
+    font-size: 0.75em;
+    white-space: nowrap;
+}
+
+.apply-link {
+    display: inline-block;
+    margin-top: 1em;
+    padding: 0.5em 1em;
+    background: var(--color-dark-blue-outline);
+    color: white;
+    text-decoration: none;
+    border-radius: 0.5em;
+    font-weight: bold;
+    font-size: 0.85em;
+    transition: opacity 0.3s ease;
+}
+
+.apply-link:hover {
+    opacity: 0.8;
+}
+
+/* Buttons for flip, skip, apply */
+.bottom-buttons {
+    display: flex;
+    justify-content: space-around;
+    padding-top: 1em;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.swipe-button {
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.skip-button {
+    background-color: var(--color-red-fill);
+    color: var(--color-red-outline);
+}
+.skip-button:hover {
+    background-color: var(--color-red-outline);
+    color: white;
+}
+
+.apply-button {
+    background-color: var(--color-green-fill);
+    color: var(--color-green-outline);
+}
+.apply-button:hover {
+    background-color: var(--color-green-outline);
+    color: white;
+}
+
+.flip-toggle-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--color-light-blue-fill);
+    border: 1px solid var(--color-light-blue-outline);
+    color: var(--color-dark-blue-outline);
+    border-radius: 0.5em;
+    padding: 0.3em 0.7em;
+    font-size: 0.8em;
+    cursor: pointer;
+    z-index: 10; /* Ensure button is clickable */
+}
+.flip-toggle-button:hover {
+    background: var(--color-dark-blue-fill);
+}
+
+/* Skill match specific styles (for the front of the card) */
+.skill-match-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%; /* Take full height of front face */
+    box-sizing: border-box;
+    padding-bottom: 70px; /* Make space for bottom buttons */
+}
+
+.skill-match-score {
+    font-size: 4em;
+    font-weight: bold;
+    color: var(--color-dark-blue-outline);
+}
+
+.skill-match-text {
+    font-size: 1.2em;
+    color: #555;
+    margin-top: 10px;
+}
+
+.skill-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+    text-align: left; /* Align skill list items */
+}
+
+.skill-list li {
+    margin-bottom: 5px;
+    font-size: 1em;
+}
+
+.skill-list li[style*="color: green"] {
+    color: green;
+}
+
+.skill-list li[style*="color: red"] {
+    color: red;
+}
