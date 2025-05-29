@@ -1,45 +1,44 @@
 // state/preferences.js
+const STORAGE_KEY = 'jobPreferences';
 
-// Central store for user preferences
-export const preferences = {
-  skills: [],
+const defaultPrefs = {
+  skills:    [],
   locations: [],
-  industries: [],
-  roles: [],
-  salary: null,
-  nature: [],        // 1=full-time, 2=part-time, 3=intern
-  workModel: []      // 1=remote, 2=on-site, 3=hybrid
+  industries:[],
+  roles:     [],
+  nature:    [],
+  workModel: [],
+  salary:    ''
 };
 
-/**
- * Update one of the array preference fields
- * @param {string} key - One of: 'skills', 'locations', 'industries', 'roles', 'nature', 'workModel'
- * @param {Array<string|number>} values - Array of selected values
- */
+// load or fallback
+let preferences;
+try {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  preferences = raw ? JSON.parse(raw) : { ...defaultPrefs };
+} catch {
+  preferences = { ...defaultPrefs };
+}
+
+function save() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(preferences));
+  } catch {}
+}
+
 export function setPreference(key, values) {
-  if (!preferences.hasOwnProperty(key)) {
-    throw new Error(`Unknown preference key: ${key}`);
-  }
-  // Salary is special--handle elsewhere
-  if (key !== 'salary' && !Array.isArray(values)) {
-    throw new Error(`${key} must be an array`);
-  }
-  preferences[key] = Array.isArray(values) ? [...values] : values;
+  if (!(key in preferences)) throw new Error(`Unknown pref ${key}`);
+  preferences[key] = Array.isArray(values) ? values : [values];
+  save();
 }
 
-/**
- * Set the salary preference
- * @param {number|string} amount
- */
-export function setSalary(amount) {
-  preferences.salary = amount;
+export function setSalary(val) {
+  preferences.salary = val;
+  save();
 }
 
-/**
- * Retrieve a snapshot of the current preferences
- * @returns {Object}
- */
 export function getPreferences() {
+  // return a copy
   return {
     skills:    [...preferences.skills],
     locations: [...preferences.locations],

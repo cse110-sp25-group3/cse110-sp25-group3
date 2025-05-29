@@ -1,13 +1,34 @@
 // pages/job-preferences/job-preferences.js
-import { getUniqueValues }              from "../../functions/fetch-jobs.js";
-import {
-  setPreference,
-  setSalary,
-  getPreferences
-} from "../../state/preferences.js";
+import { getUniqueValues } from "../../functions/fetch-jobs.js";
+
+// ── Persistence setup ──
+const STORAGE_KEY = 'jobPreferences';
+const defaultPrefs = {
+  skills:    [],
+  locations: [],
+  industries:[],
+  roles:     [],
+  nature:    [],
+  workModel: [],
+  salary:    ''
+};
+
+let savedPrefs;
+try {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  savedPrefs = raw ? JSON.parse(raw) : { ...defaultPrefs };
+} catch {
+  savedPrefs = { ...defaultPrefs };
+}
+
+function savePrefs() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(savedPrefs));
+  } catch {}
+}
 
 //helper for making tag html elements
-function generateTags(items) {
+function generateTags(items, initialSelected = [], prefKey) {
   const selectedTags = [];
   
   //tag container
@@ -76,6 +97,10 @@ function generateTags(items) {
     if (selectedTags.includes(tag)) return; //if already has tag, skip
     selectedTags.unshift(tag); //add tag to the top of the list 
 
+    // update persistence
+    savedPrefs[prefKey] = [...selectedTags];
+    savePrefs();
+
     //creating html ele for the tag 
     const pill = document.createElement('button');
     pill.type = 'button';
@@ -85,6 +110,9 @@ function generateTags(items) {
       //can remove tag by clicking 
       selectedTags.splice(selectedTags.indexOf(tag), 1);
       selectedContainer.removeChild(pill);
+      // update persistence
+      savedPrefs[prefKey] = [...selectedTags];
+      savePrefs();
     });
 
     selectedContainer.prepend(pill);
@@ -120,6 +148,11 @@ function generateTags(items) {
     }
   });
 
+  // pre-select any saved tags
+  initialSelected.forEach(tag => {
+    if (items.includes(tag)) selectTag(tag);
+  });
+
   return {
     element: container,
     getSelectedTags: () => [...selectedTags]
@@ -127,7 +160,7 @@ function generateTags(items) {
 }
 
 //helper for generating text box entries 
-function generateCheckboxes(options) {
+function generateCheckboxes(options, initialSelected = [], prefKey) {
   //html container for the checkboxes
   const container = document.createElement('div');
   container.className = 'checkbox-group';
@@ -143,6 +176,16 @@ function generateCheckboxes(options) {
     input.type  = 'checkbox';
     input.id    = id;
     input.value = String(value);
+
+    // set initial checked state
+    input.checked = initialSelected.includes(String(value));
+    // auto-save on change
+    input.addEventListener('change', () => {
+      const vals = Array.from(container.querySelectorAll('input:checked'))
+                        .map(cb => cb.value);
+      savedPrefs[prefKey] = vals;
+      savePrefs();
+    });
 
     const lbl = document.createElement('label');
     lbl.htmlFor = id;
@@ -171,16 +214,26 @@ export async function renderPreferences(container) {
   const industries = await getUniqueValues('industry');
   const roles      = await getUniqueValues('jobRole');
 
-  //building the tag selectors 
-  const { element: skillsEl, getSelectedTags: getSkills     } = generateTags(skills);
-  const { element: locEl,    getSelectedTags: getLocations  } = generateTags(locations);
-  const { element: indEl,    getSelectedTags: getIndustries} = generateTags(industries);
-  const { element: roleEl,   getSelectedTags: getRoles      } = generateTags(roles);
+  //building the tag selectors, using savedPrefs
+  const { element: skillsEl, getSelectedTags: getSkills     } =
+    generateTags(skills,     savedPrefs.skills,     'skills');
+  const { element: locEl,    getSelectedTags: getLocations  } =
+    generateTags(locations,  savedPrefs.locations,  'locations');
+  const { element: indEl,    getSelectedTags: getIndustries} =
+    generateTags(industries, savedPrefs.industries, 'industries');
+  const { element: roleEl,   getSelectedTags: getRoles      } =
+    generateTags(roles,      savedPrefs.roles,      'roles');
 
   // Preferred salary input
   const salaryInput = document.createElement('input');
   salaryInput.type        = 'number';
   salaryInput.placeholder = 'Preferred salary';
+  salaryInput.value       = savedPrefs.salary;
+  // auto-save salary on input
+  salaryInput.addEventListener('input', () => {
+    savedPrefs.salary = salaryInput.value;
+    savePrefs();
+  });
 
   // checkbox vocabularies
   const natureMap = {
@@ -200,25 +253,9 @@ export async function renderPreferences(container) {
     .map(([value, label]) => ({ value, label }));
   
   const { element: natureEl, getSelectedValues: getNatures     } =
-    generateCheckboxes(natureOptions);
+    generateCheckboxes(natureOptions,   savedPrefs.nature,    'nature');
   const { element: workEl,   getSelectedValues: getWorkModels } =
-    generateCheckboxes(workModelOptions);
-
-  // save button
-  const saveBtn = document.createElement('button');
-  saveBtn.className = "saveBtn";
-  saveBtn.textContent = 'Save Preferences';
-  saveBtn.addEventListener('click', () => {
-    setPreference('skills',     getSkills());
-    setPreference('locations',  getLocations());
-    setPreference('industries', getIndustries());
-    setPreference('roles',      getRoles());
-    setPreference('nature',     getNatures());
-    setPreference('workModel',  getWorkModels());
-    setSalary(salaryInput.value);
-
-    console.log('Saved prefs:', getPreferences()); //can delete later so less calls
-  });
+    generateCheckboxes(workModelOptions, savedPrefs.workModel, 'workModel');
 
   // helper to wrap sections
   const makeSection = (title, el) => {
@@ -229,7 +266,7 @@ export async function renderPreferences(container) {
     return sec;
   };
 
-  // append all your preference controls
+  // append all your preference controls (no save button needed)
   container.append(
     makeSection('Preferred Skills',      skillsEl),
     makeSection('Preferred Locations',   locEl),
@@ -237,7 +274,6 @@ export async function renderPreferences(container) {
     makeSection('Preferred Roles',       roleEl),
     makeSection('Preferred Salary',      salaryInput),
     makeSection('Employment Type',       natureEl),
-    makeSection('Work Model',            workEl),
-    saveBtn
+    makeSection('Work Model',            workEl)
   );
 }
