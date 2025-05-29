@@ -1,107 +1,142 @@
-.job-card-front {
-  background: white;
-  border-radius: 24px;
-  padding: 24px 20px;
-  width: 320px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+body {
   font-family: "Open Sans", sans-serif;
-  text-align: center;
-  margin: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
 }
 
+.card-container {
+  position: relative;
+  width: 90%;
+  max-width: 360px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.job-card-front {
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  width: 100%;
+  min-height: 380px;          /* NEW: consistent height */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+
 .donut {
-  width: 120px;
-  height: 120px;
+  width: 180px;
+  height: 180px;
   border-radius: 50%;
-  background: conic-gradient(#8b7dff 0deg, #eee 0deg); /* default placeholder */
+  margin: auto;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto;
+  background: conic-gradient(#8b7dff var(--degree, 0deg), #eee 0deg);
   position: relative;
 }
 
 .donut-text {
-  position: absolute;
-  font-weight: 700;
-  font-size: 18px;
+  font-size: 22px;
+  font-weight: bold;
+  width: 100px;
+  height: 100px;
+  line-height: 100px;
   background: white;
-  width: 60px;
-  height: 60px;
-  line-height: 60px;
-  border-radius: 50%;
   text-align: center;
-  box-shadow: inset 0 0 0 2px #fff;
-}
-
-.skills {
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  gap: 6px;
-  font-size: 15px;
-}
-
-.skills p {
-  margin: 0;
-}
-
-.actions {
-  display: flex;
-  justify-content: center;
-  gap: 48px;
-  margin: 12px 0 8px 0;
-}
-
-.actions button {
-  font-size: 24px;
-  border: none;
-  background: none;
-  cursor: pointer;
-  width: 48px;
-  height: 48px;
   border-radius: 50%;
-  transition: transform 0.2s;
+  position: absolute;
+  box-shadow: inset 0 0 0 2px white;
 }
 
-.actions button:hover {
-  transform: scale(1.1);
+.skills-2col {
+  display: flex;
+  justify-content: space-between;
+  text-align: left;
+  margin-top: 40px;
+  padding: 0 16px;
+  gap: 16px;
+}
+
+.skills-left,
+.skills-right {
+  flex: 1;
+}
+
+.skills-left p {
+  margin: 4px 0;
+  color: #cc0000;
+  font-size: 14px;
+}
+
+.skills-right p {
+  margin: 4px 0;
+  color: #008000;
+  font-size: 14px;
+}
+
+.button-row {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin: 20px 0 10px 0;
+  z-index: 2;
+}
+
+.button-row button {
+  width: 64px;
+  height: 64px;
+  font-size: 28px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s;
+  box-shadow: none;
 }
 
 .skip {
-  background-color: #ffe5e5;
-  color: #d33;
+  background-color: #fbecec;
+  color: #cc0000;
 }
 
 .apply {
-  background-color: #e5ffe5;
-  color: #2c9;
+  background-color: #e5fbe5;
+  color: #008000;
+}
+
+.button-row button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.progress-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 6px;
+  margin-top: 6px;
 }
 
 .progress-bar {
-  position: relative;
-  height: 8px;
-  background: #eee;
+  flex: 1;
+  height: 6px;
+  background-color: #eee;
   border-radius: 4px;
-  margin-top: 4px;
   overflow: hidden;
+  margin-right: 10px;
 }
 
 .progress-bar .filled {
   height: 100%;
-  background: #7b6fff;
-  border-radius: 4px;
-  transition: width 0.3s ease-in-out;
+  background: #7064ff;
+  transition: width 0.3s;
 }
 
-.progress-bar .progress-text {
-  font-size: 12px;
+.progress-text {
+  font-size: 13px;
   font-weight: 600;
-  color: #7b6fff;
-  position: absolute;
-  right: 0;
-  bottom: 110%;
+  color: #7064ff;
 }
