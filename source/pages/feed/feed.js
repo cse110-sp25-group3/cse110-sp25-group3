@@ -111,20 +111,26 @@ function createJobCards(container) {
       card.classList.toggle('flipped');
     });
 
-    // Prevent flip toggle buttons from double-flipping
-    // (Removed since buttons are gone)
+    // Event listeners for skip/apply buttons - attach to ALL buttons in the card
+    const skipButtons = card.querySelectorAll('.skip-button');
+    const applyButtons = card.querySelectorAll('.apply-button');
 
-    // Event listeners for skip/apply buttons
-    card.querySelector('.skip-button').addEventListener('click', (event) => {
-      event.stopPropagation();
-      console.log('Job skipped:', job.jobRole);
-      skipCurrentJob();
+    // Attach event listeners to all skip buttons (front and back)
+    skipButtons.forEach(button => {
+      button.addEventListener('click', (event) => {
+        event.stopPropagation();
+        console.log('Job skipped:', job.jobRole);
+        skipCurrentJob();
+      });
     });
 
-    card.querySelector('.apply-button').addEventListener('click', (event) => {
-      event.stopPropagation();
-      console.log('Job applied:', job.jobRole);
-      applyToCurrentJob();
+    // Attach event listeners to all apply buttons (front and back)
+    applyButtons.forEach(button => {
+      button.addEventListener('click', (event) => {
+        event.stopPropagation();
+        console.log('Job applied:', job.jobRole);
+        applyToCurrentJob();
+      });
     });
 
     container.appendChild(card);
