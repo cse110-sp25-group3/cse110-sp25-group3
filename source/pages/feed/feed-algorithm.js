@@ -38,8 +38,8 @@ export function runFeedAlgorithm(jobs, prefs) {
 
         // get the skillScore
         job.skillScore = skillAssessment(
-        prefs.userSkills,
-        Array.isArray(job.requiredSkills) ? job.requiredSkills : []
+            prefs.userSkills,
+            Array.isArray(job.requiredSkills) ? job.requiredSkills : []
         );
 
         // get the matchedSkills / lostSkills
