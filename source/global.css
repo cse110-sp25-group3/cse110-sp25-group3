@@ -38,6 +38,7 @@ button{
 }
 
 .phone{
+    position: relative; /*onboarding feature need*/
     width: 375px;
     height: 667px;
 

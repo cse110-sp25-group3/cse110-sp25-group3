@@ -10,14 +10,15 @@ export function createHeader() {
     nav.id = 'nav-menu';
     nav.className="nav-menu hidden";
     [
-        { path: '/source/pages/feed/feed.html',         label: 'Job Feed' },
-        { path: '/source/pages/preferences/job-pref.html',   label: 'Job Preferences' },
-        { path: '/source/pages/applications/view-app.html', label: 'View Applications' },
-        { path: '/source/pages/documents/documents.html',         label: 'Your Documents' },
-      ].forEach(({path,label}) => {
+      { path: '/source/pages/feed/feed.html',         label: 'Job Feed',         id: 'nav-feed' },
+      { path: '/source/pages/preferences/job-pref.html',   label: 'Job Preferences',  id: 'nav-preferences' },
+      { path: '/source/pages/applications/view-app.html', label: 'View Applications', id: 'nav-applications' },
+      { path: '/source/pages/documents/documents.html',         label: 'Your Documents',      id: 'nav-documents' }
+      ].forEach(({path,label,id}) => {
         const a = document.createElement('a');
         a.href = path;
         a.textContent = label;
+        a.id = id;
         nav.append(a);
       });
       header.append(nav);

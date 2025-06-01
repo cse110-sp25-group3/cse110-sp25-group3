@@ -1,0 +1,225 @@
+
+/* Basic styles for the overall overlay layer */
+.onboarding-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.67);
+  z-index: 9998;
+  pointer-events: auto;
+  transition: none;
+}
+
+/* Circular cutout effect - using CSS variables */
+.onboarding-overlay.circle-cutout {
+  background: radial-gradient(
+    circle at var(--circle-x, 50%) var(--circle-y, 50%),
+    transparent var(--circle-radius, 10%),
+    rgba(0, 0, 0, 0.67) var(--circle-radius, 10%)
+  );
+}
+
+/* Rectangular cutout effect - using clip-path and CSS variables */
+.onboarding-overlay.rect-cutout {
+  clip-path: polygon(
+    0% 0%, 
+    0% var(--rect-top, 0%), 
+    var(--rect-left, 0%) var(--rect-top, 0%), 
+    var(--rect-left, 0%) var(--rect-bottom, 100%), 
+    var(--rect-right, 100%) var(--rect-bottom, 100%), 
+    var(--rect-right, 100%) var(--rect-top, 0%), 
+    100% var(--rect-top, 0%), 
+    100% 0%, 
+    100% 100%, 
+    var(--rect-right, 100%) 100%, 
+    var(--rect-right, 100%) var(--rect-bottom, 100%), 
+    var(--rect-left, 0%) var(--rect-bottom, 100%), 
+    var(--rect-left, 0%) 100%, 
+    0% 100%
+  );
+}
+
+/* Tooltip base styles - Fix: fully opaque */
+.onboarding-tooltip {
+  position: absolute;
+  background-image: url('./onboarding/dialog.webp');
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  /* Fix: changed to fully opaque white background */
+  background-color: #ffffff;
+  /* Removed semi-transparent blending mode */
+
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 9999;
+
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  max-width: 280px;
+  min-width: 200px;
+  pointer-events: auto;
+
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Tooltip visible state */
+.onboarding-tooltip.visible {
+  display: flex;
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Dialog text content */
+.tooltip-text {
+  font-size: 14px;
+  line-height: 1.4;
+  color: #333333;
+  text-align: center;
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+
+/* Buttons container */
+.tooltip-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  width: 100%;
+}
+
+/* Previous button */
+.tooltip-prev {
+  font-size: 14px;
+  color: #ffffff;
+  background: rgba(120, 142, 236, 0.8);
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.tooltip-prev:hover {
+  background: rgba(120, 142, 236, 0.9);
+}
+
+/* Next/Finish button */
+.tooltip-next {
+  font-size: 14px;
+  color: #ffffff;
+  background: rgba(120, 142, 236, 0.8);
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.tooltip-next:hover:not(:disabled) {
+  background: rgba(120, 142, 236, 0.9);
+}
+
+/* Next button disabled state */
+.tooltip-next:disabled {
+  background: rgba(120, 142, 236, 0.3);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Circular highlight border */
+.highlight-circle {
+  position: absolute;
+  border: 3px solid #ffffff;
+  border-radius: 50%;
+  box-sizing: border-box;
+  pointer-events: none;
+  z-index: 9999;
+
+  /* Pulse animation effect */
+  animation: pulse-circle 2s infinite;
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.3);
+}
+
+/* Rectangular highlight border */
+.highlight-rect {
+  position: absolute;
+  border: 3px solid #ffffff;
+  border-radius: 6px;
+  box-sizing: border-box;
+  pointer-events: none;
+  z-index: 9999;
+
+  /* Pulse animation effect */
+  animation: pulse-rect 2s infinite;
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.3);
+}
+
+/* Circular pulse animation */
+@keyframes pulse-circle {
+  0% {
+    border-color: rgba(255, 255, 255, 1);
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.3);
+  }
+  50% {
+    border-color: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.1);
+  }
+  100% {
+    border-color: rgba(255, 255, 255, 1);
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.3);
+  }
+}
+
+/* Rectangular pulse animation */
+@keyframes pulse-rect {
+  0% {
+    border-color: rgba(255, 255, 255, 1);
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.3);
+  }
+  50% {
+    border-color: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.1);
+  }
+  100% {
+    border-color: rgba(255, 255, 255, 1);
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.3);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 375px) {
+  .onboarding-tooltip {
+    max-width: 260px;
+    padding: 16px;
+  }
+
+  .tooltip-text {
+    font-size: 13px;
+  }
+
+  .tooltip-prev,
+  .tooltip-next {
+    font-size: 13px;
+    padding: 6px 12px;
+  }
+}
+
+/* Highlight color variants - optional use */
+.highlight-circle.highlight-green,
+.highlight-rect.highlight-green {
+  border-color: #00ff88;
+  box-shadow: 0 0 0 4px rgba(0, 255, 136, 0.3);
+}
+
+.highlight-circle.highlight-orange,
+.highlight-rect.highlight-orange {
+  border-color: #ff6b35;
+  box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.3);
+}

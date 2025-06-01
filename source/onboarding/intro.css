@@ -1,0 +1,100 @@
+
+/* Container—use absolute positioning; parent container .phone already has position: relative */
+#intro-container {
+  position: absolute;   /* Positioned relative to the top-left of .phone */
+  top: 0;
+  left: 0;
+  width: 100%;         /* 100% equals 375px, since parent .phone width is 375px */
+  height: 100%;        /* 100% equals 667px */
+  background-color: #ffffff;
+  display: none;       /* Initially hidden; JS controls visibility */
+  overflow: hidden;
+  z-index: 9999;
+}
+
+/* Each page uses the same layout: position absolute, filling the parent container */
+.intro-page {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+  box-sizing: border-box;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.intro-page.active {
+  opacity: 1;
+  z-index: 1;
+}
+
+/* Page image styles */
+.intro-page img {
+  width: 60%;
+  max-width: 300px;
+  height: auto;
+  margin-bottom: 30px;
+}
+
+/* Title styles */
+.intro-page .intro-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333333;
+  margin-bottom: 12px;
+}
+
+/* Description styles */
+.intro-page .intro-desc {
+  font-size: 16px;
+  color: #666666;
+  line-height: 1.5;
+  margin-bottom: 40px;
+}
+
+/* “Get Started” button on the third page */
+#intro-start-button {
+  font-family: "Open-Sans", sans-serif;
+  font-size: 18px;
+  color: #ffffff;
+  background-color: #788eec;
+  border: none;
+  border-radius: 25px;
+  padding: 12px 36px;
+  cursor: pointer;
+  outline: none;
+  transition: background-color 0.2s ease;
+}
+
+#intro-start-button:hover {
+  background-color: #5f75d3;
+}
+
+/* Pagination dots container */
+.intro-dots {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+}
+
+/* Single pagination dot */
+.intro-dot {
+  width: 10px;
+  height: 10px;
+  background-color: #cccccc;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+}
+
+.intro-dot.active {
+  background-color: #788eec;
+}
