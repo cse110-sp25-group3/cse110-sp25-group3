@@ -11,7 +11,7 @@ import { skillAssessment } from './skill-assessment.js';
 
 describe('computeJobScore', () => {
 	const baseJob = {
-		requiredSkills: ['JS', 'CSS', 'HTML'],
+		relevantSkills: ['JS', 'CSS', 'HTML'],
 		workModel:      'remote',
 		nature:         'full-time',
 		location:       'NY',
@@ -50,7 +50,7 @@ describe('computeJobScore', () => {
 		// ensure we called skillAssessment correctly
 		expect(skillAssessment).toHaveBeenCalledWith(
 			basePrefs.userSkills,
-			baseJob.requiredSkills
+			baseJob.relevantSkills
 		);
 	});
 
@@ -134,9 +134,9 @@ describe('computeJobScore', () => {
 		expect(score).toBe(60);
 	});
 
-	test('job.requiredSkills empty => skillAssessment called with empty array', () => {
+	test('job.relevantSkills empty => skillAssessment called with empty array', () => {
 		skillAssessment.mockReturnValue(0);
-		const jobNoSkills = { ...baseJob, requiredSkills: [] };
+		const jobNoSkills = { ...baseJob, relevantSkills: [] };
 		const prefs = { ...basePrefs };
 
 		const score = computeJobScore(jobNoSkills, prefs);

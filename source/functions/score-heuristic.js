@@ -12,7 +12,7 @@ import { skillAssessment } from './skill-assessment.js';
  * This one contains the heuristic for "how exactly this job fits the user"
  *
  * @param {Object} job
- * @param {string[]} job.requiredSkills
+ * @param {string[]} job.relevantSkills
  * @param {string} job.workModel
  * @param {string} job.nature
  * @param {string} job.location
@@ -29,7 +29,7 @@ import { skillAssessment } from './skill-assessment.js';
  */
 export function computeJobScore(job, prefs) {
 	// Skill match
-	const skillScore = skillAssessment(prefs.userSkills, job.requiredSkills);
+	const skillScore = skillAssessment(prefs.userSkills, job.relevantSkills);
 
 	// location match
 	let locationScore;
