@@ -1,94 +1,215 @@
-const userSkills = ["JavaScript", "Node.js"];
+import { fetchJobs } from '../../functions/fetch-jobs.js';
 
-let currentIndex = 0;
-let jobs = [];
+let jobsData = [];
+let currentJobIndex = 0;
 
-function createJobCardFront(job, userSkills, progress = 1, total = 10) {
-  const matched = job.relevantSkills.filter((skill) =>
-    userSkills.includes(skill)
-  );
-  const lost = job.relevantSkills.filter(
-    (skill) => !userSkills.includes(skill)
-  );
-  const percent = Math.round(
-    (matched.length / job.relevantSkills.length) * 100
-  );
-  const degree = Math.round((matched.length / job.relevantSkills.length) * 360);
+const userSkills = ['JavaScript', 'Node.js'];
 
-  const container = document.createElement("div");
-  container.classList.add("card-container");
-
-  container.innerHTML = `
-    <div class="job-card-front">
-      <div class="donut" style="--degree: ${degree}deg;">
-        <div class="donut-text">${percent}%</div>
-      </div>
-
-      <h3>Skill Match</h3>
-      <div class="skills-2col">
-        <div class="skills-left">
-          ${lost.map((s) => `<p>❌ ${s}</p>`).join("")}
-        </div>
-        <div class="skills-right">
-          ${matched.map((s) => `<p>✅ ${s}</p>`).join("")}
-        </div>
-      </div>
-    </div>
-
-    <div class="button-row">
-      <button class="skip">❌</button>
-      <button class="apply">✅</button>
-    </div>
-
-    <div class="progress-row">
-      <div class="progress-bar">
-        <div class="filled" style="width: ${(progress / total) * 100}%"></div>
-      </div>
-      <span class="progress-text">${progress}/${total}</span>
-    </div>
-  `;
-
-  // Add listeners for skip and apply
-  container.querySelector(".skip").addEventListener("click", () => {
-    showNextCard();
-  });
-
-  container.querySelector(".apply").addEventListener("click", () => {
-    // future logic for apply
-    showNextCard();
-  });
-
-  return container;
+function getMatchedSkills(job) {
+  return job.relevantSkills.filter(skill => userSkills.includes(skill));
 }
 
-function showNextCard() {
-  const contentDiv = document.querySelector(".content");
-  contentDiv.innerHTML = "";
+function getLostSkills(job) {
+  return job.relevantSkills.filter(skill => !userSkills.includes(skill));
+}
 
-  if (currentIndex < jobs.length) {
-    const card = createJobCardFront(
-      jobs[currentIndex],
-      userSkills,
-      currentIndex + 1,
-      jobs.length
-    );
-    contentDiv.appendChild(card);
-    currentIndex++;
-  } else {
-    contentDiv.innerHTML = `<p>🎉 You've reached the end of the job feed!</p>`;
-  }
+function getMatchPercent(job) {
+  const total = job.relevantSkills.length;
+  const matched = getMatchedSkills(job).length;
+  return total === 0 ? 0 : Math.round((matched / total) * 100);
+}
+
+function getMatchDegree(job) {
+  const percent = getMatchPercent(job);
+  return Math.round((percent / 100) * 360);
 }
 
 export async function renderFeed(container) {
-  console.log("renderFeed called");
-  const contentDiv = container.querySelector(".content");
-  contentDiv.innerHTML = "";
+  console.log('renderFeed called');
+  container.innerHTML = '<div id="job-cards-container"></div>';
 
-  const response = await fetch(
-    "../../assets/datasets/dummy_job_positions.json"
-  );
-  jobs = await response.json();
-  currentIndex = 0;
+  const jobCardsContainer = document.getElementById('job-cards-container');
 
-  showNextCard();
+  try {
+    jobsData = await fetchJobs();
+    console.log('Fetched jobs:', jobsData);
+
+    createJobCards(jobCardsContainer);
+    updateCardVisibility();
+
+  } catch (error) {
+    console.error('Error fetching jobs:', error);
+    jobCardsContainer.innerHTML += '<p>Failed to load job listings. Please try again later.</p>';
+  }
+}
+
+function createJobCards(container) {
+  jobsData.forEach((job, index) => {
+    const card = document.createElement('div');
+    card.className = 'job-card';
+    card.dataset.index = index;
+
+    const workModelMap = { 1: 'Remote', 2: 'On-site', 3: 'Hybrid' };
+    const workModelText = workModelMap[job.workModel] || 'Unknown';
+    const workModelSvg = workModelText.replace(/\s/g, '-') + '.svg';
+
+    card.innerHTML = `
+      <div class="card-inner">
+        <div class="card-face card-front">
+          <div class="skill-match-display">
+            <div class="donut" style="background: conic-gradient(#8b7dff ${getMatchDegree(job)}deg, #eee 0deg);">
+              <div class="donut-text">${getMatchPercent(job)}%</div>
+            </div>
+            <div class="skill-match-text">Skill Match</div>
+            <div class="skills-2col">
+              <div class="skills-left">
+                ${getLostSkills(job).map(skill => `<p>❌ ${skill}</p>`).join('')}
+              </div>
+              <div class="skills-right">
+                ${getMatchedSkills(job).map(skill => `<p>✅ ${skill}</p>`).join('')}
+              </div>
+            </div>
+          </div>
+          <div class="bottom-buttons">
+            <button class="swipe-button skip-button" aria-label="Skip job">✕</button>
+            <button class="swipe-button apply-button" aria-label="Apply for job">✓</button>
+          </div>
+        </div>
+        <div class="card-face card-back">
+          <div class="job-details-content">
+            <header>
+              <div class="company-meta">
+                <img class="logo" src="${job.companyLogo}" alt="${job.companyName} logo">
+                <div class="text-info">
+                  <span class="company-name">${job.companyName}</span>
+                  <span class="industry">${job.industry}</span>
+                </div>
+              </div>
+            </header>
+            <h3 class="job-title-back">${job.jobRole}</h3>
+            <div class="meta">
+              <div class="column">
+                <span><img src='assets/location.svg'>${job.location}</span>
+                <span><img src='assets/${workModelSvg}'>${workModelText}</span>
+              </div>
+              <div class="column">
+                <span><img src='assets/pay.svg'>${job.pay}</span>
+                <span>Posted ${job.datePosted}</span>
+              </div>
+            </div>
+            <section class="details">
+              <p><strong>About:</strong> ${job.companyInfo}</p>
+              <p><strong>Description:</strong> ${job.jobDescription}</p>
+              <p><strong>Requirements:</strong></p>
+              <ul>
+                ${job.jobRequirements.map(req => `<li>${req}</li>`).join('')}
+              </ul>
+              <p><strong>Skills:</strong></p>
+              <div class="skills">
+                ${job.relevantSkills.map(skill => `<span class="skill">${skill}</span>`).join('')}
+              </div>
+              <a class="apply-link" href="${job.applicationLink}" target="_blank" rel="noopener">Link to Application</a>
+            </section>
+          </div>
+          <div class="bottom-buttons">
+            <button class="swipe-button skip-button" aria-label="Skip job">✕</button>
+            <button class="swipe-button apply-button" aria-label="Apply for job">✓</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    card.addEventListener('click', (event) => {
+      if (event.target.classList.contains('swipe-button') || 
+          event.target.classList.contains('apply-link')) {
+        return;
+      }
+      event.stopPropagation();
+      card.classList.toggle('flipped');
+    });
+
+    const skipButtons = card.querySelectorAll('.skip-button');
+    const applyButtons = card.querySelectorAll('.apply-button');
+
+    skipButtons.forEach(button => {
+      button.addEventListener('click', (event) => {
+        event.stopPropagation();
+        console.log('Job skipped:', job.jobRole);
+        skipCurrentJob();
+      });
+    });
+
+    applyButtons.forEach(button => {
+      button.addEventListener('click', (event) => {
+        event.stopPropagation();
+        console.log('Job applied:', job.jobRole);
+        applyToCurrentJob();
+      });
+    });
+
+    container.appendChild(card);
+  });
+}
+
+function updateCardVisibility() {
+  const cards = document.querySelectorAll('.job-card');
+
+  cards.forEach(card => {
+    card.classList.remove('active', 'next', 'prev');
+    card.style.display = 'none';
+  });
+
+  for (let i = 0; i < 3 && (currentJobIndex + i) < jobsData.length; i++) {
+    const cardIndex = currentJobIndex + i;
+    const card = cards[cardIndex];
+
+    if (card) {
+      card.style.display = 'block';
+
+      if (i === 0) card.classList.add('active');
+      else if (i === 1) card.classList.add('next');
+      else if (i === 2) card.classList.add('prev');
+    }
+  }
+
+  if (currentJobIndex >= jobsData.length) {
+    showEndMessage();
+  }
+}
+
+function skipCurrentJob() {
+  if (currentJobIndex < jobsData.length) {
+    const currentCard = document.querySelector('.job-card.active');
+    if (currentCard) {
+      currentCard.classList.add('skip-animation');
+      setTimeout(() => {
+        currentJobIndex++;
+        updateCardVisibility();
+      }, 500);
+    }
+  }
+}
+
+function applyToCurrentJob() {
+  if (currentJobIndex < jobsData.length) {
+    const currentCard = document.querySelector('.job-card.active');
+    if (currentCard) {
+      currentCard.classList.add('apply-animation');
+      setTimeout(() => {
+        currentJobIndex++;
+        updateCardVisibility();
+      }, 500);
+    }
+  }
+}
+
+function showEndMessage() {
+  const container = document.getElementById('job-cards-container');
+  container.innerHTML = `
+    <div class="end-message">
+      <h3>No more jobs!</h3>
+      <p>You've seen all available job listings.</p>
+      <button onclick="location.reload()" class="reload-button">Refresh Feed</button>
+    </div>
+  `;
 }
