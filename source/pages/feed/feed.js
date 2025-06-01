@@ -64,16 +64,22 @@ function createJobCards(container) {
             </div>
             <div class="skill-match-text">Skill Match</div>
             <div class="skills-2col">
-              <div class="skills-left">
-                ${getLostSkills(job)
-                  .map((skill) => `<p>❌ ${skill}</p>`)
-                  .join("")}
-              </div>
-              <div class="skills-right">
-                ${getMatchedSkills(job)
-                  .map((skill) => `<p>✅ ${skill}</p>`)
-                  .join("")}
-              </div>
+            <div class="skills-left">
+              ${getLostSkills(job)
+                .map(
+                  (skill) =>
+                    `<p><span class="skill-icon red">✖</span> ${skill}</p>`
+                )
+                .join("")}
+            </div>
+            <div class="skills-right">
+              ${getMatchedSkills(job)
+                .map(
+                  (skill) =>
+                    `<p><span class="skill-icon green">✔</span> ${skill}</p>`
+                )
+                .join("")}
+            </div>          
             </div>
           </div>
           <div class="bottom-buttons">
