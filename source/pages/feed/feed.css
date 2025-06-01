@@ -414,17 +414,16 @@ p {
 }
 
 .skill-icon {
-    font-weight: bold;
-    font-size: 1.1em;
-    margin-right: 6px;
-    vertical-align: middle;
-  }
-  
-  .skill-icon.red {
-    color: #d33;
-  }
-  
-  .skill-icon.green {
-    color: #28a745;
-  }
-  
+  font-weight: bold;
+  font-size: 1.1em;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.skill-icon.red {
+  color: #d33;
+}
+
+.skill-icon.green {
+  color: #28a745;
+}
