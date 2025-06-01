@@ -116,10 +116,10 @@ function parsePay(payString) {
  *
  * Given a numeric jobSalary (e.g. 80000) and a user preference range [min, max],
  * returns a 0–100 score:
- *   • If userMin is undefined or zero => return 50 (neutral)
- *   • If jobSalary < userMin => 0
- *   • If jobSalary > userMax => 100
- *   • If min < jobSalary < max => I use ((jobSalary - userMin) / (userMax - userMin)) * 100
+ *   If userMin is undefined or zero => return 50 (neutral)
+ *   If jobSalary < userMin => 0
+ *   If jobSalary > userMax => 100
+ *   If min < jobSalary < max => I use ((jobSalary - userMin) / (userMax - userMin)) * 100
  */
 function payScore(jobSalary, userMin = 0, userMax = 0) {
   if (!userMin || userMin <= 0) {
