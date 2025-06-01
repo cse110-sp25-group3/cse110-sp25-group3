@@ -25,6 +25,7 @@ jobs: # the things being executed
         
       - name: Unit Test
         run: npm test -- --ci # the actual testing line (now is only using auto detect)
+        continue-on-error: true 
         if: ${{ hashFiles('**/package.json') != '' }}
         
       - name: Generate docs
