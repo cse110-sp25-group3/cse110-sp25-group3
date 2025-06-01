@@ -56,7 +56,7 @@ jobs: # the things being executed
         if: ${{ hashFiles('**/package.json') != '' }}
   
       - name: Install dependencies (incl. Cypress)
-        run: npm ci
+        run: npm install
         if: ${{ hashFiles('**/package.json') != '' }}
         
       - name: Cypress run
