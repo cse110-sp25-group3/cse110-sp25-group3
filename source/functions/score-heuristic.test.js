@@ -5,7 +5,7 @@ import { computeJobScore } from './score-heuristic.js';
 
 // Mock skillAssessment so we can control its output
 jest.mock('./skill-assessment.js', () => ({
-  	skillAssessment: jest.fn()
+	skillAssessment: jest.fn()
 }));
 import { skillAssessment } from './skill-assessment.js';
 
