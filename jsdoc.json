@@ -1,7 +1,7 @@
 {
   "source": {
     "include": ["functions", "pages", "components"], 
-    "includePattern": ".+\\.js(doc|x)?$",
+    "includePattern": ".+\\.js$",
     "excludePattern": "(^|\\/|\\\\)_"
   },
   "opts": {
