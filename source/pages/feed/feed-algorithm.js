@@ -1,7 +1,6 @@
 // feed-algorithm.js
 import { skillAssessment } from "../../functions/skill-assessment.js";
 import { computeJobScore }   from "../../functions/score-heuristic.js";
-import { parse } from "@babel/core";
 
 /**
  * Given:
@@ -29,7 +28,7 @@ export function runFeedAlgorithm(jobs, prefs) {
     // compute scores + matched/lost lists
     filtered.forEach(job => {
         // compute compositeScore
-        job.compositeScore = computeJobScore(job, {
+        job.baseScore = computeJobScore(job, {
             userSkills: prefs.userSkills,
             workModels: prefs.workModels,
             natures:    prefs.natures,
@@ -43,12 +42,26 @@ export function runFeedAlgorithm(jobs, prefs) {
             Array.isArray(job.requiredSkills) ? job.requiredSkills : []
         );
 
-        
+        // considering the freshness of the job listing
+        job.dateScore = datePostedScore(job.datePosted, 30);
 
         // get the matchedSkills / lostSkills
         const rel = Array.isArray(job.relevantSkills) ? job.relevantSkills : [];
         job.matchedSkills = rel.filter(s => prefs.userSkills.includes(s));
         job.lostSkills    = rel.filter(s => !prefs.userSkills.includes(s));
+
+    });
+
+    // weight for each score
+    const W_BASE = 0.6;
+    const W_DATE = 0.4;
+
+    // final compositeScore using weights
+    filtered.forEach(job => {
+        job.compositeScore = Math.round(
+            job.baseScore   * W_BASE +
+            job.dateScore   * W_DATE
+        );
     });
 
     // sort in descending order by compositeScore
@@ -103,18 +116,39 @@ function parsePay(payString) {
  *
  * Given a numeric jobSalary (e.g. 80000) and a user preference range [min, max],
  * returns a 0–100 score:
- *   • If userMin is undefined or zero → return 50 (neutral)
+ *   • If userMin is undefined or zero => return 50 (neutral)
  *   • If jobSalary < userMin => 0
  *   • If jobSalary > userMax => 100
  *   • If min < jobSalary < max => I use ((jobSalary - userMin) / (userMax - userMin)) * 100
  */
 function payScore(jobSalary, userMin = 0, userMax = 0) {
   if (!userMin || userMin <= 0) {
-    // no preference → neutral
+    // no preference => neutral
     return 50;
   }
   if (jobSalary < userMin) return 0;
   if (jobSalary > userMax) return 100;
 
   return Math.round(((jobSalary - userMin) / (userMax - userMin)) * 100);
+}
+
+/**
+ * datePostedScore()
+ *
+ * Given a string date (e.g. "2025-05-15"), returns a number 0–100 where:
+ *   jobs posted today => 100
+ *   jobs posted >= maxDays ago => 0
+ */
+function datePostedScore(dateString, maxDays = 30) {
+    // parse the job’s posted date
+    const postedTime = new Date(dateString).getTime(); // in milisecond
+    if (isNaN(postedTime)) return 0; // invalid date => 0 freshness
+
+    // compute age in days
+    const ageMs = Date.now() - postedTime; // in milisecond
+    const ageDays = ageMs / (1000 * 60 * 60 * 24);
+
+    // if older than maxDays, score = 0; if fresh (0 days), score = 100
+    const raw = (maxDays - ageDays) / maxDays; 
+    return raw <= 0 ? 0 : Math.round(Math.min(raw, 1) * 100);
 }
