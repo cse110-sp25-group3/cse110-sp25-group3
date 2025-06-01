@@ -73,9 +73,6 @@ export function computeJobScore(job, prefs) {
 		roleScore = 0;
 	}
 
-	// Pay score
-	// need a pay parse function
-
 	// Combine with weights
 	const WEIGHTS = {
 		location: 0.4,

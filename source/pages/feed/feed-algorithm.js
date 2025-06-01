@@ -53,3 +53,37 @@ export function runFeedAlgorithm(jobs, prefs) {
 
     return filtered;
 }
+
+function parsePay(payString) {
+	if (typeof payString !== "string") return NaN;
+
+	// Remove any $ or commas and make lowercase
+	let s = payString.trim().replace(/\$/g, "").replace(/,/g, "").toLowerCase();
+
+	// Handle hourly (e.g. "25/hr" or "25/hr - 30/hr")
+	if (s.includes("/hr")) {
+		// extract numeric: e.g. "25/hr-30/hr" => ["25", "30"]
+		const nums = s.split("/hr").map(p => p.replace(/\D+/g, "")).filter(Boolean);
+		if (nums.length === 0) return NaN;
+		// convert first number to annual: assume 40 hours/week × 52 weeks = 2080 hours
+		const hourlyRates = nums.map(n => parseFloat(n));
+		const avgHourly = hourlyRates.reduce((a,b) => a+b, 0) / hourlyRates.length;
+		return avgHourly * 2080; 
+	}
+
+	// Handle "80k", "70k-90k", "80000-90000"
+	// Replace trailing 'k' with '000'
+	s = s.replace(/k\b/, "000");
+
+	// If it’s a range with '-', take midpoint
+	if (s.includes("-")) {
+		const parts = s.split("-");
+		const nums = parts.map(p => parseFloat(p)).filter(n => !isNaN(n));
+		if (nums.length === 0) return NaN;
+		return nums.reduce((a, b) => a + b, 0) / nums.length;
+	}
+
+	// Otherwise, parse single number
+	const val = parseFloat(s);
+	return isNaN(val) ? NaN : val;
+}
