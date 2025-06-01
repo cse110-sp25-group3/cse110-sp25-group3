@@ -14,9 +14,9 @@ jobs: # the things being executed
         if: ${{ hashFiles('**/package.json') != '' }}
         
       - name: Lint
-        run: npm run lint       # ESLint/Prettier
-        continue-on-error: true 
-        if: ${{ hashFiles('**/package.json') != '' }}
+        #run: npm run lint       # ESLint/Prettier
+        #continue-on-error: true 
+        #if: ${{ hashFiles('**/package.json') != '' }}
 
       - name: CodeClimate (static analysis)
         uses: paambaati/codeclimate-action@v5
