@@ -1,6 +1,7 @@
 // feed-algorithm.js
 import { skillAssessment } from "../../functions/skill-assessment.js";
 import { computeJobScore }   from "../../functions/score-heuristic.js";
+import { parse } from "@babel/core";
 
 /**
  * Given:
@@ -29,11 +30,11 @@ export function runFeedAlgorithm(jobs, prefs) {
     filtered.forEach(job => {
         // compute compositeScore
         job.compositeScore = computeJobScore(job, {
-        userSkills: prefs.userSkills,
-        workModels: prefs.workModels,
-        natures:    prefs.natures,
-        locations:  prefs.locations,
-        roles:      prefs.roles
+            userSkills: prefs.userSkills,
+            workModels: prefs.workModels,
+            natures:    prefs.natures,
+            locations:  prefs.locations,
+            roles:      prefs.roles
         });
 
         // get the skillScore
@@ -41,6 +42,8 @@ export function runFeedAlgorithm(jobs, prefs) {
             prefs.userSkills,
             Array.isArray(job.requiredSkills) ? job.requiredSkills : []
         );
+
+        
 
         // get the matchedSkills / lostSkills
         const rel = Array.isArray(job.relevantSkills) ? job.relevantSkills : [];
@@ -54,6 +57,13 @@ export function runFeedAlgorithm(jobs, prefs) {
     return filtered;
 }
 
+
+/**
+ * parsePay()
+ *
+ * Attempts to turn a job.pay string (e.g. "$80k", "70k-90k", "$25/hr") into a
+ * single annualized number like 80000 or 80000 (midpoint). Returns NaN on failure.
+ */
 function parsePay(payString) {
 	if (typeof payString !== "string") return NaN;
 
@@ -86,4 +96,25 @@ function parsePay(payString) {
 	// Otherwise, parse single number
 	const val = parseFloat(s);
 	return isNaN(val) ? NaN : val;
+}
+
+/**
+ * payScore()
+ *
+ * Given a numeric jobSalary (e.g. 80000) and a user preference range [min, max],
+ * returns a 0–100 score:
+ *   • If userMin is undefined or zero → return 50 (neutral)
+ *   • If jobSalary < userMin => 0
+ *   • If jobSalary > userMax => 100
+ *   • If min < jobSalary < max => I use ((jobSalary - userMin) / (userMax - userMin)) * 100
+ */
+function payScore(jobSalary, userMin = 0, userMax = 0) {
+  if (!userMin || userMin <= 0) {
+    // no preference → neutral
+    return 50;
+  }
+  if (jobSalary < userMin) return 0;
+  if (jobSalary > userMax) return 100;
+
+  return Math.round(((jobSalary - userMin) / (userMax - userMin)) * 100);
 }
