@@ -1,16 +1,16 @@
-import { fetchJobs } from '../../functions/fetch-jobs.js';
+import { fetchJobs } from "../../functions/fetch-jobs.js";
 
 let jobsData = [];
 let currentJobIndex = 0;
 
-const userSkills = ['JavaScript', 'Node.js'];
+const userSkills = ["JavaScript", "Node.js"];
 
 function getMatchedSkills(job) {
-  return job.relevantSkills.filter(skill => userSkills.includes(skill));
+  return job.relevantSkills.filter((skill) => userSkills.includes(skill));
 }
 
 function getLostSkills(job) {
-  return job.relevantSkills.filter(skill => !userSkills.includes(skill));
+  return job.relevantSkills.filter((skill) => !userSkills.includes(skill));
 }
 
 function getMatchPercent(job) {
@@ -25,48 +25,54 @@ function getMatchDegree(job) {
 }
 
 export async function renderFeed(container) {
-  console.log('renderFeed called');
+  console.log("renderFeed called");
   container.innerHTML = '<div id="job-cards-container"></div>';
 
-  const jobCardsContainer = document.getElementById('job-cards-container');
+  const jobCardsContainer = document.getElementById("job-cards-container");
 
   try {
     jobsData = await fetchJobs();
-    console.log('Fetched jobs:', jobsData);
+    console.log("Fetched jobs:", jobsData);
 
     createJobCards(jobCardsContainer);
     updateCardVisibility();
-
   } catch (error) {
-    console.error('Error fetching jobs:', error);
-    jobCardsContainer.innerHTML += '<p>Failed to load job listings. Please try again later.</p>';
+    console.error("Error fetching jobs:", error);
+    jobCardsContainer.innerHTML +=
+      "<p>Failed to load job listings. Please try again later.</p>";
   }
 }
 
 function createJobCards(container) {
   jobsData.forEach((job, index) => {
-    const card = document.createElement('div');
-    card.className = 'job-card';
+    const card = document.createElement("div");
+    card.className = "job-card";
     card.dataset.index = index;
 
-    const workModelMap = { 1: 'Remote', 2: 'On-site', 3: 'Hybrid' };
-    const workModelText = workModelMap[job.workModel] || 'Unknown';
-    const workModelSvg = workModelText.replace(/\s/g, '-') + '.svg';
+    const workModelMap = { 1: "Remote", 2: "On-site", 3: "Hybrid" };
+    const workModelText = workModelMap[job.workModel] || "Unknown";
+    const workModelSvg = workModelText.replace(/\s/g, "-") + ".svg";
 
     card.innerHTML = `
       <div class="card-inner">
         <div class="card-face card-front">
           <div class="skill-match-display">
-            <div class="donut" style="background: conic-gradient(#8b7dff ${getMatchDegree(job)}deg, #eee 0deg);">
+            <div class="donut" style="background: conic-gradient(#8b7dff ${getMatchDegree(
+              job
+            )}deg, #eee 0deg);">
               <div class="donut-text">${getMatchPercent(job)}%</div>
             </div>
             <div class="skill-match-text">Skill Match</div>
             <div class="skills-2col">
               <div class="skills-left">
-                ${getLostSkills(job).map(skill => `<p>❌ ${skill}</p>`).join('')}
+                ${getLostSkills(job)
+                  .map((skill) => `<p>❌ ${skill}</p>`)
+                  .join("")}
               </div>
               <div class="skills-right">
-                ${getMatchedSkills(job).map(skill => `<p>✅ ${skill}</p>`).join('')}
+                ${getMatchedSkills(job)
+                  .map((skill) => `<p>✅ ${skill}</p>`)
+                  .join("")}
               </div>
             </div>
           </div>
@@ -79,7 +85,9 @@ function createJobCards(container) {
           <div class="job-details-content">
             <header>
               <div class="company-meta">
-                <img class="logo" src="${job.companyLogo}" alt="${job.companyName} logo">
+                <img class="logo" src="${job.companyLogo}" alt="${
+      job.companyName
+    } logo">
                 <div class="text-info">
                   <span class="company-name">${job.companyName}</span>
                   <span class="industry">${job.industry}</span>
@@ -102,13 +110,17 @@ function createJobCards(container) {
               <p><strong>Description:</strong> ${job.jobDescription}</p>
               <p><strong>Requirements:</strong></p>
               <ul>
-                ${job.jobRequirements.map(req => `<li>${req}</li>`).join('')}
+                ${job.jobRequirements.map((req) => `<li>${req}</li>`).join("")}
               </ul>
               <p><strong>Skills:</strong></p>
               <div class="skills">
-                ${job.relevantSkills.map(skill => `<span class="skill">${skill}</span>`).join('')}
+                ${job.relevantSkills
+                  .map((skill) => `<span class="skill">${skill}</span>`)
+                  .join("")}
               </div>
-              <a class="apply-link" href="${job.applicationLink}" target="_blank" rel="noopener">Link to Application</a>
+              <a class="apply-link" href="${
+                job.applicationLink
+              }" target="_blank" rel="noopener">Link to Application</a>
             </section>
           </div>
           <div class="bottom-buttons">
@@ -119,30 +131,32 @@ function createJobCards(container) {
       </div>
     `;
 
-    card.addEventListener('click', (event) => {
-      if (event.target.classList.contains('swipe-button') || 
-          event.target.classList.contains('apply-link')) {
+    card.addEventListener("click", (event) => {
+      if (
+        event.target.classList.contains("swipe-button") ||
+        event.target.classList.contains("apply-link")
+      ) {
         return;
       }
       event.stopPropagation();
-      card.classList.toggle('flipped');
+      card.classList.toggle("flipped");
     });
 
-    const skipButtons = card.querySelectorAll('.skip-button');
-    const applyButtons = card.querySelectorAll('.apply-button');
+    const skipButtons = card.querySelectorAll(".skip-button");
+    const applyButtons = card.querySelectorAll(".apply-button");
 
-    skipButtons.forEach(button => {
-      button.addEventListener('click', (event) => {
+    skipButtons.forEach((button) => {
+      button.addEventListener("click", (event) => {
         event.stopPropagation();
-        console.log('Job skipped:', job.jobRole);
+        console.log("Job skipped:", job.jobRole);
         skipCurrentJob();
       });
     });
 
-    applyButtons.forEach(button => {
-      button.addEventListener('click', (event) => {
+    applyButtons.forEach((button) => {
+      button.addEventListener("click", (event) => {
         event.stopPropagation();
-        console.log('Job applied:', job.jobRole);
+        console.log("Job applied:", job.jobRole);
         applyToCurrentJob();
       });
     });
@@ -152,23 +166,23 @@ function createJobCards(container) {
 }
 
 function updateCardVisibility() {
-  const cards = document.querySelectorAll('.job-card');
+  const cards = document.querySelectorAll(".job-card");
 
-  cards.forEach(card => {
-    card.classList.remove('active', 'next', 'prev');
-    card.style.display = 'none';
+  cards.forEach((card) => {
+    card.classList.remove("active", "next", "prev");
+    card.style.display = "none";
   });
 
-  for (let i = 0; i < 3 && (currentJobIndex + i) < jobsData.length; i++) {
+  for (let i = 0; i < 3 && currentJobIndex + i < jobsData.length; i++) {
     const cardIndex = currentJobIndex + i;
     const card = cards[cardIndex];
 
     if (card) {
-      card.style.display = 'block';
+      card.style.display = "block";
 
-      if (i === 0) card.classList.add('active');
-      else if (i === 1) card.classList.add('next');
-      else if (i === 2) card.classList.add('prev');
+      if (i === 0) card.classList.add("active");
+      else if (i === 1) card.classList.add("next");
+      else if (i === 2) card.classList.add("prev");
     }
   }
 
@@ -179,9 +193,9 @@ function updateCardVisibility() {
 
 function skipCurrentJob() {
   if (currentJobIndex < jobsData.length) {
-    const currentCard = document.querySelector('.job-card.active');
+    const currentCard = document.querySelector(".job-card.active");
     if (currentCard) {
-      currentCard.classList.add('skip-animation');
+      currentCard.classList.add("skip-animation");
       setTimeout(() => {
         currentJobIndex++;
         updateCardVisibility();
@@ -192,9 +206,9 @@ function skipCurrentJob() {
 
 function applyToCurrentJob() {
   if (currentJobIndex < jobsData.length) {
-    const currentCard = document.querySelector('.job-card.active');
+    const currentCard = document.querySelector(".job-card.active");
     if (currentCard) {
-      currentCard.classList.add('apply-animation');
+      currentCard.classList.add("apply-animation");
       setTimeout(() => {
         currentJobIndex++;
         updateCardVisibility();
@@ -204,7 +218,7 @@ function applyToCurrentJob() {
 }
 
 function showEndMessage() {
-  const container = document.getElementById('job-cards-container');
+  const container = document.getElementById("job-cards-container");
   container.innerHTML = `
     <div class="end-message">
       <h3>No more jobs!</h3>
