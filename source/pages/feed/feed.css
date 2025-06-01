@@ -358,3 +358,54 @@ h1, h2, h3, p {
 .reload-button:hover {
     opacity: 0.8;
 }
+
+.donut {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: conic-gradient(#8b7dff var(--degree, 0deg), #eee 0deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    position: relative;
+  }
+  
+  .donut::before {
+    content: "";
+    position: absolute;
+    width: 65%;
+    height: 65%;
+    background: white;
+    border-radius: 50%;
+    z-index: 1;
+  }
+  
+  .donut-text {
+    position: relative;
+    z-index: 2;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  
+  /* Skill display in two columns */
+  .skills-2col {
+    display: flex;
+    justify-content: space-between;
+    gap: 1em;
+    width: 100%;
+    text-align: left;
+    padding: 0 1em;
+  }
+  
+  .skills-left, .skills-right {
+    flex: 1;
+  }
+  
+  .skills-left p, .skills-right p {
+    margin: 0.3em 0;
+    font-size: 0.9em;
+  }
+  
