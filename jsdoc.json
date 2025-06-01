@@ -1,6 +1,6 @@
 {
   "source": {
-    "include": ["functions", "pages", "components"], 
+    "include": ["source"], 
     "includePattern": ".+\\.js$",
     "excludePattern": "(^|\\/|\\\\)_"
   },
