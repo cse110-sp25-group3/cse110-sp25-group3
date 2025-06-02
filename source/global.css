@@ -18,42 +18,67 @@
   
     /* accent */
     --color-star:             #F59E0B;
-  }
+}
 
-html,body{
+html, body {
     font-family: 'Open-Sans', sans-serif;
-
     margin: 0;
     padding: 0;
     width: 100%;
     height: 100%;
-
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-button{
+button {
     font-family: 'Open-Sans', sans-serif;
 }
 
-.phone{
-    position: relative; /*onboarding feature need*/
+.phone {
+    position: relative; /* onboarding feature need */
     width: 375px;
     height: 667px;
-
     max-width: 100vw;
     max-height: 100vh;
-
     box-shadow: 0 0 0 1px var(--color-icon-gray);
     border-radius: 20px;
-    overflow:hidden;
-
+    overflow: hidden;
     display: flex;
     flex-direction: column;
 }
 
+/* =================== LAYERING SYSTEM =================== */
+
+/* 1. Intro container - highest priority when visible */
+#intro-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10000; /* Highest layer */
+    display: none;
+    overflow: hidden;
+}
+
+/* 2. Onboarding container - wraps all onboarding elements */
+#onboarding-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9000; /* Higher than app content */
+    display: none;
+    overflow: hidden;
+    pointer-events: none; /* Allow clicks to pass through by default */
+}
+
+/* 3. Main app content - lowest priority */
 #app {
-  min-height: 100%;
-  overflow-y: auto;
+    position: relative;
+    z-index: 1000; /* Base app layer */
+    min-height: 100%;
+    overflow-y: auto;
 }

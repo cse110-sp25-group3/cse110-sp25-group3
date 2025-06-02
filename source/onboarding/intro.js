@@ -1,7 +1,24 @@
+/**
+ * Intro Carousel System - Welcome screens before onboarding
+ * 
+ * Responsibilities:
+ * - Display three intro pages with images and descriptions
+ * - Handle page navigation (click to advance)
+ * - Manage pagination dots
+ * - Transition to onboarding system
+ */
 
 (function() {
-  // 1. Configuration: images, titles, and descriptions for three pages
-  const pages = [
+  'use strict';
+
+  // =================== CONFIGURATION ===================
+  const CONFIG = {
+    CONTAINER_ID: 'intro-container',
+    STORAGE_KEY: 'hasSeenIntro',
+    FADE_DURATION: 300
+  };
+
+  const PAGES = [
     {
       imgSrc: './onboarding/job-search.png',
       title: 'Discover Your Dream Role',
@@ -19,121 +36,140 @@
     }
   ];
 
-  let currentIndex = 0;
-  let isFadingOut = false;
-
-  const introContainer = document.getElementById('intro-container');
-
-  // Check localStorage: if already viewed, hide and exit
-  if (localStorage.getItem('hasSeenIntro') === 'true') {
-    introContainer.style.display = 'none';
-    return;
-  }
-
-  // 2. Build DOM for three pages
-  const dotContainer = document.createElement('div');
-  dotContainer.className = 'intro-dots';
-
-  pages.forEach((page, idx) => {
-    // Wrapper for each page
-    const pageDiv = document.createElement('div');
-    pageDiv.className = 'intro-page';
-    pageDiv.dataset.index = idx;
-
-    // Only make the first page (idx=0) visible initially
-    if (idx === 0) {
-      pageDiv.classList.add('active');
+  // =================== INTRO MANAGER ===================
+  class IntroManager {
+    constructor() {
+      this.currentIndex = 0;
+      this.isFadingOut = false;
+      this.container = document.getElementById(CONFIG.CONTAINER_ID);
+      this.dotContainer = null;
     }
 
-    // Image
-    const img = document.createElement('img');
-    img.src = page.imgSrc;
-    img.alt = page.title;
-    pageDiv.appendChild(img);
+    init() {
+      if (!this.container) {
+        console.error('Intro container not found');
+        return;
+      }
 
-    // Title
-    const titleEl = document.createElement('div');
-    titleEl.className = 'intro-title';
-    titleEl.textContent = page.title;
-    pageDiv.appendChild(titleEl);
+      if (this.isCompleted()) {
+        this.container.style.display = 'none';
+        return;
+      }
 
-    // Description
-    const descEl = document.createElement('div');
-    descEl.className = 'intro-desc';
-    descEl.textContent = page.desc;
-    pageDiv.appendChild(descEl);
+      this.buildPages();
+      this.setupEventListeners();
+      this.show();
+    }
 
-    // On the third page: add "Get Started" button
-    if (idx === pages.length - 1) {
-      const button = document.createElement('button');
-      button.id = 'intro-start-button';
-      button.textContent = 'Get Started';
-      // Clicking the button triggers fade-out
-      button.addEventListener('click', function(e) {
-        e.stopPropagation();
-        fadeOutIntro();
+    isCompleted() {
+      return localStorage.getItem(CONFIG.STORAGE_KEY) === 'true';
+    }
+
+    buildPages() {
+      this.dotContainer = document.createElement('div');
+      this.dotContainer.className = 'intro-dots';
+
+      PAGES.forEach((page, index) => {
+        this.createPage(page, index);
+        this.createDot(index);
       });
-      pageDiv.appendChild(button);
+
+      this.container.appendChild(this.dotContainer);
     }
 
-    // Append to the container
-    introContainer.appendChild(pageDiv);
+    createPage(page, index) {
+      const pageDiv = document.createElement('div');
+      pageDiv.className = 'intro-page';
+      pageDiv.dataset.index = index;
+      
+      if (index === 0) {
+        pageDiv.classList.add('active');
+      }
 
-    // Also create bottom dot indicators
-    const dot = document.createElement('div');
-    dot.className = 'intro-dot';
-    if (idx === 0) dot.classList.add('active');
-    dotContainer.appendChild(dot);
-  });
+      pageDiv.innerHTML = `
+        <img src="${page.imgSrc}" alt="${page.title}">
+        <div class="intro-title">${page.title}</div>
+        <div class="intro-desc">${page.desc}</div>
+        ${index === PAGES.length - 1 ? '<button id="intro-start-button">Get Started</button>' : ''}
+      `;
 
-  introContainer.appendChild(dotContainer);
+      this.container.appendChild(pageDiv);
 
-  // 3. Show introContainer and disable page scrolling
-  introContainer.style.display = 'block';
-  document.body.style.overflow = 'hidden'; // Prevent page scrolling
+      // Add start button event listener
+      if (index === PAGES.length - 1) {
+        const startBtn = pageDiv.querySelector('#intro-start-button');
+        startBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          this.finish();
+        });
+      }
+    }
 
-  // 4. Click anywhere (except the "Get Started" button) to go to the next page
-  introContainer.addEventListener('click', function(e) {
-    if (isFadingOut) return;
-    if (currentIndex >= pages.length - 1) return;
-    goToPage(currentIndex + 1);
-  });
+    createDot(index) {
+      const dot = document.createElement('div');
+      dot.className = 'intro-dot';
+      if (index === 0) dot.classList.add('active');
+      this.dotContainer.appendChild(dot);
+    }
 
-  // 5. Method to switch pages
-  function goToPage(newIndex) {
-    // Remove active from the current page
-    const prevPage = introContainer.querySelector(`.intro-page[data-index="${currentIndex}"]`);
-    const prevDot = dotContainer.children[currentIndex];
-    if (prevPage) prevPage.classList.remove('active');
-    if (prevDot) prevDot.classList.remove('active');
+    setupEventListeners() {
+      this.container.addEventListener('click', (e) => {
+        if (this.isFadingOut || this.currentIndex >= PAGES.length - 1) return;
+        this.goToPage(this.currentIndex + 1);
+      });
+    }
 
-    // Add active to the new page
-    const nextPage = introContainer.querySelector(`.intro-page[data-index="${newIndex}"]`);
-    const nextDot = dotContainer.children[newIndex];
-    if (nextPage) nextPage.classList.add('active');
-    if (nextDot) nextDot.classList.add('active');
+    goToPage(newIndex) {
+      if (newIndex < 0 || newIndex >= PAGES.length) return;
 
-    currentIndex = newIndex;
-  }
+      // Update previous page and dot
+      const prevPage = this.container.querySelector(`[data-index="${this.currentIndex}"]`);
+      const prevDot = this.dotContainer.children[this.currentIndex];
+      if (prevPage) prevPage.classList.remove('active');
+      if (prevDot) prevDot.classList.remove('active');
 
-  // 6. Fade out intro and start main app logic
-  function fadeOutIntro() {
-    isFadingOut = true;
-    // Add fade-out transition, then hide and restore scrolling
-    introContainer.style.transition = 'opacity 0.3s ease-in-out';
-    introContainer.style.opacity = '0';
-    setTimeout(() => {
-      introContainer.style.display = 'none';
-      introContainer.style.opacity = '1';
-      introContainer.style.transition = '';
-      document.body.style.overflow = '';
-      localStorage.setItem('hasSeenIntro', 'true');
+      // Update new page and dot
+      const nextPage = this.container.querySelector(`[data-index="${newIndex}"]`);
+      const nextDot = this.dotContainer.children[newIndex];
+      if (nextPage) nextPage.classList.add('active');
+      if (nextDot) nextDot.classList.add('active');
+
+      this.currentIndex = newIndex;
+    }
+
+    show() {
+      this.container.style.display = 'block';
+      document.body.style.overflow = 'hidden';
+    }
+
+    finish() {
+      this.isFadingOut = true;
+      this.container.style.transition = `opacity ${CONFIG.FADE_DURATION}ms ease-in-out`;
+      this.container.style.opacity = '0';
+
+      setTimeout(() => {
+        this.container.style.display = 'none';
+        this.container.style.opacity = '1';
+        this.container.style.transition = '';
+        document.body.style.overflow = '';
+        
+        localStorage.setItem(CONFIG.STORAGE_KEY, 'true');
+        this.startOnboarding();
+      }, CONFIG.FADE_DURATION);
+    }
+
+    startOnboarding() {
       if (typeof window.startOnboarding === 'function') {
-        console.log('>> intro: calling startOnboarding()'); // debugging
+        console.log('Starting onboarding from intro');
         window.startOnboarding();
       } else {
-        console.warn('>> intro: window.startOnboarding is not defined');
+        console.warn('Onboarding function not available');
       }
-    }, 300);
+    }
   }
+
+  // =================== INITIALIZATION ===================
+  const introManager = new IntroManager();
+  introManager.init();
+
 })();

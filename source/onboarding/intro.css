@@ -1,15 +1,8 @@
 
-/* Container—use absolute positioning; parent container .phone already has position: relative */
+/* Container - use the base styles from global.css, only override specific properties */
 #intro-container {
-  position: absolute;   /* Positioned relative to the top-left of .phone */
-  top: 0;
-  left: 0;
-  width: 100%;         /* 100% equals 375px, since parent .phone width is 375px */
-  height: 100%;        /* 100% equals 667px */
   background-color: #ffffff;
-  display: none;       /* Initially hidden; JS controls visibility */
-  overflow: hidden;
-  z-index: 9999;
+  /* z-index is already set to 10000 in global.css */
 }
 
 /* Each page uses the same layout: position absolute, filling the parent container */
@@ -58,7 +51,7 @@
   margin-bottom: 40px;
 }
 
-/* “Get Started” button on the third page */
+/* "Get Started" button on the third page */
 #intro-start-button {
   font-family: "Open-Sans", sans-serif;
   font-size: 18px;
