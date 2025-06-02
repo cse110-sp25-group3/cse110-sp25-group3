@@ -273,7 +273,7 @@ class AppCard extends HTMLElement {
                 </div>
                 <div class="column">
                     <span><img src='assets/pay.svg'>${data.pay}</span>
-                    <span><img src='assets/check.svg'>Applied on <time datetime="${data.submittedDate}">${data.submittedDate}</time></span>
+                    <span><img src='assets/check.svg'>Applied on <time datetime="${data.dateSubmitted}">${data.dateSubmitted}</time></span>
                 </div>
             </div>
 
