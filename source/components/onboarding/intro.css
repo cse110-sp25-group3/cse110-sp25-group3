@@ -91,3 +91,11 @@
 .intro-dot.active {
   background-color: #788eec;
 }
+
+
+#intro-container {
+  transition: opacity 300ms ease-in-out;
+}
+#intro-container.fade-out {
+  opacity: 0;
+}

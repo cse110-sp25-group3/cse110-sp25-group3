@@ -277,8 +277,10 @@
       }
       
       if (this.overlay) {
-        this.overlay.remove();
+        
         this.overlay.style.pointerEvents = 'none';
+        this.overlay.remove();
+        
       }
       
     }

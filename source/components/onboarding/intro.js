@@ -20,17 +20,17 @@
 
   const PAGES = [
     {
-      imgSrc: './onboarding/job-search.png',
+      imgSrc: './components/onboarding/job-search.png',
       title: 'Discover Your Dream Role',
       desc: 'Swiftly browse jobs tailored to your field and see your compatibility.'
     },
     {
-      imgSrc: './onboarding/resume.png',
+      imgSrc: './components/onboarding/resume.png',
       title: 'One-Tap Apply, No Forms',
       desc: 'Like it? Tap the check button. Simplify applications and skip tedious steps.'
     },
     {
-      imgSrc: './onboarding/applicant.png',
+      imgSrc: './components/onboarding/applicant.png',
       title: 'Track Progress, Instantly',
       desc: 'Easily view all your application statuses and stay updated on your job search.'
     }
@@ -144,8 +144,8 @@
 
     finish() {
       this.isFadingOut = true;
-      this.container.style.transition = `opacity ${CONFIG.FADE_DURATION}ms ease-in-out`;
-      this.container.style.opacity = '0';
+      this.container.classList.add('fade-out');
+
 
       setTimeout(() => {
         this.container.style.display = 'none';
