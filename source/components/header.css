@@ -1,6 +1,6 @@
 /* header flex container */
 .site-header {
-    position: relative;          /* for absolute children */
+    position: absolute;          /* for absolute children */
     display: flex;               /* lay children in a row */
     align-items: center;         /* vertically center */
     justify-content: flex-start; /* left align */
@@ -10,6 +10,7 @@
 
     border-bottom: solid;
     border-width: 1px;
+    background-color: blue;
   }
   
   /* hamburger styling */

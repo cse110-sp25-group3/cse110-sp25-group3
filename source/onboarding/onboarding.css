@@ -6,13 +6,13 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.67);
+  background: rgba(0, 0, 0, 0.1);
   z-index: 1;
   pointer-events: none;
   transition: none;
 }
 
-/* Circular cutout for tip1 */
+/* Circular cutout for tip1 
 .onboarding-overlay.circle-cutout {
   background: radial-gradient(
     circle at var(--circle-x, 50%) var(--circle-y, 50%),
@@ -20,7 +20,7 @@
     rgba(0, 0, 0, 0.67) var(--circle-radius, 10%)
   );
 }
-
+*/
 /* Rectangular cutout for tip2-5 */
 .onboarding-overlay.rect-cutout {
   background: rgba(0, 0, 0, 0.67);
