@@ -35,7 +35,7 @@
 .job-card.next {
   z-index: 2;
   transform: scale(0.95) translateY(-10px);
-  opacity: 0.8;
+  /* opacity: 0.8; */
 }
 
 .job-card.prev {
