@@ -3,12 +3,13 @@
     "allowUnknownTags": true
   },
   "source": {
-    "include": ["source/components/onboarding"],  
-    "includePattern": ".+\\.js(doc|x)?$",
+    "include": ["source"], 
+    "includePattern": ".+\\.js$",
     "excludePattern": "(^|\\/|\\\\)_"
   },
   "opts": {
     "destination": "./docs",
-    "recurse": true
+    "recurse": true,
+    "verbose": true
   }
 }

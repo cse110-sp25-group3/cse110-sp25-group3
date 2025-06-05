@@ -1,14 +1,5 @@
-# node_modules
-node_modules/
-
-# Jest coverage
-coverage/
-
-.vscode/
-*.code-workspace
-
-
+.vscode
 .DS_Store
-
+node_modules/
+node_modules
 test.html
-

@@ -1,9 +1,11 @@
 import { fetchJobs } from "../../functions/fetch-jobs.js";
+import { loadUserPreferences } from "../preferences/job-preferences.js";
+import { runFeedAlgorithm } from "./feed-algorithm.js";
 
 let jobsData = [];
 let currentJobIndex = 0;
 
-const userSkills = ["JavaScript", "Node.js"];
+let userSkills = [];
 
 function getMatchedSkills(job) {
   return job.relevantSkills.filter((skill) => userSkills.includes(skill));
@@ -31,8 +33,25 @@ export async function renderFeed(container) {
   const jobCardsContainer = document.getElementById("job-cards-container");
 
   try {
-    jobsData = await fetchJobs();
-    console.log("Fetched jobs:", jobsData);
+    // Fetch raw jobs
+    const rawJobs = await fetchJobs();
+
+    // Load prefs
+    const prefs = loadUserPreferences();
+    userSkills = Array.isArray(prefs.userSkills) ? prefs.userSkills : [];
+
+    // the feed algorithm that do filter&score&sort
+    jobsData = runFeedAlgorithm(rawJobs, {
+      userSkills: prefs.userSkills,
+      industries: prefs.industries,
+      locations:  prefs.locations,
+      workModels: prefs.workModels,
+      natures: prefs.natures,
+      roles: prefs.roles
+    });
+
+    // Reset index
+    currentJobIndex = 0;
 
     createJobCards(jobCardsContainer);
     updateCardVisibility();
@@ -103,12 +122,12 @@ function createJobCards(container) {
             <h3 class="job-title-back">${job.jobRole}</h3>
             <div class="meta">
               <div class="column">
-                <span><img src='assets/location.svg'>${job.location}</span>
-                <span><img src='assets/${workModelSvg}'>${workModelText}</span>
+                <span><img src='../applications/assets/location.svg'>${job.location}</span>
+                <span><img src='../applications/assets/${workModelSvg}'>${workModelText}</span>
               </div>
               <div class="column">
-                <span><img src='assets/pay.svg'>${job.pay}</span>
-                <span>Posted ${job.datePosted}</span>
+                <span><img src='../applications/assets/pay.svg'>${job.pay}</span>
+                <span><img src='../applications/assets/check.svg'>Posted ${job.datePosted}</span>
               </div>
             </div>
             <section class="details">
@@ -213,6 +232,8 @@ function skipCurrentJob() {
 function applyToCurrentJob() {
   if (currentJobIndex < jobsData.length) {
     const currentCard = document.querySelector(".job-card.active");
+    const job = jobsData[currentJobIndex];
+    saveJobToLocalStorage(job);
     if (currentCard) {
       currentCard.classList.add("apply-animation");
       setTimeout(() => {
@@ -220,6 +241,26 @@ function applyToCurrentJob() {
         updateCardVisibility();
       }, 500);
     }
+  }
+}
+
+function saveJobToLocalStorage(job) {
+  const existing = JSON.parse(localStorage.getItem('appliedJobs')) || [];
+  const isDuplicate = existing.some(
+    (saved) =>
+      saved.companyName === job.companyName &&
+      saved.jobRole === job.jobRole &&
+      saved.dateSubmitted === job.dateSubmitted
+  );
+
+  if (!isDuplicate) {
+    const jobWithDate = {
+      ...job,
+      dateSubmitted: new Date().toISOString().split('T')[0]
+    };
+
+    existing.push(jobWithDate);
+    localStorage.setItem('appliedJobs', JSON.stringify(existing));
   }
 }
 

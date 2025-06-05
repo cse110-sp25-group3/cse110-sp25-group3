@@ -6,22 +6,31 @@ import { renderApplications } from './pages/applications/view-applications.js';
 import { renderPreferences }  from './pages/preferences/job-preferences.js'; 
 import { renderDocuments }    from './pages/documents/documents.js';
 
+// 1) Now using the **exact** pathname as keys
 const pageMap = {
-  'feed.html':              { render: renderFeed,         title: 'Job Feed' },
-  'view-app.html': { render: renderApplications, title: 'Your Applications' },
-  'job-pref.html':   { render: renderPreferences,  title: 'Job Preferences' },
-  'documents.html':         { render: renderDocuments,    title: 'Your Documents' },
+  '/source/pages/feed/feed.html':         { render: renderFeed,         title: 'Job Feed' },
+  '/source/pages/applications/view-app.html': { render: renderApplications, title: 'Your Applications' },
+  '/source/pages/preferences/job-pref.html':   { render: renderPreferences,  title: 'Job Preferences' },
+  '/source/pages/documents/documents.html':    { render: renderDocuments,    title: 'Your Documents' },
 };
-window.loadPage= function() {
-  //const path = window.location.pathname;
-  const path = window.location.pathname.split('/').pop(); // Get the last part of the path
-  console.log('Current path:', path);
 
-  // find the first key that the path ends with
-  const key = Object
-    .keys(pageMap)
-    .find(k => path.endsWith(k))
-    || 'feed.html';
+function loadPage() {
+  const fullPath = window.location.pathname;
+  const fileName = fullPath.split('/').pop(); // filename from path
+  
+  console.log('Current path:', fullPath);
+  console.log('File name:', fileName);
+
+  // prioritize full path over file name
+  let key;
+  if (pageMap[fullPath]) {
+    key = fullPath;
+  } else if (pageMap[fileName]) {
+    key = fileName;
+  } else {
+    // default to feed.html if no match found
+    key = pageMap['/source/pages/feed/feed.html'] ? '/source/pages/feed/feed.html' : 'feed.html';
+  }
 
   console.log('Matched key:', key);
 
@@ -39,18 +48,11 @@ window.loadPage= function() {
 
   console.log(`Calling render for ${key}`);
   render(content);
-
-// Second phase of Onboarding will be automatically triggered in onboarding.js
-window.addEventListener('popstate', () => {
-  // If the user navigates forward/backward, still render the new page
-  window.loadPage();
-});
-
 }
 
-
+//expose loadPage function for testing onboarding
+window.loadPage = loadPage;
 
 
 window.addEventListener('DOMContentLoaded', loadPage);
 window.addEventListener('popstate', loadPage);
-

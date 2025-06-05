@@ -1,4 +1,13 @@
 // __tests__/stepRenderer.test.js
+
+global.localStorage = {
+  _store: {},
+  getItem(key) { return this._store[key] || null; },
+  setItem(key, value) { this._store[key] = String(value); },
+  removeItem(key) { delete this._store[key]; },
+  clear() { this._store = {}; }
+};
+
 const { StepRenderer, EventHandler } = require('../onboarding.js');
 
 describe('StepRenderer', () => {
