@@ -1,9 +1,11 @@
 import { fetchJobs } from "../../functions/fetch-jobs.js";
+import { loadUserPreferences } from "../preferences/job-preferences.js";
+import { runFeedAlgorithm } from "./feed-algorithm.js";
 
 let jobsData = [];
 let currentJobIndex = 0;
 
-const userSkills = ["JavaScript", "Node.js"];
+let userSkills = [];
 
 function getMatchedSkills(job) {
   return job.relevantSkills.filter((skill) => userSkills.includes(skill));
@@ -31,8 +33,25 @@ export async function renderFeed(container) {
   const jobCardsContainer = document.getElementById("job-cards-container");
 
   try {
-    jobsData = await fetchJobs();
-    console.log("Fetched jobs:", jobsData);
+    // Fetch raw jobs
+    const rawJobs = await fetchJobs();
+
+    // Load prefs
+    const prefs = loadUserPreferences();
+    userSkills = Array.isArray(prefs.userSkills) ? prefs.userSkills : [];
+
+    // the feed algorithm that do filter&score&sort
+    jobsData = runFeedAlgorithm(rawJobs, {
+      userSkills: prefs.userSkills,
+      industries: prefs.industries,
+      locations:  prefs.locations,
+      workModels: prefs.workModels,
+      natures: prefs.natures,
+      roles: prefs.roles
+    });
+
+    // Reset index
+    currentJobIndex = 0;
 
     createJobCards(jobCardsContainer);
     updateCardVisibility();
