@@ -11,10 +11,28 @@
   </head>
   <body>
     <div class="phone">
+      <!-- 1. Intro container - highest priority when visible -->
+      <div id="intro-container">
+      </div>
+
+      <!-- 2. Onboarding container -->
+      <div id="onboarding-container">
+        <!-- Onboarding elements by onboarding.js -->
+      </div>
+
+      <!-- 3. Main app content (minimal for onboarding) -->
       <div id="app">
-        <div class="content"></div>
+        <div id="content">
+          <!-- This will be populated by onboarding process -->
+        </div>
       </div>
     </div>
-    <script type="module" src="../../app.js"></script>
+    
+    <!-- Onboarding scripts -->
+    <script src="./components/onboarding/intro.js"></script>
+    <script src="./components/onboarding/onboarding.js"></script>
+    
+    <!-- Load app.js only for onboarding functionality -->
+    <script type="module" src="./app.js"></script>
   </body>
 </html>

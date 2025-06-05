@@ -1,12 +1,59 @@
+
+
 <!-- File: /source/index.html -->
 <!DOCTYPE html>
 <html>
 <head>
-  <!-- as soon as this page loads, redirect to feed.html -->
-  <meta http-equiv="refresh" content="0; url=/source/pages/feed/feed.html">
-  <title>Redirecting to Feed…</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="./global.css" />
+  <link rel="stylesheet" href="./components/header.css" />
+  <title>Job Feed</title>
+  
+  <!-- Onboarding styles -->
+  <link rel="stylesheet" href="./components/onboarding/intro.css" />
+  <link rel="stylesheet" href="./components/onboarding/onboarding.css" />
+  
+  <!-- Smart redirect logic -->
+  <script>
+    // check if the user has completed onboarding
+    (function() {
+      const hasSeenIntro = localStorage.getItem('hasSeenIntro') === 'true';
+      const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding') === 'true';
+      
+      // if the user has completed onboarding, redirect to feed
+      if (hasSeenIntro && hasSeenOnboarding) {
+        window.location.href = '/source/pages/feed/feed.html';
+        return;
+      }
+
+    })();
+  </script>
 </head>
 <body>
-  Redirecting you to the Job Feed…
+  <div class="phone">
+    <!-- 1. Intro container - highest priority when visible -->
+    <div id="intro-container">
+    </div>
+
+    <!-- 2. Onboarding container -->
+    <div id="onboarding-container">
+      <!-- Onboarding elements by onboarding.js -->
+    </div>
+
+    <!-- 3. Main app content (minimal for onboarding) -->
+    <div id="app">
+      <div id="content">
+        <!-- This will be populated by onboarding process -->
+      </div>
+    </div>
+  </div>
+  
+  <!-- Onboarding scripts -->
+  <script src="./components/onboarding/intro.js"></script>
+  <script src="./components/onboarding/onboarding.js"></script>
+  
+  <!-- Load app.js only for onboarding functionality -->
+  <script type="module" src="./app.js"></script>
 </body>
 </html>
