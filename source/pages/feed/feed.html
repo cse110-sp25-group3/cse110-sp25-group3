@@ -8,31 +8,29 @@
     <link rel="stylesheet" href="../../components/header.css" />
 
     <title>Job Feed</title>
+  <!-- add Onboarding styles -->
+    <link rel="stylesheet" href="../../components/onboarding/intro.css" />
+    <link rel="stylesheet" href="../../components/onboarding/onboarding.css" />
   </head>
   <body>
     <div class="phone">
-      <!-- 1. Intro container - highest priority when visible -->
-      <div id="intro-container">
+      <!--add Onboarding container -->
+      <div id="onboarding-container" style="display: none;">
+        <!-- Onboarding elements will be created by onboarding.js -->
       </div>
 
-      <!-- 2. Onboarding container -->
-      <div id="onboarding-container">
-        <!-- Onboarding elements by onboarding.js -->
-      </div>
-
-      <!-- 3. Main app content (minimal for onboarding) -->
+      <!-- Main app content -->
       <div id="app">
         <div id="content">
-          <!-- This will be populated by onboarding process -->
+          <!-- This will be populated by app.js -->
         </div>
       </div>
     </div>
     
-    <!-- Onboarding scripts -->
-    <script src="./components/onboarding/intro.js"></script>
-    <script src="./components/onboarding/onboarding.js"></script>
+    <!-- add Onboarding scripts -->
+    <script src="../../components/onboarding/intro.js"></script>
+    <script src="../../components/onboarding/onboarding.js"></script>
     
-    <!-- Load app.js only for onboarding functionality -->
-    <script type="module" src="./app.js"></script>
+    <script type="module" src="../../app.js"></script>
   </body>
 </html>
