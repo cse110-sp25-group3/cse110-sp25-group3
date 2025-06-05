@@ -204,9 +204,6 @@ export async function renderDocuments(container) {
         const resumeData = await resumeParser.parseResumeFromFile(file);
         console.log('Parsed resume data:', resumeData);
         
-        // Generate report in console (like original)
-        resumeParser.generateReport(resumeData);
-        
         // Auto-fill the form with extracted data
         populateForm(resumeData);
         
