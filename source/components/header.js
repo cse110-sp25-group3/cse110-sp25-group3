@@ -8,7 +8,7 @@ export function createHeader() {
 
     const nav = document.createElement('nav');
     nav.id = 'nav-menu';
-    nav.className="nav-menu hidden";
+    nav.className="nav-menu";
     [
         { path: '/source/pages/feed/feed.html',         label: 'Job Feed' },
         { path: '/source/pages/preferences/job-pref.html',   label: 'Job Preferences' },
@@ -26,9 +26,9 @@ export function createHeader() {
     const btn  = header.querySelector('#menu-toggle');
     const menu = header.querySelector('#nav-menu');
     btn.addEventListener('click', () => {
-      const isHidden = menu.classList.toggle('hidden');
-      btn.classList.toggle('rotated', !isHidden);
-      if (!isHidden) {
+      const isOpen = menu.classList.toggle('show');
+      btn.classList.toggle('rotated', isOpen);
+      if (isOpen) {
         btn.textContent = '✕';
         btn.setAttribute('aria-label', 'Close menu');
       } else {
@@ -51,6 +51,26 @@ export function createHeader() {
     
     // Run on initial load
     highlightCurrent();
+
+    // ── Auto-close on link click ──
+    const navLinks = nav.querySelectorAll('a');
+    navLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+        e.preventDefault(); // stop immediate navigation
+
+        // Collapse menu
+        menu.classList.remove('show');
+        btn.classList.remove('rotated');
+        btn.textContent = '☰';
+        btn.setAttribute('aria-label', 'Open menu');
+
+        // Delay navigation to allow animation
+        const href = link.href;
+        setTimeout(() => {
+        window.location.href = href;
+        }, 325);
+    });
+    });
   
     return header;
   }
