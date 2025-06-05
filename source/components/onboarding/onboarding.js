@@ -27,7 +27,7 @@
     {
       name: 'tip1',
       targetSelector: '.hamburger-btn',
-      text: 'Please click this button to open the main menu',
+      text: 'Welcome! To begin, please click on the menu button. This will reveal the main navigation, allowing you to access all the powerful features of our platform.',
       placement: 'right',
       isCircle: true,
       requiresInteraction: true
@@ -35,28 +35,28 @@
     {
       name: 'tip2',
       targetSelector: '#nav-feed',
-      text: 'The Job Feed page shows your skill match percentage for each position. Click "view detail" to see specific job and company information. Use the check mark at the bottom to apply for a job in one click, and click the X to quickly browse the next job.',
+      text: 'The Job Feed page shows your skill match percentage for each position. Click "view detail" to see specific job and company information. Click ✅ at the bottom to apply for a job in one click, and click ❌ to quickly browse the next job.',
       placement: 'bottom-right',
       positionOffset: { left: -50, top: 0 }
     },
     {
       name: 'tip3',
       targetSelector: '#nav-preferences',
-      text: 'Set your job preferences here so the system can recommend more accurate positions for you',
+      text: 'By setting your desired criteria at Preference page, our system can refine its recommendations, ensuring you receive suggestions for more accurate and relevant positions',
       placement: 'bottom-right',
       positionOffset: { left: -50, top: 0 }
     },
     {
       name: 'tip4',
       targetSelector: '#nav-applications',
-      text: 'You can view the jobs you have applied to and track their status.',
+      text: 'At Applications page, you can easily view all the jobs you have applied to and track their current status, keeping you informed every step of the way.',
       placement: 'bottom-right',
       positionOffset: { left: -50, top: 0 }
     },
     {
       name: 'tip5',
       targetSelector: '#nav-documents',
-      text: 'Upload your resume or job documents here to better match you with positions.',
+      text: 'In Your Documents section, you can upload your resume here. Maintaining an up-to-date profile with your professional documents will significantly improve your chances of being better matched with suitable positions.',
       placement: 'bottom-right',
       positionOffset: { left: -50, top: -20 }
     }
@@ -277,8 +277,9 @@
       }
       
       if (this.overlay) {
-        this.overlay.style.pointerEvents = 'none';
+        //this.overlay.style.pointerEvents = 'none';
         this.overlay.remove();
+        this.overlay = null;
       }
       
     }
@@ -344,7 +345,7 @@
     }
 
     createTooltip() {
-      // 如果已存在旧的tooltip，先移除
+      
       if (this.tooltipEl && this.tooltipEl.parentNode) {
         console.log('🧹 Removing existing tooltip before creating new one');
         this.tooltipEl.parentNode.removeChild(this.tooltipEl);
@@ -414,7 +415,7 @@
       
       // check if tip1 is completed
       if (index === 0 && this.tip1Completed) {
-        this.updateTooltipContent('Great! The menu is open. Click "Next" to continue the tour.');
+        this.updateTooltipContent('Excellent! You open the main menu, click Next to continue tutorial.');
         const nextBtn = this.tooltipEl.querySelector('.tooltip-next');
         nextBtn.disabled = false;
       } else {
