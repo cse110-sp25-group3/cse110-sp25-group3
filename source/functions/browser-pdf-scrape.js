@@ -1,8 +1,7 @@
-const fs = require('fs');
-const path = require('path');
-const pdfParse = require('pdf-parse');
+// Complete browser adaptation of pdf-scrapeV2.js
+// Preserves ALL sophistication and accuracy, only changes Node.js-specific parts
 
-class ResumeParser {
+class BrowserResumeParser {
     constructor() {
         this.initializePatterns();
         this.initializeKeywords();
@@ -10,6 +9,7 @@ class ResumeParser {
         this.extractedData = new Set(); // Track extracted information to prevent duplicates
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     initializePatterns() {
         this.patterns = {
             email: /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/gi,
@@ -49,6 +49,7 @@ class ResumeParser {
         };
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     initializeKeywords() {
         this.keywords = {
             jobTitles: [
@@ -102,6 +103,7 @@ class ResumeParser {
         };
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     initializeClassifiers() {
         this.sectionPatterns = {
             contact: [
@@ -153,30 +155,60 @@ class ResumeParser {
         };
     }
 
-    async parseResume(filePath) {
+    // ONLY METHOD THAT CHANGES - Browser PDF processing instead of Node.js
+    async parseResumeFromFile(file) {
         try {
-            console.log(`Parsing resume: ${filePath}`);
+            console.log(`Parsing resume: ${file.name}`);
             
             // Reset extracted data tracker for new resume
             this.extractedData = new Set();
             
-            // Extract raw text from PDF
-            const dataBuffer = fs.readFileSync(filePath);
-            const pdfData = await pdfParse(dataBuffer);
-            const rawText = pdfData.text;
+            // Extract raw text from PDF using PDF.js (browser compatible)
+            const arrayBuffer = await file.arrayBuffer();
+            const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
             
-            // Preprocess text
+            let rawText = '';
+            for (let i = 1; i <= pdf.numPages; i++) {
+                const page = await pdf.getPage(i);
+                const textContent = await page.getTextContent();
+                
+                // Better text reconstruction with positioning
+                let pageText = '';
+                let lastY = null;
+                let lastX = null;
+                
+                for (const item of textContent.items) {
+                    const y = item.transform[5];  // Y position
+                    const x = item.transform[4];  // X position
+                    
+                    if (lastY !== null && Math.abs(y - lastY) > 5) {
+                        // New line detected
+                        pageText += '\n';
+                    } else if (lastX !== null && (x - lastX) > 10) {
+                        // Significant horizontal gap - add space
+                        pageText += ' ';
+                    }
+                    
+                    pageText += item.str;
+                    lastY = y;
+                    lastX = x + (item.width || 0);
+                }
+                
+                rawText += pageText + '\n';
+            }
+            
+            // Preprocess text (EXACT SAME as original)
             const cleanText = this.preprocessText(rawText);
             const lines = this.splitIntoLines(cleanText);
             
-            // Extract sections
+            // Extract sections (EXACT SAME as original)
             const sections = this.identifySections(lines);
             
-            // Extract all information with priority order to prevent overlaps
+            // Extract all information with priority order to prevent overlaps (EXACT SAME as original)
             const resumeData = {
                 metadata: {
-                    filename: path.basename(filePath),
-                    totalPages: pdfData.numpages,
+                    filename: file.name,
+                    totalPages: pdf.numPages,
                     parseDate: new Date().toISOString(),
                     wordCount: cleanText.split(/\s+/).length,
                     lineCount: lines.length
@@ -193,10 +225,10 @@ class ResumeParser {
                 rawText: rawText.substring(0, 2000) + '...'
             };
             
-            // Final cleanup to remove any remaining overlaps
+            // Final cleanup to remove any remaining overlaps (EXACT SAME as original)
             this.cleanupOverlaps(resumeData);
             
-            // Calculate confidence score
+            // Calculate confidence score (EXACT SAME as original)
             resumeData.metadata.confidenceScore = this.calculateConfidence(resumeData);
             
             return resumeData;
@@ -207,17 +239,20 @@ class ResumeParser {
         }
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     markAsExtracted(data) {
         if (data && typeof data === 'string' && data.trim().length > 0) {
             this.extractedData.add(data.toLowerCase().trim());
         }
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     isAlreadyExtracted(data) {
         if (!data || typeof data !== 'string') return false;
         return this.extractedData.has(data.toLowerCase().trim());
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     preprocessText(text) {
         if (!text) return '';
         
@@ -244,12 +279,14 @@ class ResumeParser {
             .trim();
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     splitIntoLines(text) {
         return text.split('\n')
             .map(line => line.trim())
             .filter(line => line.length > 0);
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     identifySections(lines) {
         const sections = {};
         let currentSection = 'unknown';
@@ -274,6 +311,7 @@ class ResumeParser {
         return sections;
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     classifyLine(line, index, allLines) {
         if (!line || line.length === 0) return null;
         
@@ -291,6 +329,7 @@ class ResumeParser {
         return 'content';
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     looksLikeHeader(line, index) {
         if (!line || line.length > 60) return false;
         
@@ -303,6 +342,7 @@ class ResumeParser {
         return isAllCaps || hasColonOrDash || isShortAndCentered || hasUnderline;
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     identifySectionType(line) {
         const text = line.toLowerCase().replace(/[^\w\s]/g, '').trim();
         
@@ -315,6 +355,7 @@ class ResumeParser {
         return null;
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     extractContactInfo(text, lines) {
         const contact = {
             name: null,
@@ -391,6 +432,7 @@ class ResumeParser {
         return contact;
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     extractContactLocation(lines) {
         // Only look for location in the first 10 lines (contact header area)
         const headerLines = lines.slice(0, 10);
@@ -442,6 +484,7 @@ class ResumeParser {
         return null;
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     containsEducationKeywords(line) {
         const educationKeywords = [
             'university', 'college', 'school', 'institute', 'academy', 'polytechnic',
@@ -452,6 +495,7 @@ class ResumeParser {
         return educationKeywords.some(keyword => lowerLine.includes(keyword));
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     containsExperienceKeywords(line) {
         const experienceKeywords = [
             'experience', 'work', 'employment', 'career', 'professional',
@@ -462,6 +506,7 @@ class ResumeParser {
         return experienceKeywords.some(keyword => lowerLine.includes(keyword));
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     containsInstitutionName(location) {
         // Check if location contains common institution indicators
         const institutionIndicators = [
@@ -473,6 +518,7 @@ class ResumeParser {
         return institutionIndicators.some(indicator => lowerLocation.includes(indicator));
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     containsCompanyName(location) {
         // Check if location contains common company indicators
         const companyIndicators = [
@@ -484,6 +530,7 @@ class ResumeParser {
         return companyIndicators.some(indicator => lowerLocation.includes(indicator));
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     extractDomainFromUrl(url) {
         try {
             const cleaned = url.replace(/^(https?:\/\/)?(www\.)?/, '');
@@ -494,6 +541,7 @@ class ResumeParser {
         }
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     extractName(lines) {
         // Look for name in first 5 lines
         for (let i = 0; i < Math.min(5, lines.length); i++) {
@@ -511,6 +559,7 @@ class ResumeParser {
         return null;
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     isLikelyName(line) {
         if (!line || line.length > 60 || line.length < 2) return false;
         
@@ -535,6 +584,7 @@ class ResumeParser {
         return isValidFormat;
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     normalizePhone(phone) {
         const digits = phone.replace(/\D/g, '');
         if (digits.length === 10) {
@@ -545,11 +595,13 @@ class ResumeParser {
         return phone;
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     extractSummary(sections) {
         const summaryContent = sections.summary || sections.objective || sections.profile || [];
         return summaryContent.join(' ').trim();
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     extractExperience(sections) {
         const experienceLines = sections.experience || sections.work || [];
         if (experienceLines.length === 0) return [];
@@ -581,6 +633,7 @@ class ResumeParser {
         return experiences;
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     cleanTitleFromDateFragments(title) {
         if (!title) return title;
         
@@ -597,6 +650,7 @@ class ResumeParser {
             .trim();
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     isExperienceHeader(line) {
         const hasJobTitle = this.keywords.jobTitles.some(title => 
             line.toLowerCase().includes(title.toLowerCase())
@@ -622,6 +676,7 @@ class ResumeParser {
         return (hasJobTitle || hasCompanyIndicators || hasAtPattern) && (hasDatePattern || hasDelimiters);
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     parseExperienceHeader(line) {
         const experience = {
             title: '',
@@ -715,26 +770,31 @@ class ResumeParser {
         return experience;
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     looksLikeJobTitle(text) {
         return this.keywords.jobTitles.some(title => 
             text.toLowerCase().includes(title.toLowerCase())
         );
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     looksLikeCompany(text) {
         return this.keywords.companies.some(company => 
             text.toLowerCase().includes(company.toLowerCase())
         ) || /\b(inc|corp|llc|ltd|co)\b/i.test(text);
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     looksLikeLocation(text) {
         return this.patterns.location.test(text) && text.length < 50;
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     finalizeExperience(experience) {
         return experience;
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     cleanInstitutionFromDateFragments(institution) {
         if (!institution) return institution;
         
@@ -750,6 +810,7 @@ class ResumeParser {
             .trim();
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     extractYearFromDate(dateString) {
         // Extract the most recent/relevant year from date string
         const years = dateString.match(/\b(19|20)\d{2}\b/g);
@@ -760,6 +821,7 @@ class ResumeParser {
         return '';
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     extractEducation(sections) {
         const educationLines = sections.education || [];
         if (educationLines.length === 0) return [];
@@ -806,6 +868,7 @@ class ResumeParser {
         return educationEntries;
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     finalizeEducation(education) {
         return {
             ...education,
@@ -813,6 +876,7 @@ class ResumeParser {
         };
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     looksLikeDegree(line) {
         const degreePatterns = [
             /\b(?:bachelor|master|phd|doctorate|associate|diploma)\b/i,
@@ -832,6 +896,7 @@ class ResumeParser {
         return matchesDegree && !isCoursework;
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     isEducationHeader(line) {
         const hasDegree = this.keywords.degrees.some(degree => 
             line.toLowerCase().includes(degree.toLowerCase())
@@ -851,6 +916,7 @@ class ResumeParser {
         return (hasDegree || hasInstitution) && hasDate;
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     parseEducationHeader(line) {
         const education = {
             degree: '',
@@ -926,18 +992,21 @@ class ResumeParser {
         return education;
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     containsDegree(text) {
         return this.keywords.degrees.some(degree => 
             text.toLowerCase().includes(degree.toLowerCase())
         );
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     containsInstitution(text) {
         return this.keywords.institutions.some(inst => 
             text.toLowerCase().includes(inst.toLowerCase())
         );
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     extractSkills(sections, text) {
         const skillsLines = sections.skills || sections.technical || sections.competencies || [];
         const skills = new Set();
@@ -961,6 +1030,7 @@ class ResumeParser {
         return skillsArray;
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     parseSkillsFromText(text, skills) {
         // Handle the specific format: "Programming/Scripting Languages: (Proficient) Java; (Familiar) Python, C, SQL"
         
@@ -980,6 +1050,7 @@ class ResumeParser {
         }
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     extractSkillsFromCategorizedText(text, skills) {
         // Remove proficiency indicators like "(Proficient)", "(Familiar)"
         let cleanText = text.replace(/\([^)]*\)/g, '');
@@ -1000,6 +1071,7 @@ class ResumeParser {
         }
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     isCategoryHeader(text) {
         if (!text || text.length === 0) return true;
         
@@ -1038,6 +1110,7 @@ class ResumeParser {
         return categoryPatterns.some(pattern => pattern.test(text));
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     extractContextualSkills(text, skills) {
         // Look for skills mentioned in context, but be more selective
         const allSkills = Object.values(this.keywords.skills).flat();
@@ -1072,6 +1145,7 @@ class ResumeParser {
         }
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     deduplicateSkills(skills) {
         const uniqueSkills = [];
         const seenSkills = new Map(); // Store lowercase -> preferred case mapping
@@ -1100,6 +1174,7 @@ class ResumeParser {
         return uniqueSkills;
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     isValidSkill(skill) {
         if (!skill || skill.length < 2 || skill.length > 30) return false; // Reduced max length
         
@@ -1176,6 +1251,7 @@ class ResumeParser {
         return true;
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     formatSkill(skill) {
         const specialCases = {
             'javascript': 'JavaScript',
@@ -1192,8 +1268,7 @@ class ResumeParser {
         return specialCases[skill.toLowerCase()] || skill;
     }
 
-
-
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     extractCertifications(sections) {
         const certLines = sections.certifications || sections.certificates || sections.licenses || [];
         const certifications = certLines.map(line => {
@@ -1212,6 +1287,7 @@ class ResumeParser {
         return certifications;
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     extractAchievements(sections) {
         const achievementLines = sections.achievements || sections.awards || sections.honors || [];
         const achievements = achievementLines.map(line => {
@@ -1230,6 +1306,7 @@ class ResumeParser {
         return achievements;
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     extractLanguages(sections) {
         const languageLines = sections.languages || [];
         const languages = languageLines.map(line => {
@@ -1249,6 +1326,7 @@ class ResumeParser {
         return languages;
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     extractDateFromLine(line) {
         // Try different date patterns in order of preference
         const datePatterns = [
@@ -1271,6 +1349,7 @@ class ResumeParser {
         return '';
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     cleanupOverlaps(resumeData) {
         // Additional cleanup to remove any remaining overlaps
         
@@ -1287,6 +1366,7 @@ class ResumeParser {
         }
     }
 
+    // EXACT COPY from pdf-scrapeV2.js - NO CHANGES
     calculateConfidence(resumeData) {
         let score = 0;
         
@@ -1306,16 +1386,7 @@ class ResumeParser {
         return Math.min(100, score);
     }
 
-    async saveToJSON(data, outputPath) {
-        try {
-            const jsonData = JSON.stringify(data, null, 2);
-            fs.writeFileSync(outputPath, jsonData, 'utf8');
-            console.log(`Resume data saved to: ${outputPath}`);
-        } catch (error) {
-            throw new Error(`Error saving JSON: ${error.message}`);
-        }
-    }
-
+    // Browser-compatible report generation (simplified from original)
     generateReport(resumeData) {
         console.log('\n=== ENHANCED RESUME PARSING REPORT ===');
         console.log(`Confidence Score: ${resumeData.metadata.confidenceScore}%`);
@@ -1346,56 +1417,5 @@ class ResumeParser {
     }
 }
 
-// Main execution function
-async function main() {
-    const parser = new ResumeParser();
-    
-    const args = process.argv.slice(2);
-    
-    if (args.length === 0) {
-        console.log('Usage: node enhanced-parser.js <pdf-file-path> [output-json-path]');
-        console.log('Example: node enhanced-parser.js ./resume.pdf ./resume-data.json');
-        process.exit(1);
-    }
-    
-    const pdfPath = args[0];
-    const outputPath = args[1] || path.join(
-        path.dirname(pdfPath), 
-        path.basename(pdfPath, '.pdf') + '-enhanced-parsed.json'
-    );
-    
-    if (!fs.existsSync(pdfPath)) {
-        console.error(`Error: PDF file not found: ${pdfPath}`);
-        process.exit(1);
-    }
-    
-    try {
-        const resumeData = await parser.parseResume(pdfPath);
-        await parser.saveToJSON(resumeData, outputPath);
-        parser.generateReport(resumeData);
-        
-    } catch (error) {
-        console.error(`Error: ${error.message}`);
-        process.exit(1);
-    }
-}
-
-// Export for use as module
-module.exports = { 
-    ResumeParser, 
-    parseSingleResume: async (resumePath, outputPath = null) => {
-        const parser = new ResumeParser();
-        const resumeData = await parser.parseResume(resumePath);
-        
-        if (outputPath) {
-            await parser.saveToJSON(resumeData, outputPath);
-        }
-        
-        return resumeData;
-    }
-};
-
-// Run if called directly
-if (require.main === module) {
-    main();
-}
+// Export for browser use
+window.BrowserResumeParser = BrowserResumeParser;
