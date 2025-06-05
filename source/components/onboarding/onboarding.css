@@ -86,6 +86,7 @@
   text-align: center;
   margin-bottom: 16px;
   font-weight: 500;
+  white-space: pre-line;
 }
 
 .tooltip-buttons {

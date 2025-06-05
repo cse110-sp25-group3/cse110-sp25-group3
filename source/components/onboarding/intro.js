@@ -22,17 +22,17 @@
     {
       imgSrc: './components/onboarding/job-search.png',
       title: 'Discover Your Dream Role',
-      desc: 'Welcome to JobSwipe! Dive into your Job Feed to quickly browse opportunities perfectly tailored to your skills, complete with a clear compatibility score for each role.'
+      desc: 'Welcome to JobSwipe! \nDive into your Job Feed to quickly browse opportunities perfectly tailored to your skills, complete with a clear compatibility score for each role.'
     },
     {
       imgSrc: './components/onboarding/resume.png',
       title: 'Effortless One-Tap Applications',
-      desc: 'Found a job you love? Just tap the checkmark to apply instantly. Say goodbye to lengthy forms and tedious steps.'
+      desc: 'Found a job you love? \nJust tap the checkmark to apply instantly. Say goodbye to lengthy forms and tedious steps.'
     },
     {
       imgSrc: './components/onboarding/applicant.png',
       title: 'Monitor Your Applications in Real-Time',
-      desc: 'Keep tabs on your career journey. Easily view the status of all your applications and stay updated every step of the way.'
+      desc: 'Keep tabs on your career journey. \nEasily view the status of all your applications and stay updated every step of the way.'
     }
   ];
 

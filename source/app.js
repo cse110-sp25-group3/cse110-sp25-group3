@@ -25,7 +25,9 @@ function loadPage() {
     if (hasSeenIntro && hasSeenOnboarding) {
       // Redirect to feed page instead of rendering in-place
       console.log('Redirecting completed user to feed page');
-      window.location.href = '/source/pages/feed/feed.html';
+      //window.location.href = '/source/pages/feed/feed.html';
+      window.location.href = '/source/pages/documents/documents.html';
+
       return;
     }
     

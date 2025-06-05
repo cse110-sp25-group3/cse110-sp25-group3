@@ -34,29 +34,29 @@
   },
   {
     name: 'tip2',
-    targetSelector: '#nav-menu a[href*="feed"]', // 选择包含 "feed" 的链接
-    text: 'The Job Feed page shows your skill match percentage for each position. Click "view detail" to see specific job and company information. Click ✅ at the bottom to apply for a job in one click, and click ❌ to quickly browse the next job.',
+    targetSelector: '#nav-menu a[href*="feed"]', 
+    text: 'The Job Feed page shows your skill match percentage for each position. \nClick "view detail" to see specific job and company information. \n\nClick ✅ at the bottom to apply for a job in one click, and click ❌ to quickly browse the next job.',
     placement: 'bottom-right',
     positionOffset: { left: -50, top: 0 }
   },
   {
     name: 'tip3',
     targetSelector: '#nav-menu a[href*="preferences"]', 
-    text: 'By setting your desired criteria at Preference page, our system can refine its recommendations, ensuring you receive suggestions for more accurate and relevant positions',
+    text: 'By setting your desired criteria here, our system can refine its recommendations, ensuring you receive suggestions for more accurate and relevant positions',
     placement: 'bottom-right',
     positionOffset: { left: -50, top: 0 }
   },
   {
     name: 'tip4',
     targetSelector: '#nav-menu a[href*="applications"]', 
-    text: 'At Applications page, you can easily view all the jobs you have applied to and track their current status, keeping you informed every step of the way.',
+    text: 'Here you can easily view all the jobs you have applied to and track their current status, keeping you informed every step of the way.',
     placement: 'bottom-right',
     positionOffset: { left: -50, top: 0 }
   },
   {
     name: 'tip5',
     targetSelector: '#nav-menu a[href*="documents"]', 
-    text: 'In Your Documents section, you can upload your resume here. Maintaining an up-to-date profile with your professional documents will significantly improve your chances of being better matched with suitable positions.',
+    text: 'Upload your resume in the Documents section. An updated profile greatly improves your skill matches. \nReady to see how well your skills align with top roles? \nClick finish button to upload your resume!',
     placement: 'bottom-right',
     positionOffset: { left: -50, top: -20 }
   }
@@ -267,6 +267,10 @@
     }
 
     cleanup() {
+        const allHighlights = this.container.querySelectorAll('.highlight-circle, .highlight-rect');
+        allHighlights.forEach(highlight => {
+            highlight.remove();
+        });
       if (this.highlightEl) {
         this.highlightEl.remove();
         this.highlightEl = null;
@@ -450,6 +454,13 @@
     handleTip1Interaction() {
       this.tip1Completed = true;
       
+      const highlightCircle = this.container.querySelector('.highlight-circle');
+        if (highlightCircle) {
+            highlightCircle.style.animation = 'none';
+            highlightCircle.style.opacity = '0';
+            highlightCircle.style.transition = 'opacity 0.3s ease';
+        }
+
       // clean up existing tooltip for tip1 
       if (this.tooltipEl && this.tooltipEl.parentNode) {
         this.tooltipEl.parentNode.removeChild(this.tooltipEl);
@@ -492,9 +503,9 @@
       this.container.style.display = 'none';
       Utils.markOnboardingComplete();
       this.tip1Completed = false; 
-      //setTimeout(() => {
-    //window.location.href = '/source/pages/feed/feed.html';
-  // }, 100);
+      setTimeout(() => {
+    window.location.href = '/source/pages/documents/documents.html';
+   }, 100);
     }
   }
 
