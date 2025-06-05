@@ -10,10 +10,10 @@ export function createHeader() {
     nav.id = 'nav-menu';
     nav.className="nav-menu hidden";
     [
-        { path: '/cse110-sp25-group3/source/pages/feed/feed.html',         label: 'Job Feed' },
-        { path: '/cse110-sp25-group3/source/pages/preferences/job-pref.html',   label: 'Job Preferences' },
-        { path: '/cse110-sp25-group3/source/pages/applications/view-app.html', label: 'View Applications' },
-        { path: '/cse110-sp25-group3/source/pages/documents/documents.html',         label: 'Your Documents' },
+        { path: '/source/pages/feed/feed.html',         label: 'Job Feed' },
+        { path: '/source/pages/preferences/job-pref.html',   label: 'Job Preferences' },
+        { path: '/source/pages/applications/view-app.html', label: 'View Applications' },
+        { path: '/source/pages/documents/documents.html',         label: 'Your Documents' },
       ].forEach(({path,label}) => {
         const a = document.createElement('a');
         a.href = path;
