@@ -24,44 +24,43 @@
   };
 
   const STEPS = [
-    {
-      name: 'tip1',
-      targetSelector: '.hamburger-btn',
-      text: 'Welcome! To begin, please click on the menu button. This will reveal the main navigation, allowing you to access all the powerful features of our platform.',
-      placement: 'right',
-      isCircle: true,
-      requiresInteraction: true
-    },
-    {
-      name: 'tip2',
-      targetSelector: '#nav-feed',
-      text: 'The Job Feed page shows your skill match percentage for each position. Click "view detail" to see specific job and company information. Click ✅ at the bottom to apply for a job in one click, and click ❌ to quickly browse the next job.',
-      placement: 'bottom-right',
-      positionOffset: { left: -50, top: 0 }
-    },
-    {
-      name: 'tip3',
-      targetSelector: '#nav-preferences',
-      text: 'By setting your desired criteria at Preference page, our system can refine its recommendations, ensuring you receive suggestions for more accurate and relevant positions',
-      placement: 'bottom-right',
-      positionOffset: { left: -50, top: 0 }
-    },
-    {
-      name: 'tip4',
-      targetSelector: '#nav-applications',
-      text: 'At Applications page, you can easily view all the jobs you have applied to and track their current status, keeping you informed every step of the way.',
-      placement: 'bottom-right',
-      positionOffset: { left: -50, top: 0 }
-    },
-    {
-      name: 'tip5',
-      targetSelector: '#nav-documents',
-      text: 'In Your Documents section, you can upload your resume here. Maintaining an up-to-date profile with your professional documents will significantly improve your chances of being better matched with suitable positions.',
-      placement: 'bottom-right',
-      positionOffset: { left: -50, top: -20 }
-    }
-  ];
-
+  {
+    name: 'tip1',
+    targetSelector: '.hamburger-btn',
+    text: 'Welcome! To begin, please click on the menu button. This will reveal the main navigation, allowing you to access all the powerful features of our platform.',
+    placement: 'right',
+    isCircle: true,
+    requiresInteraction: true
+  },
+  {
+    name: 'tip2',
+    targetSelector: '#nav-menu a[href*="feed"]', // 选择包含 "feed" 的链接
+    text: 'The Job Feed page shows your skill match percentage for each position. Click "view detail" to see specific job and company information. Click ✅ at the bottom to apply for a job in one click, and click ❌ to quickly browse the next job.',
+    placement: 'bottom-right',
+    positionOffset: { left: -50, top: 0 }
+  },
+  {
+    name: 'tip3',
+    targetSelector: '#nav-menu a[href*="preferences"]', 
+    text: 'By setting your desired criteria at Preference page, our system can refine its recommendations, ensuring you receive suggestions for more accurate and relevant positions',
+    placement: 'bottom-right',
+    positionOffset: { left: -50, top: 0 }
+  },
+  {
+    name: 'tip4',
+    targetSelector: '#nav-menu a[href*="applications"]', 
+    text: 'At Applications page, you can easily view all the jobs you have applied to and track their current status, keeping you informed every step of the way.',
+    placement: 'bottom-right',
+    positionOffset: { left: -50, top: 0 }
+  },
+  {
+    name: 'tip5',
+    targetSelector: '#nav-menu a[href*="documents"]', 
+    text: 'In Your Documents section, you can upload your resume here. Maintaining an up-to-date profile with your professional documents will significantly improve your chances of being better matched with suitable positions.',
+    placement: 'bottom-right',
+    positionOffset: { left: -50, top: -20 }
+  }
+];
   // UTILITY FUNCTIONS
   const Utils = {
     getPhoneRect: () => document.querySelector('.phone').getBoundingClientRect(),
@@ -376,48 +375,57 @@
       }
 
     renderStep(index) {
-      if (index < 0 || index >= STEPS.length) return;
- 
-      this.currentStep = index;
-      const step = STEPS[index];
-      const targetEl = document.querySelector(step.targetSelector);
+    if (index < 0 || index >= STEPS.length) return;
 
-      if (!targetEl) {
+    this.currentStep = index;
+    const step = STEPS[index];
+    const targetEl = document.querySelector(step.targetSelector);
+
+    if (!targetEl) {
+        console.log(`🔴 [ONBOARDING] Target element not found: ${step.targetSelector}`);
+        
+       
         if (index === 0) {
-          setTimeout(() => this.renderStep(index), 2000);
+        setTimeout(() => this.renderStep(index), 2000);
+        } else {
+        
+        console.log(`🔄 [ONBOARDING] Waiting for element: ${step.targetSelector}`);
+        setTimeout(() => this.renderStep(index), 500);
         }
         return;
-      }      
-      
-      const existingTooltips = document.querySelectorAll('.onboarding-tooltip');
-      if (existingTooltips.length > 1) {
+    }      
+    
+    console.log(`🟢 [ONBOARDING] Found target element for step ${index}:`, targetEl);
+    
+    const existingTooltips = document.querySelectorAll('.onboarding-tooltip');
+    if (existingTooltips.length > 1) {
         existingTooltips.forEach((tooltip, i) => {
-          if (i < existingTooltips.length - 1) {
+        if (i < existingTooltips.length - 1) {
             tooltip.remove();
-          }
+        }
         });
-      }
-      
-      this.stepRenderer.cleanup();
-      this.updateTooltipButtons(index);
-      
-      // check if tip1 is completed
-      if (index === 0 && this.tip1Completed) {
+    }
+    
+    this.stepRenderer.cleanup();
+    this.updateTooltipButtons(index);
+    
+    // check if tip1 is completed
+    if (index === 0 && this.tip1Completed) {
         this.updateTooltipContent('Excellent! You open the main menu, click Next to continue tutorial.');
         const nextBtn = this.tooltipEl.querySelector('.tooltip-next');
         nextBtn.disabled = false;
-      } else {
+    } else {
         this.updateTooltipContent(step.text);
         
         if (step.isCircle) {
-          this.stepRenderer.renderCircleHighlight(targetEl, () => this.handleTip1Interaction());
+        this.stepRenderer.renderCircleHighlight(targetEl, () => this.handleTip1Interaction());
         } else {
-          this.stepRenderer.renderRectHighlight(targetEl);
+        this.stepRenderer.renderRectHighlight(targetEl);
         }
-      }
+    }
 
-      TooltipPositioner.position(this.tooltipEl, targetEl, step.placement, step.positionOffset);
-      this.tooltipEl.classList.add('visible');
+    TooltipPositioner.position(this.tooltipEl, targetEl, step.placement, step.positionOffset);
+    this.tooltipEl.classList.add('visible');
     }
 
     updateTooltipButtons(index) {

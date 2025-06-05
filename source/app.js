@@ -24,11 +24,13 @@ function loadPage() {
     
     if (hasSeenIntro && hasSeenOnboarding) {
       // Redirect to feed page instead of rendering in-place
+      console.log('Redirecting completed user to feed page');
       window.location.href = '/source/pages/feed/feed.html';
       return;
     }
     
     // For users in onboarding process, don't render anything
+    // Let onboarding system handle the UI
     console.log('User in onboarding process, skipping page render');
     return;
   }
