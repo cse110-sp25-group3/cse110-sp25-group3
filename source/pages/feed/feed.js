@@ -213,6 +213,8 @@ function skipCurrentJob() {
 function applyToCurrentJob() {
   if (currentJobIndex < jobsData.length) {
     const currentCard = document.querySelector(".job-card.active");
+    const job = jobsData[currentJobIndex];
+    saveJobToLocalStorage(job);
     if (currentCard) {
       currentCard.classList.add("apply-animation");
       setTimeout(() => {
@@ -220,6 +222,26 @@ function applyToCurrentJob() {
         updateCardVisibility();
       }, 500);
     }
+  }
+}
+
+function saveJobToLocalStorage(job) {
+  const existing = JSON.parse(localStorage.getItem('appliedJobs')) || [];
+  const isDuplicate = existing.some(
+    (saved) =>
+      saved.companyName === job.companyName &&
+      saved.jobRole === job.jobRole &&
+      saved.dateSubmitted === job.dateSubmitted
+  );
+
+  if (!isDuplicate) {
+    const jobWithDate = {
+      ...job,
+      dateSubmitted: new Date().toISOString().split('T')[0]
+    };
+
+    existing.push(jobWithDate);
+    localStorage.setItem('appliedJobs', JSON.stringify(existing));
   }
 }
 
