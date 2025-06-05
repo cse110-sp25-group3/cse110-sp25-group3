@@ -298,7 +298,15 @@
     init() {
       if (Utils.isOnboardingCompleted()) return;
       
+      // check if to start onboarding
       if (Utils.shouldStartOnboarding()) {
+        this.waitForElements();
+      }
+
+      // Check localStorage flag to determine if onboarding should start
+      const shouldStart = localStorage.getItem('shouldStartOnboarding') === 'true';
+      if (shouldStart) {
+        // dont remove the flag, just wait for elements
         this.waitForElements();
       }
 
@@ -444,7 +452,6 @@
       
       // 200ms delay to ensure cleanup is complete
       setTimeout(() => {
-        // 重新创建提示框
         this.createTooltip();
         
         this.renderStep(0);
@@ -477,6 +484,9 @@
       this.container.style.display = 'none';
       Utils.markOnboardingComplete();
       this.tip1Completed = false; 
+      //setTimeout(() => {
+    //window.location.href = '/source/pages/feed/feed.html';
+  // }, 100);
     }
   }
 

@@ -11,7 +11,7 @@
 (function() {
   'use strict';
 
-  // =================== CONFIGURATION ===================
+  // CONFIGURATION 
   const CONFIG = {
     CONTAINER_ID: 'intro-container',
     STORAGE_KEY: 'hasSeenIntro',
@@ -22,17 +22,17 @@
     {
       imgSrc: './components/onboarding/job-search.png',
       title: 'Discover Your Dream Role',
-      desc: 'Swiftly browse jobs tailored to your field and see your compatibility.'
+      desc: 'Welcome to JobSwipe! Dive into your Job Feed to quickly browse opportunities perfectly tailored to your skills, complete with a clear compatibility score for each role.'
     },
     {
       imgSrc: './components/onboarding/resume.png',
-      title: 'One-Tap Apply, No Forms',
-      desc: 'Like it? Tap the check button. Simplify applications and skip tedious steps.'
+      title: 'Effortless One-Tap Applications',
+      desc: 'Found a job you love? Just tap the checkmark to apply instantly. Say goodbye to lengthy forms and tedious steps.'
     },
     {
       imgSrc: './components/onboarding/applicant.png',
-      title: 'Track Progress, Instantly',
-      desc: 'Easily view all your application statuses and stay updated on your job search.'
+      title: 'Monitor Your Applications in Real-Time',
+      desc: 'Keep tabs on your career journey. Easily view the status of all your applications and stay updated every step of the way.'
     }
   ];
 
@@ -157,9 +157,12 @@
     }
 
     startOnboarding() {
-      if (typeof window.startOnboarding === 'function') {
-        window.startOnboarding();
-      } 
+     localStorage.setItem('shouldStartOnboarding', 'true');//new
+    window.location.href = '/source/pages/feed/feed.html';
+
+    //if (typeof window.startOnboarding === 'function') {
+    //  window.startOnboarding();//old
+    //} 
     }
   }
 
