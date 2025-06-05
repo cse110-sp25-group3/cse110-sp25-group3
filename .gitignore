@@ -1,0 +1,14 @@
+# node_modules
+node_modules/
+
+# Jest coverage
+coverage/
+
+.vscode/
+*.code-workspace
+
+
+.DS_Store
+
+test.html
+

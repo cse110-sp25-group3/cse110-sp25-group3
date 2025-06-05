@@ -277,10 +277,8 @@
       }
       
       if (this.overlay) {
-        
         this.overlay.style.pointerEvents = 'none';
         this.overlay.remove();
-        
       }
       
     }
@@ -294,9 +292,9 @@
       this.tooltipEl = null;
       this.eventHandler = new EventHandler();
       this.stepRenderer = null;
-      this.hasStarted = false; // ✅ 新增：防止重复启动
+      this.hasStarted = false; // new
 
-      this.tip1Completed = false; // 新增：跟踪tip1是否已完成
+      this.tip1Completed = false; //
     }
 
     init() {
@@ -400,7 +398,7 @@
 
       console.log(`✅ Rendering step ${index + 1}: ${step.name}`);
       
-      // 清理任何旧的tooltip（防止重复）
+      
       const existingTooltips = document.querySelectorAll('.onboarding-tooltip');
       if (existingTooltips.length > 1) {
         console.warn(`⚠️ Found ${existingTooltips.length} tooltips, cleaning up extras`);
@@ -414,16 +412,14 @@
       this.stepRenderer.cleanup();
       this.updateTooltipButtons(index);
       
-      // 对于tip1，检查是否已经完成交互
+      // check if tip1 is completed
       if (index === 0 && this.tip1Completed) {
         this.updateTooltipContent('Great! The menu is open. Click "Next" to continue the tour.');
         const nextBtn = this.tooltipEl.querySelector('.tooltip-next');
         nextBtn.disabled = false;
-        // tip1完成后不需要任何高亮
       } else {
         this.updateTooltipContent(step.text);
         
-        // 只在需要时渲染高亮
         if (step.isCircle) {
           this.stepRenderer.renderCircleHighlight(targetEl, () => this.handleTip1Interaction());
         } else {
@@ -442,7 +438,7 @@
       prevBtn.style.display = index <= 1 ? 'none' : 'inline-block';
       nextBtn.textContent = index === STEPS.length - 1 ? 'Finish' : 'Next';
       
-      // 只在tip1未完成时禁用Next按钮
+      // for tip1, disable next button until interaction
       if (index === 0 && !this.tip1Completed) {
         nextBtn.disabled = true;
       } else {
@@ -459,25 +455,22 @@
       console.log('Current tooltip element:', this.tooltipEl);
       console.log('Tooltip parent:', this.tooltipEl.parentNode);
       
-      // 标记tip1已完成
       this.tip1Completed = true;
       
-      // 完全移除当前的提示框
+      // clean up existing tooltip for tip1 
       if (this.tooltipEl && this.tooltipEl.parentNode) {
         this.tooltipEl.parentNode.removeChild(this.tooltipEl);
         this.tooltipEl = null;
         console.log('✅ Tooltip element removed from DOM');
       }
       
-      // 清理圆形高亮
       this.stepRenderer.cleanup();
       
-      // 200ms后重新创建并显示新的提示框
+      // 200ms delay to ensure cleanup is complete
       setTimeout(() => {
         // 重新创建提示框
         this.createTooltip();
         
-        // 重新渲染当前步骤（仍然是step 0，但内容会更新）
         this.renderStep(0);
         
         console.log('✅ New tooltip created and shown');
@@ -504,8 +497,7 @@
         console.warn('❌ Invalid step index:', index);
         return;
       }
-      
-      // 如果从tip1返回到其他步骤，重置tip1完成状态
+    
       if (index === 0) {
         this.tip1Completed = false;
       }
@@ -519,7 +511,7 @@
       this.stepRenderer.cleanup();
       this.container.style.display = 'none';
       Utils.markOnboardingComplete();
-      this.tip1Completed = false; // 重置状态
+      this.tip1Completed = false; 
     }
   }
 
@@ -536,4 +528,17 @@
   };
 
   console.log('✅ Onboarding system initialized (refactored)');
+    // =================== TEST EXPORTS ===================
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+      OnboardingManager,
+      StepRenderer,
+      EventHandler,
+      TooltipPositioner,
+      Utils,
+    
+      CONFIG,
+      STEPS
+    };
+  }
 })();

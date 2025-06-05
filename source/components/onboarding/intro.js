@@ -146,7 +146,6 @@
       this.isFadingOut = true;
       this.container.classList.add('fade-out');
 
-
       setTimeout(() => {
         this.container.style.display = 'none';
         this.container.style.opacity = '1';
@@ -171,5 +170,14 @@
   // =================== INITIALIZATION ===================
   const introManager = new IntroManager();
   introManager.init();
+
+  // =================== TEST EXPORTS ===================
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+      IntroManager,
+      CONFIG,
+      PAGES
+    };
+  }
 
 })();
