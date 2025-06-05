@@ -11,7 +11,7 @@ export function renderApplications(container) {
             <div class="end-message">
                 <h3>No applications yet!</h3>
                 <p>Let's get applying!</p>
-                <button id='noapp'><a href='../../pages/feed/feed.html'>Feed Page</a></button>
+                <button id='noapp'><a href='../../pages/feed/feed.html'>Job Feed</a></button>
             </div>
         `;
         return;
