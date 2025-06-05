@@ -103,12 +103,12 @@ function createJobCards(container) {
             <h3 class="job-title-back">${job.jobRole}</h3>
             <div class="meta">
               <div class="column">
-                <span><img src='assets/location.svg'>${job.location}</span>
-                <span><img src='assets/${workModelSvg}'>${workModelText}</span>
+                <span><img src='../applications/assets/location.svg'>${job.location}</span>
+                <span><img src='../applications/assets/${workModelSvg}'>${workModelText}</span>
               </div>
               <div class="column">
-                <span><img src='assets/pay.svg'>${job.pay}</span>
-                <span>Posted ${job.datePosted}</span>
+                <span><img src='../applications/assets/pay.svg'>${job.pay}</span>
+                <span><img src='../applications/assets/check.svg'>Posted ${job.datePosted}</span>
               </div>
             </div>
             <section class="details">
