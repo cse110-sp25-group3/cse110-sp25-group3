@@ -10,7 +10,7 @@ const pageMap = {
   'feed.html':              { render: renderFeed,         title: 'Job Feed' },
   'view-app.html': { render: renderApplications, title: 'Your Applications' },
   'job-pref.html':   { render: renderPreferences,  title: 'Job Preferences' },
-  'documents.html':         { render: renderDocuments,    title: 'Documents' },
+  'documents.html':         { render: renderDocuments,    title: 'Your Documents' },
 };
 window.loadPage= function() {
   //const path = window.location.pathname;
@@ -45,14 +45,7 @@ window.addEventListener('popstate', () => {
   // If the user navigates forward/backward, still render the new page
   window.loadPage();
 });
-// ================================
-// After rendering the current page, start Onboarding (if the user hasn't seen it yet)
-// ================================
-// if (typeof startOnboardingIfNeeded === 'function') {
-  // startOnboardingIfNeeded will internally check localStorage;
-  // it only shows up on the first visit or after clearing records
-  // startOnboardingIfNeeded();
-// }
+
 }
 
 

@@ -11,7 +11,7 @@
 (function() {
   'use strict';
 
-  // =================== CONFIGURATION ===================
+  // CONFIGURATION 
   const CONFIG = {
     CONTAINER_ID: 'onboarding-container',
     MAX_WAIT_ATTEMPTS: 10,
@@ -62,7 +62,7 @@
     }
   ];
 
-  // =================== UTILITY FUNCTIONS ===================
+  // UTILITY FUNCTIONS
   const Utils = {
     getPhoneRect: () => document.querySelector('.phone').getBoundingClientRect(),
     
@@ -76,7 +76,6 @@
         } else if (attempts < maxAttempts) {
           setTimeout(check, CONFIG.WAIT_INTERVAL);
         } else {
-          console.warn(`Element ${selector} not found after ${maxAttempts} attempts`);
           callback(null);
         }
       };
@@ -95,7 +94,7 @@
     }
   };
 
-  // =================== EVENT HANDLER ===================
+  // EVENT HANDLER 
   class EventHandler {
     constructor() {
       this.listeners = new Map();
@@ -127,17 +126,15 @@
     }
   }
 
-  // =================== TOOLTIP POSITIONER ===================
+  // TOOLTIP POSITIONER
   class TooltipPositioner {
     static position(tooltipEl, targetEl, placement, offset = {}) {
       const targetRect = targetEl.getBoundingClientRect();
       const phoneRect = Utils.getPhoneRect();
       
       // Get tooltip dimensions
-      tooltipEl.style.visibility = 'hidden';
       tooltipEl.classList.add('visible');
       const tooltipRect = tooltipEl.getBoundingClientRect();
-      tooltipEl.style.visibility = 'visible';
 
       let left, top;
 
@@ -171,7 +168,7 @@
     }
   }
 
-  // =================== STEP RENDERER ===================
+  // STEP RENDERER 
   class StepRenderer {
     constructor(container, eventHandler) {
       this.container = container;
@@ -285,7 +282,7 @@
     }
   }
 
-  // =================== MAIN ONBOARDING MANAGER ===================
+  // MAIN ONBOARDING MANAGER 
   class OnboardingManager {
     constructor() {
       this.currentStep = 0;
@@ -293,9 +290,9 @@
       this.tooltipEl = null;
       this.eventHandler = new EventHandler();
       this.stepRenderer = null;
-      this.hasStarted = false; // new
+      this.hasStarted = false; 
 
-      this.tip1Completed = false; //
+      this.tip1Completed = false; 
     }
 
     init() {
@@ -329,14 +326,10 @@
     }
 
     start() {
-      console.log('🚀 Starting onboarding...');
-      
       this.container = document.getElementById(CONFIG.CONTAINER_ID);
       if (!this.container) {
-        console.error('Onboarding container not found!');
         return;
       }
-
       this.container.style.display = 'block';
       this.stepRenderer = new StepRenderer(this.container, this.eventHandler);
       
@@ -347,7 +340,6 @@
     createTooltip() {
       
       if (this.tooltipEl && this.tooltipEl.parentNode) {
-        console.log('🧹 Removing existing tooltip before creating new one');
         this.tooltipEl.parentNode.removeChild(this.tooltipEl);
       }
       
@@ -367,42 +359,30 @@
       const nextBtn = this.tooltipEl.querySelector('.tooltip-next');
       
       prevBtn.addEventListener('click', () => {
-        console.log('🔙 Previous button clicked');
         this.goToStep(this.currentStep - 1);
       });
       
       nextBtn.addEventListener('click', () => {
-        console.log('⏭️ Next button clicked, current step:', this.currentStep);
         this.handleNext();
       });
-      
-      console.log('✅ Tooltip created:', this.tooltipEl);
-    }
+      }
 
     renderStep(index) {
       if (index < 0 || index >= STEPS.length) return;
-      
-      console.log(`📍 renderStep called with index: ${index}`);
-      console.log('Current tooltips in DOM:', document.querySelectorAll('.onboarding-tooltip').length);
-      
+ 
       this.currentStep = index;
       const step = STEPS[index];
       const targetEl = document.querySelector(step.targetSelector);
 
       if (!targetEl) {
-        console.warn(`Target element not found: ${step.targetSelector}`);
         if (index === 0) {
           setTimeout(() => this.renderStep(index), 2000);
         }
         return;
-      }
-
-      console.log(`✅ Rendering step ${index + 1}: ${step.name}`);
-      
+      }      
       
       const existingTooltips = document.querySelectorAll('.onboarding-tooltip');
       if (existingTooltips.length > 1) {
-        console.warn(`⚠️ Found ${existingTooltips.length} tooltips, cleaning up extras`);
         existingTooltips.forEach((tooltip, i) => {
           if (i < existingTooltips.length - 1) {
             tooltip.remove();
@@ -452,17 +432,12 @@
     }
 
     handleTip1Interaction() {
-      console.log('🎯 Tip1 interaction triggered');
-      console.log('Current tooltip element:', this.tooltipEl);
-      console.log('Tooltip parent:', this.tooltipEl.parentNode);
-      
       this.tip1Completed = true;
       
       // clean up existing tooltip for tip1 
       if (this.tooltipEl && this.tooltipEl.parentNode) {
         this.tooltipEl.parentNode.removeChild(this.tooltipEl);
         this.tooltipEl = null;
-        console.log('✅ Tooltip element removed from DOM');
       }
       
       this.stepRenderer.cleanup();
@@ -473,29 +448,19 @@
         this.createTooltip();
         
         this.renderStep(0);
-        
-        console.log('✅ New tooltip created and shown');
-        console.log('New tooltip element:', this.tooltipEl);
       }, 200);
     }
 
     handleNext() {
-      console.log('🎯 handleNext called, current step:', this.currentStep, 'total steps:', STEPS.length);
-      
       if (this.currentStep < STEPS.length - 1) {
-        console.log('➡️ Going to next step:', this.currentStep + 1);
         this.goToStep(this.currentStep + 1);
       } else {
-        console.log('🏁 Finishing onboarding');
         this.finish();
       }
     }
 
     goToStep(index) {
-      console.log('🔄 goToStep called with index:', index);
-      
       if (index < 0 || index >= STEPS.length) {
-        console.warn('❌ Invalid step index:', index);
         return;
       }
     
@@ -508,7 +473,6 @@
     }
 
     finish() {
-      console.log('✅ Onboarding completed');
       this.stepRenderer.cleanup();
       this.container.style.display = 'none';
       Utils.markOnboardingComplete();
@@ -528,7 +492,6 @@
     onboardingManager.init();
   };
 
-  console.log('✅ Onboarding system initialized (refactored)');
     // =================== TEST EXPORTS ===================
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = {

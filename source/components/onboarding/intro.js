@@ -36,7 +36,7 @@
     }
   ];
 
-  // =================== INTRO MANAGER ===================
+  // INTRO MANAGER
   class IntroManager {
     constructor() {
       this.currentIndex = 0;
@@ -47,7 +47,6 @@
 
     init() {
       if (!this.container) {
-        console.error('Intro container not found');
         return;
       }
 
@@ -159,11 +158,8 @@
 
     startOnboarding() {
       if (typeof window.startOnboarding === 'function') {
-        console.log('Starting onboarding from intro');
         window.startOnboarding();
-      } else {
-        console.warn('Onboarding function not available');
-      }
+      } 
     }
   }
 

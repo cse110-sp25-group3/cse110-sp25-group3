@@ -48,21 +48,21 @@ button {
     flex-direction: column;
 }
 
-/* =================== LAYERING SYSTEM =================== */
+/* LAYERING SYSTEM(onboarding needed)*/
 
-/* 1. Intro container - highest priority when visible */
+/* 1. Intro container - highest visible */
 #intro-container {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 10000; /* Highest layer */
+    z-index: 10000; 
     display: none;
     overflow: hidden;
 }
 
-/* 2. Onboarding container - wraps all onboarding elements */
+/* 2. Onboarding container  */
 #onboarding-container {
     position: absolute;
     top: 0;
@@ -72,13 +72,13 @@ button {
     z-index: 9000; /* Higher than app content */
     display: none;
     overflow: hidden;
-    pointer-events: none; /* Allow clicks to pass through by default */
+    pointer-events: none;
 }
 
-/* 3. Main app content - lowest priority */
+/* 3. Main app content */
 #app {
     position: relative;
-    z-index: 1000; /* Base app layer */
+    z-index: 1000; 
     min-height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
