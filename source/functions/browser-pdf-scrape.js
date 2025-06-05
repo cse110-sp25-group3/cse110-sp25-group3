@@ -1,8 +1,4 @@
-const fs = require('fs');
-const path = require('path');
-const pdfParse = require('pdf-parse');
-
-class ResumeParser {
+class BrowserResumeParser {
     constructor() {
         this.initializePatterns();
         this.initializeKeywords();
@@ -153,17 +149,46 @@ class ResumeParser {
         };
     }
 
-    async parseResume(filePath) {
+    async parseResumeFromFile(file) {
         try {
-            console.log(`Parsing resume: ${filePath}`);
+            console.log(`Parsing resume: ${file.name}`);
             
             // Reset extracted data tracker for new resume
             this.extractedData = new Set();
             
-            // Extract raw text from PDF
-            const dataBuffer = fs.readFileSync(filePath);
-            const pdfData = await pdfParse(dataBuffer);
-            const rawText = pdfData.text;
+            // Extract raw text from PDF using PDF.js (browser compatible)
+            const arrayBuffer = await file.arrayBuffer();
+            const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
+            
+            let rawText = '';
+            for (let i = 1; i <= pdf.numPages; i++) {
+                const page = await pdf.getPage(i);
+                const textContent = await page.getTextContent();
+                
+                // Better text reconstruction with positioning
+                let pageText = '';
+                let lastY = null;
+                let lastX = null;
+                
+                for (const item of textContent.items) {
+                    const y = item.transform[5];  // Y position
+                    const x = item.transform[4];  // X position
+                    
+                    if (lastY !== null && Math.abs(y - lastY) > 5) {
+                        // New line detected
+                        pageText += '\n';
+                    } else if (lastX !== null && (x - lastX) > 10) {
+                        // Significant horizontal gap - add space
+                        pageText += ' ';
+                    }
+                    
+                    pageText += item.str;
+                    lastY = y;
+                    lastX = x + (item.width || 0);
+                }
+                
+                rawText += pageText + '\n';
+            }
             
             // Preprocess text
             const cleanText = this.preprocessText(rawText);
@@ -175,8 +200,8 @@ class ResumeParser {
             // Extract all information with priority order to prevent overlaps
             const resumeData = {
                 metadata: {
-                    filename: path.basename(filePath),
-                    totalPages: pdfData.numpages,
+                    filename: file.name,
+                    totalPages: pdf.numPages,
                     parseDate: new Date().toISOString(),
                     wordCount: cleanText.split(/\s+/).length,
                     lineCount: lines.length
@@ -193,10 +218,10 @@ class ResumeParser {
                 rawText: rawText.substring(0, 2000) + '...'
             };
             
-            // Final cleanup to remove any remaining overlaps
+            // Final cleanup to remove any remaining overlaps 
             this.cleanupOverlaps(resumeData);
             
-            // Calculate confidence score
+            // Calculate confidence score 
             resumeData.metadata.confidenceScore = this.calculateConfidence(resumeData);
             
             return resumeData;
@@ -273,7 +298,7 @@ class ResumeParser {
         
         return sections;
     }
-
+ 
     classifyLine(line, index, allLines) {
         if (!line || line.length === 0) return null;
         
@@ -451,7 +476,7 @@ class ResumeParser {
         const lowerLine = line.toLowerCase();
         return educationKeywords.some(keyword => lowerLine.includes(keyword));
     }
-
+ 
     containsExperienceKeywords(line) {
         const experienceKeywords = [
             'experience', 'work', 'employment', 'career', 'professional',
@@ -461,7 +486,7 @@ class ResumeParser {
         const lowerLine = line.toLowerCase();
         return experienceKeywords.some(keyword => lowerLine.includes(keyword));
     }
-
+ 
     containsInstitutionName(location) {
         // Check if location contains common institution indicators
         const institutionIndicators = [
@@ -472,7 +497,7 @@ class ResumeParser {
         const lowerLocation = location.toLowerCase();
         return institutionIndicators.some(indicator => lowerLocation.includes(indicator));
     }
-
+ 
     containsCompanyName(location) {
         // Check if location contains common company indicators
         const companyIndicators = [
@@ -483,7 +508,7 @@ class ResumeParser {
         const lowerLocation = location.toLowerCase();
         return companyIndicators.some(indicator => lowerLocation.includes(indicator));
     }
-
+ 
     extractDomainFromUrl(url) {
         try {
             const cleaned = url.replace(/^(https?:\/\/)?(www\.)?/, '');
@@ -493,7 +518,7 @@ class ResumeParser {
             return '';
         }
     }
-
+ 
     extractName(lines) {
         // Look for name in first 5 lines
         for (let i = 0; i < Math.min(5, lines.length); i++) {
@@ -510,7 +535,7 @@ class ResumeParser {
         
         return null;
     }
-
+ 
     isLikelyName(line) {
         if (!line || line.length > 60 || line.length < 2) return false;
         
@@ -534,7 +559,7 @@ class ResumeParser {
         
         return isValidFormat;
     }
-
+ 
     normalizePhone(phone) {
         const digits = phone.replace(/\D/g, '');
         if (digits.length === 10) {
@@ -544,12 +569,12 @@ class ResumeParser {
         }
         return phone;
     }
-
+ 
     extractSummary(sections) {
         const summaryContent = sections.summary || sections.objective || sections.profile || [];
         return summaryContent.join(' ').trim();
     }
-
+ 
     extractExperience(sections) {
         const experienceLines = sections.experience || sections.work || [];
         if (experienceLines.length === 0) return [];
@@ -580,7 +605,7 @@ class ResumeParser {
 
         return experiences;
     }
-
+ 
     cleanTitleFromDateFragments(title) {
         if (!title) return title;
         
@@ -596,7 +621,7 @@ class ResumeParser {
             .replace(/\s+/g, ' ')
             .trim();
     }
-
+ 
     isExperienceHeader(line) {
         const hasJobTitle = this.keywords.jobTitles.some(title => 
             line.toLowerCase().includes(title.toLowerCase())
@@ -621,7 +646,7 @@ class ResumeParser {
 
         return (hasJobTitle || hasCompanyIndicators || hasAtPattern) && (hasDatePattern || hasDelimiters);
     }
-
+ 
     parseExperienceHeader(line) {
         const experience = {
             title: '',
@@ -714,27 +739,27 @@ class ResumeParser {
 
         return experience;
     }
-
+ 
     looksLikeJobTitle(text) {
         return this.keywords.jobTitles.some(title => 
             text.toLowerCase().includes(title.toLowerCase())
         );
     }
-
+ 
     looksLikeCompany(text) {
         return this.keywords.companies.some(company => 
             text.toLowerCase().includes(company.toLowerCase())
         ) || /\b(inc|corp|llc|ltd|co)\b/i.test(text);
     }
-
+ 
     looksLikeLocation(text) {
         return this.patterns.location.test(text) && text.length < 50;
     }
-
+ 
     finalizeExperience(experience) {
         return experience;
     }
-
+ 
     cleanInstitutionFromDateFragments(institution) {
         if (!institution) return institution;
         
@@ -749,7 +774,7 @@ class ResumeParser {
             .replace(/\s+/g, ' ')
             .trim();
     }
-
+ 
     extractYearFromDate(dateString) {
         // Extract the most recent/relevant year from date string
         const years = dateString.match(/\b(19|20)\d{2}\b/g);
@@ -759,7 +784,7 @@ class ResumeParser {
         }
         return '';
     }
-
+ 
     extractEducation(sections) {
         const educationLines = sections.education || [];
         if (educationLines.length === 0) return [];
@@ -805,14 +830,14 @@ class ResumeParser {
 
         return educationEntries;
     }
-
+ 
     finalizeEducation(education) {
         return {
             ...education,
             details: education.details.join(' ').trim()
         };
     }
-
+ 
     looksLikeDegree(line) {
         const degreePatterns = [
             /\b(?:bachelor|master|phd|doctorate|associate|diploma)\b/i,
@@ -831,7 +856,7 @@ class ResumeParser {
         
         return matchesDegree && !isCoursework;
     }
-
+ 
     isEducationHeader(line) {
         const hasDegree = this.keywords.degrees.some(degree => 
             line.toLowerCase().includes(degree.toLowerCase())
@@ -850,7 +875,7 @@ class ResumeParser {
 
         return (hasDegree || hasInstitution) && hasDate;
     }
-
+ 
     parseEducationHeader(line) {
         const education = {
             degree: '',
@@ -925,19 +950,19 @@ class ResumeParser {
 
         return education;
     }
-
+ 
     containsDegree(text) {
         return this.keywords.degrees.some(degree => 
             text.toLowerCase().includes(degree.toLowerCase())
         );
     }
-
+ 
     containsInstitution(text) {
         return this.keywords.institutions.some(inst => 
             text.toLowerCase().includes(inst.toLowerCase())
         );
     }
-
+ 
     extractSkills(sections, text) {
         const skillsLines = sections.skills || sections.technical || sections.competencies || [];
         const skills = new Set();
@@ -960,7 +985,7 @@ class ResumeParser {
         
         return skillsArray;
     }
-
+ 
     parseSkillsFromText(text, skills) {
         // Handle the specific format: "Programming/Scripting Languages: (Proficient) Java; (Familiar) Python, C, SQL"
         
@@ -979,7 +1004,7 @@ class ResumeParser {
             }
         }
     }
-
+ 
     extractSkillsFromCategorizedText(text, skills) {
         // Remove proficiency indicators like "(Proficient)", "(Familiar)"
         let cleanText = text.replace(/\([^)]*\)/g, '');
@@ -999,7 +1024,7 @@ class ResumeParser {
             }
         }
     }
-
+ 
     isCategoryHeader(text) {
         if (!text || text.length === 0) return true;
         
@@ -1037,7 +1062,7 @@ class ResumeParser {
         
         return categoryPatterns.some(pattern => pattern.test(text));
     }
-
+ 
     extractContextualSkills(text, skills) {
         // Look for skills mentioned in context, but be more selective
         const allSkills = Object.values(this.keywords.skills).flat();
@@ -1071,7 +1096,7 @@ class ResumeParser {
             }
         }
     }
-
+ 
     deduplicateSkills(skills) {
         const uniqueSkills = [];
         const seenSkills = new Map(); // Store lowercase -> preferred case mapping
@@ -1099,7 +1124,7 @@ class ResumeParser {
         
         return uniqueSkills;
     }
-
+ 
     isValidSkill(skill) {
         if (!skill || skill.length < 2 || skill.length > 30) return false; // Reduced max length
         
@@ -1175,7 +1200,7 @@ class ResumeParser {
         
         return true;
     }
-
+ 
     formatSkill(skill) {
         const specialCases = {
             'javascript': 'JavaScript',
@@ -1191,9 +1216,7 @@ class ResumeParser {
         
         return specialCases[skill.toLowerCase()] || skill;
     }
-
-
-
+ 
     extractCertifications(sections) {
         const certLines = sections.certifications || sections.certificates || sections.licenses || [];
         const certifications = certLines.map(line => {
@@ -1211,7 +1234,7 @@ class ResumeParser {
 
         return certifications;
     }
-
+ 
     extractAchievements(sections) {
         const achievementLines = sections.achievements || sections.awards || sections.honors || [];
         const achievements = achievementLines.map(line => {
@@ -1229,7 +1252,7 @@ class ResumeParser {
 
         return achievements;
     }
-
+ 
     extractLanguages(sections) {
         const languageLines = sections.languages || [];
         const languages = languageLines.map(line => {
@@ -1248,7 +1271,7 @@ class ResumeParser {
 
         return languages;
     }
-
+ 
     extractDateFromLine(line) {
         // Try different date patterns in order of preference
         const datePatterns = [
@@ -1270,7 +1293,7 @@ class ResumeParser {
         
         return '';
     }
-
+ 
     cleanupOverlaps(resumeData) {
         // Additional cleanup to remove any remaining overlaps
         
@@ -1286,7 +1309,7 @@ class ResumeParser {
             resumeData.skills = this.deduplicateSkills(resumeData.skills);
         }
     }
-
+ 
     calculateConfidence(resumeData) {
         let score = 0;
         
@@ -1305,97 +1328,7 @@ class ResumeParser {
         
         return Math.min(100, score);
     }
-
-    async saveToJSON(data, outputPath) {
-        try {
-            const jsonData = JSON.stringify(data, null, 2);
-            fs.writeFileSync(outputPath, jsonData, 'utf8');
-            console.log(`Resume data saved to: ${outputPath}`);
-        } catch (error) {
-            throw new Error(`Error saving JSON: ${error.message}`);
-        }
-    }
-
-    generateReport(resumeData) {
-        console.log('\n=== ENHANCED RESUME PARSING REPORT ===');
-        console.log(`Confidence Score: ${resumeData.metadata.confidenceScore}%`);
-        console.log(`File: ${resumeData.metadata.filename}`);
-        console.log(`Pages: ${resumeData.metadata.totalPages}`);
-        console.log(`Words: ${resumeData.metadata.wordCount}`);
-        
-        console.log(`\nContact Information:`);
-        console.log(`  Name: ${resumeData.contact.name || 'Not found'}`);
-        console.log(`  Email: ${resumeData.contact.email || 'Not found'}`);
-        console.log(`  Phone: ${resumeData.contact.phone || 'Not found'}`);
-        console.log(`  Location: ${resumeData.contact.location || 'Not found'}`);
-        
-        console.log(`\nSections Identified: ${resumeData.sections.join(', ')}`);
-        
-        console.log(`\nContent Summary:`);
-        console.log(`  Experience entries: ${resumeData.experience.length}`);
-        console.log(`  Education entries: ${resumeData.education.length}`);
-        console.log(`  Skills found: ${resumeData.skills.length}`);
-        console.log(`  Certifications: ${resumeData.certifications.length}`);
-        
-        if (resumeData.skills.length > 0) {
-            console.log(`\nSkills:`);
-            console.log(`  ${resumeData.skills.slice(0, 10).join(', ')}${resumeData.skills.length > 10 ? '...' : ''}`);
-        }
-        
-        console.log(`\n=== END REPORT ===\n`);
-    }
 }
 
-// Main execution function
-async function main() {
-    const parser = new ResumeParser();
-    
-    const args = process.argv.slice(2);
-    
-    if (args.length === 0) {
-        console.log('Usage: node enhanced-parser.js <pdf-file-path> [output-json-path]');
-        console.log('Example: node enhanced-parser.js ./resume.pdf ./resume-data.json');
-        process.exit(1);
-    }
-    
-    const pdfPath = args[0];
-    const outputPath = args[1] || path.join(
-        path.dirname(pdfPath), 
-        path.basename(pdfPath, '.pdf') + '-enhanced-parsed.json'
-    );
-    
-    if (!fs.existsSync(pdfPath)) {
-        console.error(`Error: PDF file not found: ${pdfPath}`);
-        process.exit(1);
-    }
-    
-    try {
-        const resumeData = await parser.parseResume(pdfPath);
-        await parser.saveToJSON(resumeData, outputPath);
-        parser.generateReport(resumeData);
-        
-    } catch (error) {
-        console.error(`Error: ${error.message}`);
-        process.exit(1);
-    }
-}
-
-// Export for use as module
-module.exports = { 
-    ResumeParser, 
-    parseSingleResume: async (resumePath, outputPath = null) => {
-        const parser = new ResumeParser();
-        const resumeData = await parser.parseResume(resumePath);
-        
-        if (outputPath) {
-            await parser.saveToJSON(resumeData, outputPath);
-        }
-        
-        return resumeData;
-    }
-};
-
-// Run if called directly
-if (require.main === module) {
-    main();
-}
+// Export for browser use
+window.BrowserResumeParser = BrowserResumeParser;
