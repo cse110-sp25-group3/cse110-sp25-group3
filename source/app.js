@@ -6,21 +6,22 @@ import { renderApplications } from './pages/applications/view-applications.js';
 import { renderPreferences }  from './pages/preferences/job-preferences.js'; 
 import { renderDocuments }    from './pages/documents/documents.js';
 
+// 1) Now using the **exact** pathname as keys
 const pageMap = {
-  'feed.html':              { render: renderFeed,         title: 'Job Feed' },
-  'view-app.html': { render: renderApplications, title: 'Your Applications' },
-  'job-pref.html':   { render: renderPreferences,  title: 'Job Preferences' },
-  'documents.html':         { render: renderDocuments,    title: 'Documents' },
+  '/source/pages/feed/feed.html':         { render: renderFeed,         title: 'Job Feed' },
+  '/source/pages/applications/view-app.html': { render: renderApplications, title: 'Your Applications' },
+  '/source/pages/preferences/job-pref.html':   { render: renderPreferences,  title: 'Job Preferences' },
+  '/source/pages/documents/documents.html':    { render: renderDocuments,    title: 'Your Documents' },
 };
+
 function loadPage() {
   const path = window.location.pathname;  
   console.log('Current path:', path);
 
-  // find the first key that the path ends with
-  const key = Object
-    .keys(pageMap)
-    .find(k => path.endsWith(k))
-    || 'feed.html';
+  // 2) Look up the exact pathname in pageMap; fallback to feed
+  const key = pageMap[path]
+    ? path
+    : '/source/pages/feed/feed.html';
 
   console.log('Matched key:', key);
 
