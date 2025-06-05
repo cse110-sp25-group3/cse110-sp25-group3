@@ -8,13 +8,29 @@
     <link rel="stylesheet" href="../../components/header.css" />
 
     <title>Job Feed</title>
+  <!-- add Onboarding styles -->
+    <link rel="stylesheet" href="../../components/onboarding/intro.css" />
+    <link rel="stylesheet" href="../../components/onboarding/onboarding.css" />
   </head>
   <body>
     <div class="phone">
+      <!--add Onboarding container -->
+      <div id="onboarding-container" style="display: none;">
+        <!-- Onboarding elements will be created by onboarding.js -->
+      </div>
+
+      <!-- Main app content -->
       <div id="app">
-        <div class="content"></div>
+        <div id="content">
+          <!-- This will be populated by app.js -->
+        </div>
       </div>
     </div>
+    
+    <!-- add Onboarding scripts -->
+    <script src="../../components/onboarding/intro.js"></script>
+    <script src="../../components/onboarding/onboarding.js"></script>
+    
     <script type="module" src="../../app.js"></script>
   </body>
 </html>
