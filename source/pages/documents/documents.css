@@ -1,0 +1,293 @@
+/* documents.css */
+
+/* Container sections */
+.section {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 1rem 1rem;
+  margin-bottom: 2rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.1);
+}
+
+/* Section titles */
+.section-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #1d4ed8;
+  margin-bottom: 1rem;
+  font-family: 'Open-Sans', sans-serif;
+}
+
+/* Upload area */
+.upload-area {
+  margin-bottom: 1rem;
+}
+
+.upload-area button {
+  cursor: pointer;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 0.5rem 1.3rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  font-family: 'Open-Sans', sans-serif;
+  transition: background-color 0.3s ease;
+}
+
+.upload-area button:hover:not(:disabled) {
+  background-color: #1e40af;
+}
+
+.upload-area button:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* Error message */
+.error-message {
+  background-color: #fef2f2;
+  color: #dc2626;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #fecaca;
+  margin-bottom: 1rem;
+  font-family: 'Open-Sans', sans-serif;
+  font-size: 0.9rem;
+}
+
+.error-message small {
+  color: #7f1d1d;
+  font-size: 0.8rem;
+}
+
+/* Status messages */
+.upload-status, .auto-fill-status {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-family: 'Open-Sans', sans-serif;
+  font-weight: 500;
+}
+
+.upload-status.success, .auto-fill-status.success {
+  background-color: #dcfce7;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.upload-status.error, .auto-fill-status.error {
+  background-color: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+.upload-status.processing, .auto-fill-status.processing {
+  background-color: #fef3c7;
+  color: #d97706;
+  border: 1px solid #fed7aa;
+}
+
+/* Resume list and cards */
+.resume-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.resume-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 1rem;
+  background-color: #eff6ff;
+  border-radius: 10px;
+  border: 1px solid #bfdbfe;
+  font-family: 'Open-Sans', sans-serif;
+  font-size: 0.95rem;
+  color: #1e40af;
+}
+
+.resume-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.resume-name {
+  font-weight: 600;
+}
+
+.resume-size {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+/* Buttons in resume card */
+.resume-actions {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.resume-actions button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 0.2rem;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.resume-actions .star-btn {
+  color: #94a3b8;
+}
+
+.resume-actions .star-btn.starred {
+  color: #f59e0b;
+}
+
+.resume-actions .star-btn:hover {
+  background-color: #f1f5f9;
+}
+
+.resume-actions .reload-btn {
+  color: #6366f1;
+}
+
+.resume-actions .reload-btn:hover {
+  background-color: #f1f5f9;
+  transform: rotate(180deg);
+}
+
+.resume-actions .view-btn {
+  color: #8b5cf6;
+}
+
+.resume-actions .view-btn:hover {
+  background-color: #f3f4f6;
+}
+
+.resume-actions .delete-btn {
+  color: #ef4444;
+}
+
+.resume-actions .delete-btn:hover {
+  color: #b91c1c;
+  background-color: #fef2f2;
+}
+
+/* Divider */
+.divider {
+  margin: 2rem 0;
+  border: none;
+  border-top: 1px solid #cbd5e1;
+}
+
+/* Personal info form */
+.info-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  font-family: 'Open-Sans', sans-serif;
+  color: #1e293b;
+  font-size: 0.95rem;
+}
+
+/* Form labels */
+.info-form label {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  display: block;
+}
+
+/* Inputs and textareas */
+.info-form input,
+.info-form textarea {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  border: 1.8px solid #bfdbfe;
+  font-size: 1rem;
+  font-family: 'Open-Sans', sans-serif;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.info-form input:focus,
+.info-form textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 5px #93c5fd;
+}
+
+/* Auto-filled input styling */
+.info-form input.auto-filled,
+.info-form textarea.auto-filled {
+  border-color: #22c55e;
+  background-color: #f0fdf4;
+  animation: highlight 3s ease-out;
+}
+
+@keyframes highlight {
+  0% {
+    background-color: #dcfce7;
+    box-shadow: 0 0 8px #22c55e;
+  }
+  100% {
+    background-color: #f0fdf4;
+    box-shadow: none;
+  }
+}
+
+/* Textarea */
+.info-form textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+/* Form buttons */
+.info-form button {
+  width: fit-content;
+  align-self: flex-start;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 0.6rem 1.3rem;
+  border: none;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+  font-family: 'Open-Sans', sans-serif;
+  margin-right: 0.5rem;
+}
+
+/* Save button */
+.info-form button[type="submit"] {
+  background-color: #22c55e;
+  color: white;
+}
+
+.info-form button[type="submit"]:hover {
+  background-color: #15803d;
+}
+
+/* Clear button */
+.btn-gray {
+  background-color: #6b7280;
+  color: white;
+}
+
+.btn-gray:hover {
+  background-color: #4b5563;
+}
+
+/* Button group */
+.info-form .button-group {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}

@@ -277,3 +277,30 @@ export async function renderPreferences(container) {
     makeSection('Work Model',            workEl)
   );
 }
+
+/**
+ * loadUserPreferences()
+ *
+ * Reads from `savedPrefs` (which was initialized from localStorage)
+ * and returns an object keyed exactly for CardDeck’s constructor:
+ *   {
+ *     userSkills:  [...],
+ *     industries:  [...],
+ *     locations:   [...],
+ *     workModels:  [...],
+ *     natures:     [...],
+ *     roles:       [...]
+ *   }
+ *
+ * (We ignore `salary` here because CardDeck doesn’t use it.)
+ */
+export function loadUserPreferences() {
+  return {
+    userSkills:  Array.isArray(savedPrefs.skills)     ? savedPrefs.skills     : [],
+    industries:  Array.isArray(savedPrefs.industries) ? savedPrefs.industries : [],
+    locations:   Array.isArray(savedPrefs.locations)  ? savedPrefs.locations  : [],
+    workModels:  Array.isArray(savedPrefs.workModel)  ? savedPrefs.workModel  : [],
+    natures:     Array.isArray(savedPrefs.nature)     ? savedPrefs.nature     : [],
+    roles:       Array.isArray(savedPrefs.roles)      ? savedPrefs.roles      : []
+  };
+}
