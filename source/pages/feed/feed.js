@@ -29,19 +29,31 @@ function getMatchDegree(job) {
 export async function renderFeed(container) {
   console.log("renderFeed called");
   container.innerHTML = '<div id="job-cards-container"></div>';
-
   const jobCardsContainer = document.getElementById("job-cards-container");
-
+  
   try {
     // Fetch raw jobs
     const rawJobs = await fetchJobs();
-
-    // Load prefs
+  
+    // Load preferences
     const prefs = loadUserPreferences();
     userSkills = Array.isArray(prefs.userSkills) ? prefs.userSkills : [];
+  
+    // Load previously applied jobs from localStorage
+    const appliedJobs = JSON.parse(localStorage.getItem('appliedJobs')) || [];
 
-    // the feed algorithm that do filter&score&sort
-    jobsData = runFeedAlgorithm(rawJobs, {
+    // Create a Set of composite keys to identify duplicates
+    const appliedSet = new Set(
+      appliedJobs.map(job => job.companyName + "::" + job.jobRole)
+    );
+
+    // Filter out jobs that were already applied to
+    const filteredJobs = rawJobs.filter(
+      job => !appliedSet.has(job.companyName + "::" + job.jobRole)
+    );
+
+    // Run feed algorithm only on remaining jobs
+    jobsData = runFeedAlgorithm(filteredJobs, {
       userSkills: prefs.userSkills,
       industries: prefs.industries,
       locations:  prefs.locations,
@@ -50,17 +62,18 @@ export async function renderFeed(container) {
       roles: prefs.roles
     });
 
-    // Reset index
     currentJobIndex = 0;
 
     createJobCards(jobCardsContainer);
     updateCardVisibility();
+    
   } catch (error) {
     console.error("Error fetching jobs:", error);
     jobCardsContainer.innerHTML +=
       "<p>Failed to load job listings. Please try again later.</p>";
   }
 }
+  
 
 function createJobCards(container) {
   jobsData.forEach((job, index) => {
@@ -231,13 +244,18 @@ function skipCurrentJob() {
 
 function applyToCurrentJob() {
   if (currentJobIndex < jobsData.length) {
-    const currentCard = document.querySelector(".job-card.active");
     const job = jobsData[currentJobIndex];
+
     saveJobToLocalStorage(job);
+
+    const cards = document.querySelectorAll('.job-card');
+    const currentCard = cards[currentJobIndex];
+
     if (currentCard) {
-      currentCard.classList.add("apply-animation");
+      currentCard.classList.add('apply-animation');
       setTimeout(() => {
-        currentJobIndex++;
+        jobsData.splice(currentJobIndex, 1);
+        currentCard.remove();
         updateCardVisibility();
       }, 500);
     }
@@ -249,8 +267,7 @@ function saveJobToLocalStorage(job) {
   const isDuplicate = existing.some(
     (saved) =>
       saved.companyName === job.companyName &&
-      saved.jobRole === job.jobRole &&
-      saved.dateSubmitted === job.dateSubmitted
+      saved.jobRole === job.jobRole
   );
 
   if (!isDuplicate) {
