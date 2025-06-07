@@ -105,7 +105,7 @@ function parsePay(payString) {
 
   // Handle "80k", "70k-90k", "80000-90000"
 	// Replace trailing 'k' with '000'
-  s = s.replace(/k\b/, "000");
+  s = s.replace(/k\b/g, "000");
 
   // Handle hourly (e.g. "25/hr" or "25/hr - 30/hr")
   if (s.includes("/hr")) {
@@ -113,24 +113,24 @@ function parsePay(payString) {
 
     // split on any dash, sanitize each side (will become an array of 1 element if no dash)
     const parts = cleaned.split("-");
-    const rates = parts.map(part => sanitizeSalary(part, 0)) // sanitize each part in the parts array
-                      .filter(n => !Number.isNaN(n)); // Drops any resulting NaN values from the array.
+    const rates = parts.map(part => sanitizeSalary(part, 0)); // sanitize each part in the parts array
     if (rates.length === 0) return 0;
-    const avgHr = rates.reduce((sum, x) => sum + x, 0) / rates.length;
+    const avgHr = rates.reduce((a, b) => a + b, 0) / rates.length;
     return avgHr * 2080;
   }
 
-  // If it’s a range with '-', take midpoint (for annual pay)
+  // For annaul case:
+  // If it’s a range with '-', take midpoint
   if (s.includes("-")) {
     const parts = s.split("-")
-    const nums = sanitizeSalary(parts);
+    const nums = parts.map(part => sanitizeSalary(part, 0));
     if (nums.length === 0) return 0;
     return nums.reduce((a, b) => a + b, 0) / nums.length;
   }
 
-  // Otherwise it’s a single number, e.g. “80000”
-  const val = sanitizeSalary(s);
-  return val;
+  // Otherwise it’s a single number for annual pay, e.g. “80000”
+  const pay = sanitizeSalary(s);
+  return pay;
 }
 
 function payScore(jobSalary, userMin = 0) {
