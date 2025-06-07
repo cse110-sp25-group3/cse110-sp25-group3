@@ -103,7 +103,7 @@ function createJobCards(container) {
           </div>
           <div class="bottom-buttons">
             <button class="swipe-button skip-button" aria-label="Skip job">✕</button>
-            <button class="swipe-button apply-button" aria-label="Apply for job">✓</button>
+            <button class="swipe-button  apply-button" aria-label="Apply for job">✓</button>
           </div>
         </div>
         <div class="card-face card-back">
@@ -150,7 +150,7 @@ function createJobCards(container) {
           </div>
           <div class="bottom-buttons">
             <button class="swipe-button skip-button" aria-label="Skip job">✕</button>
-            <button class="swipe-button apply-button" aria-label="Apply for job">✓</button>
+            <button class="swipe-button  apply-button" aria-label="Apply for job">✓</button>
           </div>
         </div>
       </div>
@@ -233,6 +233,17 @@ function applyToCurrentJob() {
   if (currentJobIndex < jobsData.length) {
     const currentCard = document.querySelector(".job-card.active");
     const job = jobsData[currentJobIndex];
+    const data = localStorage.getItem('userData');
+    const jobs = encodeURIComponent(JSON.stringify(job));
+    // Encode data to safely pass via URL
+    const encodedData = encodeURIComponent(data);
+    const newWindow = window.open(`http://localhost:3000/?data=${encodedData}&jobs=${jobs}`, '_blank', 'width=600,height=400');
+     // Wait 3 seconds, then close the new window
+     setTimeout(() => {
+        if (newWindow && !newWindow.closed) {
+          newWindow.close();
+        }
+      },1500);
     saveJobToLocalStorage(job);
     if (currentCard) {
       currentCard.classList.add("apply-animation");

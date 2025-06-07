@@ -92,17 +92,28 @@ export async function renderDocuments(container) {
       <h2 class="section-title">Personal Information</h2>
       <div id="auto-fill-status" class="auto-fill-status"></div>
       <form id="info-form" class="info-form">
-        <label>Full Name</label>
+        <label>First Name</label>
         <input type="text" name="name" id="name-input" required>
+        <label>Last Name</label>
+        <input type="text" name="lname" id="lname-input" required>
 
         <label>Date of Birth</label>
         <input type="date" name="dob" id="dob-input">
+
+        <label>Gender</label>
+        <select name="dob" id="dob-input">
+        <option value="">Select</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+        </select>
 
         <label>Phone Number</label>
         <input type="tel" name="phone" id="phone-input" required>
 
         <label>Email</label>
         <input type="email" name="email" id="email-input" required>
+        <label>Location</label>
+        <input type="text" name="location" id="location-input">
 
         <label>School / University</label>
         <input type="text" name="school" id="school-input">
@@ -124,6 +135,43 @@ export async function renderDocuments(container) {
 
         <label>Languages</label>
         <textarea name="languages" id="languages-input" rows="2"></textarea>
+        <hr class="divider">
+        <label>Linkedin</label>
+        <input type="text" name="linkedin" id="linkedin-input">
+
+        <label>Are you Hispanic or Latinx?</label>
+        <select name="hispanic" id="hispanic-input">
+        <option value="">Select</option>
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+        </select>
+
+        <label>Race</label>
+        <select name="race" id="race-input">
+        <option value="">Select</option>
+        <option value="American Indian or Alaska Native">American Indian or Alaska Native</option>
+        <option value="Asian">Asian</option>
+        <option value="Black or African American">Black or African American</option>
+        <option value="Hispanic or Latino">Hispanic or Latino</option>
+        <option value="Native Hawaiian or Other Pacific Islander">Native Hawaiian or Other Pacific Islander</option>
+        <option value="Two or more races">Two or more races</option>
+        <option value="I don't wish to answer">I don't wish to answer</option>
+        </select>
+
+        <label>Protected Veteran Status</label>
+        <select name="veteran" id="veteran-input">
+        <option value="">Select</option>
+        <option value="I am one or more of the classifications of protected veterans">I am one or more of the classifications of protected veterans</option>
+        <option value="I am not a Protected Veteran">I am not a Protected Veteran</option>
+        <option value="I don't wish to answer">I don't wish to answer</option>
+        </select>
+
+        <label>Disability Status</label>
+        <select name="disability" id="disability-input">
+        <option value="">Select</option>
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+        </select>
 
         <button type="submit" class="btn btn-green">Save Information</button>
         <button type="button" id="clear-form" class="btn btn-gray">Clear Form</button>
@@ -242,7 +290,7 @@ export async function renderDocuments(container) {
       
       const formData = new FormData(form);
       const data = Object.fromEntries(formData);
-      
+      localStorage.setItem('userData', JSON.stringify(data))  
       console.log('Saved form data:', data);
       showAutoFillStatus('Information saved successfully!', 'success');
     });
@@ -340,11 +388,14 @@ function populateForm(resumeData) {
   try {
     // Populate contact information
     if (resumeData.contact) {
-      setInputValue('name-input', resumeData.contact.name);
+      setInputValue('name-input', (resumeData.contact.name).split(' ').slice(0, -1).join(' '));
+      setInputValue('lname-input', (resumeData.contact.name).split(' ').slice(-1).join(' '));
       setInputValue('email-input', resumeData.contact.email);
       setInputValue('phone-input', resumeData.contact.phone);
+      setInputValue('location-input', resumeData.contact.location);
+      setInputValue('linkedin-input', resumeData.contact.linkedin);
     }
-
+    console.log("resumeData",resumeData)
     // Populate education information
     if (resumeData.education && resumeData.education.length > 0) {
       const firstEducation = resumeData.education[0];

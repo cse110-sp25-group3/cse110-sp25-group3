@@ -13,7 +13,7 @@ class BrowserResumeParser {
             url: /(https?:\/\/[^\s]+|www\.[^\s]+|[a-zA-Z0-9.-]+\.(com|org|net|edu|gov|io|co|me|us|uk|ca|de|fr|au)(?:\/[^\s]*)?)/gi,
             linkedin: /(?:linkedin\.com\/in\/|linkedin\.com\/pub\/)[A-Za-z0-9\-_%]+/gi,
             github: /(?:github\.com\/)[A-Za-z0-9\-_]+(?:\/[A-Za-z0-9\-_]+)*/gi,
-            
+            gender:/^(male|female)$/i,
             // Date patterns
             dates: {
                 // Year ranges: 2023-2024, 2023-present, etc.
@@ -58,13 +58,13 @@ class BrowserResumeParser {
             companies: [
                 'inc', 'incorporated', 'llc', 'corp', 'corporation', 'company', 'co',
                 'ltd', 'limited', 'technologies', 'tech', 'solutions', 'systems',
-                'software', 'services', 'consulting', 'group', 'partners', 'associates'
+                'software', 'services', 'consulting', 'group', 'partners', 'associates', 'pvt ltd'
             ],
             
             degrees: [
                 'bachelor', 'master', 'phd', 'doctorate', 'associate', 'diploma',
                 'certificate', 'degree', 'bs', 'ba', 'ms', 'ma', 'mba', 'md', 'jd',
-                'b.s.', 'm.s.', 'b.a.', 'm.a.', 'ph.d.', 'b.sc.', 'm.sc.'
+                'b.s.', 'm.s.', 'b.a.', 'm.a.', 'ph.d.', 'b.sc.', 'm.sc.,mca,bca'
             ],
             
             institutions: [
@@ -344,6 +344,7 @@ class BrowserResumeParser {
         const contact = {
             name: null,
             email: null,
+            gender:null,
             phone: null,
             location: null,
             linkedin: null,
@@ -395,6 +396,10 @@ class BrowserResumeParser {
         contact.location = this.extractContactLocation(lines);
         if (contact.location) {
             this.markAsExtracted(contact.location);
+        }
+        contact.gender = this.extractName(lines);
+        if (contact.gender) {
+            this.markAsExtracted(contact.gender);
         }
 
         // Extract other websites (lowest priority) - exclude already extracted domains
