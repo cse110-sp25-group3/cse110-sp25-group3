@@ -1,14 +1,9 @@
 /* ─── Layout & Container ─── */
 .container {
-  max-width: 600px;
-  margin: 2rem auto;
-  padding: 0 1rem;
   display: flex;
   flex-direction: column;
   align-items: stretch;
   box-sizing: border-box;
-  overflow: hidden;
-  position: relative;
 }
 
 /* ─── Section Headers ─── */
@@ -17,7 +12,6 @@
   grid-template-columns: 145px 1fr;
   column-gap: 1rem;
   align-items: baseline;
-  padding: 0.75rem 0;
   border-bottom: 1px solid #ddd;
 }
 
@@ -36,13 +30,12 @@
 
 /* Text input */
 .tag-input {
-  width: auto;
-  padding: 0.5rem 1rem;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
   border: 1px solid #ccc;
   border-radius: 0.5rem;
   box-sizing: border-box;
   font-size: 0.95rem;
-  margin-bottom: 10px;
 }
 
 /* Add button */
@@ -86,9 +79,9 @@
 
 /* Suggestion pills */
 .tag-suggestion-pill {
-  background: white;
-  border: 1px solid black;
-  color: black;
+  background: #eef;
+  border: 1px solid #99c;
+  color: #336;
 }
 .tag-suggestion-pill:hover {
   background: #dde;
@@ -129,82 +122,4 @@
 /* ─── Utility ─── */
 .hidden {
   display: none !important;
-}
-/* ─── Styles (scoped to container) ─── */
-.container {
-  position: relative;
-  max-width: 600px;
-  margin: 2rem auto;
-  padding: 0 1rem;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  overflow: hidden;
-}
-
-/* overlay inside container */
-.menu-overlay {
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 60%;
-  background: rgba(0,0,0,0.5);
-  z-index: 900;
-
-  /* start invisible and transition to visible */
-  opacity: 0;
-  transition: opacity 0.3s ease-in-out;
-}
-
-/* when we add .show it will fade in */
-.menu-overlay.show {
-  opacity: 1;
-}
-
-.quick-menu {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 60%;
-  transform: translateY(100%);
-  transition: transform 0.3s ease-in-out;
-  overflow-y: auto;
-  z-index: 10000000;
-  padding: 15px;
-  background-color: white;
-  pointer-events: none;
-}
-
-.quick-menu.open {
-  transform: translateY(0);
-  pointer-events: auto;
-}
-
-.close-menu {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  background: none;
-  border: none;
-  font-size: 2.5rem;
-  cursor: pointer;
-  z-index: 1001;
-}
-
-.section-btn {
-  background: #eee;
-  border: 1px solid var(--color-light-blue-outline);
-  border-radius: 0.5em;
-  padding: 0.4em 1em;
-  font-size: 0.85em;
-  margin-top: 10px;
-  cursor: pointer;
-}
-
-.preferences-header {
-  z-index: 100;
-}
-
-.preferences-header::-webkit-scrollbar {
-  display: none;
 }

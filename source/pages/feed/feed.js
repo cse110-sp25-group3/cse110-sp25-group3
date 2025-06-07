@@ -1,5 +1,5 @@
 import { fetchJobs } from "../../functions/fetch-jobs.js";
-import { loadUserPreferences } from "../preferences/job-preferences.js";
+import { loadUserPreferences, renderPreferences } from "../preferences/job-preferences.js";
 import { runFeedAlgorithm } from "./feed-algorithm.js";
 
 let jobsData = [];
@@ -37,7 +37,7 @@ function createCardElement(job, index) {
         <div class="skill-match-display">
           <div class="donut" style="background: conic-gradient(
             #6C9AFF 0deg,
-            #1DFFF4 ${getMatchDegree(job)}deg,
+rgb(112, 242, 235) ${getMatchDegree(job)}deg,
             #eee ${getMatchDegree(job)}deg
           );">
             <div class="donut-text">${getMatchPercent(job)}%</div>
@@ -191,14 +191,23 @@ function renderCurrentCard(container) {
 
 // Entry point
 export async function renderFeed(container) {
-  container.innerHTML = '<div id="job-cards-container"></div>';
-  const jobCardsContainer = document.getElementById("job-cards-container");
+  // Clear
+  container.innerHTML = "";
 
+  // Render preferences header (which wires showOverlay/removeOverlay)
+  renderPreferences(container);
+
+  // Append job cards container
+  const jobCardsContainer = document.createElement("div");
+  jobCardsContainer.id = "job-cards-container";
+  container.appendChild(jobCardsContainer);
+
+  // Fetch, filter, and render first card
   try {
     const rawJobs = await fetchJobs();
-    const prefs = loadUserPreferences();
-    userSkills = Array.isArray(prefs.userSkills) ? prefs.userSkills : [];
-    jobsData = runFeedAlgorithm(rawJobs, prefs);
+    const prefs   = loadUserPreferences();
+    userSkills    = Array.isArray(prefs.userSkills) ? prefs.userSkills : [];
+    jobsData      = runFeedAlgorithm(rawJobs, prefs);
     currentJobIndex = 0;
     renderCurrentCard(jobCardsContainer);
   } catch (error) {

@@ -1,4 +1,3 @@
-// pages/job-preferences/job-preferences.js
 import { getUniqueValues } from "../../functions/fetch-jobs.js";
 
 // ── Persistence setup ──
@@ -27,273 +26,262 @@ function savePrefs() {
   } catch {}
 }
 
-//helper for making tag html elements
+// ── Helpers ──
 function generateTags(items, initialSelected = [], prefKey) {
   const selectedTags = [];
-  
-  //tag container
   const container = document.createElement('div');
   container.className = 'tag-selector';
 
-  //container for selected tags 
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.placeholder = 'Type to add…';
+  input.className = 'tag-input';
+  container.append(input);
+
   const selectedContainer = document.createElement('div');
   selectedContainer.className = 'selected-tags';
   container.append(selectedContainer);
 
-  //add button (show text input)
-  const addBtn = document.createElement('button');
-  addBtn.type = 'button';
-  addBtn.textContent = '+ add';
-  addBtn.className = 'add-button';
-  container.append(addBtn);
-
-  //text input (hidden on default)
-  const input = document.createElement('input');
-  input.type = 'text';
-  input.placeholder = 'Type to add…';
-  input.className = 'tag-input hidden';
-  container.append(input);
-
-  //tag suggestions (also hidden on default)
   const suggestedTag = document.createElement('div');
-  suggestedTag.className = 'tag-suggestions hidden';
+  suggestedTag.className = 'tag-suggestions';
   container.append(suggestedTag);
 
-  // Helpers ------------------------------------------------
-
-  //helper function for suggesting tags 
   function updateSuggestions() {
-    //matching according to input 
     const q = input.value.trim().toLowerCase();
-    let list = q
-      ? items.filter(t =>
-          //excluding tags that were already selected
-          !selectedTags.includes(t) &&
-          //filtering by query/text input 
-          t.toLowerCase().startsWith(q)
-        )
-        .slice(0, 3) //only take the first three matches 
-      //when there's no query
-      : items.filter(t => !selectedTags.includes(t))
-        .sort(() => 0.5 - Math.random()) //three random tags 
-        .slice(0, 3);
-
-    //generating the html element for each tag 
+    const list = q
+      ? items.filter(t => !selectedTags.includes(t) && t.toLowerCase().startsWith(q)).slice(0,3)
+      : items.filter(t => !selectedTags.includes(t)).sort(() => 0.5 - Math.random()).slice(0,3);
     suggestedTag.innerHTML = '';
     list.forEach(tag => {
       const pill = document.createElement('button');
       pill.type = 'button';
       pill.className = 'tag-suggestion-pill';
-      pill.textContent = tag + ' +';
+      pill.textContent = `${tag} +`;
       pill.addEventListener('click', () => selectTag(tag));
       suggestedTag.append(pill);
     });
-    
-    suggestedTag.classList.toggle('hidden', list.length === 0);
   }
 
-  //function for selecting a tag 
   function selectTag(tag) {
-    if (selectedTags.includes(tag)) return; //if already has tag, skip
-    selectedTags.unshift(tag); //add tag to the top of the list 
-
-    // update persistence
+    if (selectedTags.includes(tag)) return;
+    selectedTags.unshift(tag);
     savedPrefs[prefKey] = [...selectedTags];
     savePrefs();
-
-    //creating html ele for the tag 
     const pill = document.createElement('button');
     pill.type = 'button';
     pill.className = 'tag-pill';
-    pill.textContent = tag + ' –';
+    pill.textContent = `${tag} –`;
     pill.addEventListener('click', () => {
-      //can remove tag by clicking 
-      selectedTags.splice(selectedTags.indexOf(tag), 1);
+      selectedTags.splice(selectedTags.indexOf(tag),1);
       selectedContainer.removeChild(pill);
-      // update persistence
       savedPrefs[prefKey] = [...selectedTags];
       savePrefs();
+      updateSuggestions();
     });
-
     selectedContainer.prepend(pill);
-
-    //after tag has been added, rehide the text input and suggestions 
     input.value = '';
-    suggestedTag.innerHTML = '';
-    input.classList.add('hidden');
-    suggestedTag.classList.add('hidden');
-    addBtn.classList.remove('hidden');
+    updateSuggestions();
   }
 
-  // Event wiring ------------------------------------------
-
-  // show input when "+add" clicked
-  addBtn.addEventListener('click', () => {
-    addBtn.classList.add('hidden');
-    input.classList.remove('hidden');
-    suggestedTag.classList.remove('hidden');
-    input.focus();
-    updateSuggestions();
-  });
-
-  // on each keystroke, update suggestions
   input.addEventListener('input', updateSuggestions);
-
-  // clicking outside closes input/suggestions
-  document.addEventListener('click', e => {
-    if (!container.contains(e.target)) {
-      input.classList.add('hidden');
-      suggestedTag.classList.add('hidden');
-      addBtn.classList.remove('hidden');
-    }
-  });
-
-  // pre-select any saved tags
-  initialSelected.forEach(tag => {
-    if (items.includes(tag)) selectTag(tag);
-  });
-
-  return {
-    element: container,
-    getSelectedTags: () => [...selectedTags]
-  };
+  initialSelected.forEach(tag => { if (items.includes(tag)) selectTag(tag); });
+  updateSuggestions();
+  return { element: container, getState: () => [...selectedTags] };
 }
 
-//helper for generating text box entries 
 function generateCheckboxes(options, initialSelected = [], prefKey) {
-  //html container for the checkboxes
   const container = document.createElement('div');
   container.className = 'checkbox-group';
-
-  //for each option (in parameter array), generate a checkbox and label
-  options.forEach(({ value, label }) => {
-    const id = `chk-${label.replace(/\s+/g, '-').toLowerCase()}`;
-
+  options.forEach(({value,label}) => {
+    const id = `chk-${label.replace(/\s+/g,'-').toLowerCase()}`;
     const wrapper = document.createElement('div');
     wrapper.className = 'checkbox-item';
-
     const input = document.createElement('input');
-    input.type  = 'checkbox';
-    input.id    = id;
+    input.type = 'checkbox';
+    input.id = id;
     input.value = String(value);
-
-    // set initial checked state
     input.checked = initialSelected.includes(String(value));
-    // auto-save on change
     input.addEventListener('change', () => {
-      const vals = Array.from(container.querySelectorAll('input:checked'))
-                        .map(cb => cb.value);
+      const vals = Array.from(container.querySelectorAll('input:checked')).map(cb => cb.value);
       savedPrefs[prefKey] = vals;
       savePrefs();
     });
-
     const lbl = document.createElement('label');
     lbl.htmlFor = id;
     lbl.textContent = label;
-
     wrapper.append(input, lbl);
     container.append(wrapper);
   });
-
-  return {
-    element: container,
-    getSelectedValues: () =>
-      Array.from(container.querySelectorAll('input:checked'))
-           .map(cb => cb.value)
-  };
+  return { element: container, getState: () => Array.from(container.querySelectorAll('input:checked')).map(cb => cb.value) };
 }
 
-//renderer 
-export async function renderPreferences(container) {
-  //clear old content and add your section title
-  container.innerHTML = ``;
+function makeQuickMenu(key, controlEl, getState, title) {
+  const quickMenu = document.createElement('div');
+  quickMenu.className = 'quick-menu';
+  quickMenu.dataset.section = key;
+  const h3 = document.createElement('h3');
+  h3.textContent = title;
+  quickMenu.append(h3, controlEl);
+  return { key, el: quickMenu, getState };
+}
 
-  //all the cols we need preferences for 
+// ── Header Renderer ──
+export async function renderPreferences(container) {
+  container.innerHTML = '';
   const skills     = await getUniqueValues('relevantSkills', { flatten: true });
   const locations  = await getUniqueValues('location');
   const industries = await getUniqueValues('industry');
   const roles      = await getUniqueValues('jobRole');
 
-  //building the tag selectors, using savedPrefs
-  const { element: skillsEl, getSelectedTags: getSkills     } =
-    generateTags(skills,     savedPrefs.skills,     'skills');
-  const { element: locEl,    getSelectedTags: getLocations  } =
-    generateTags(locations,  savedPrefs.locations,  'locations');
-  const { element: indEl,    getSelectedTags: getIndustries} =
-    generateTags(industries, savedPrefs.industries, 'industries');
-  const { element: roleEl,   getSelectedTags: getRoles      } =
-    generateTags(roles,      savedPrefs.roles,      'roles');
-
-  // Preferred salary input
   const salaryInput = document.createElement('input');
-  salaryInput.type        = 'number';
+  salaryInput.type = 'number';
   salaryInput.placeholder = 'Preferred salary';
-  salaryInput.value       = savedPrefs.salary;
-  // auto-save salary on input
+  salaryInput.value = savedPrefs.salary;
   salaryInput.addEventListener('input', () => {
     savedPrefs.salary = salaryInput.value;
     savePrefs();
   });
 
-  // checkbox vocabularies
-  const natureMap = {
-    1: 'Full-time',
-    2: 'Part-time',
-    3: 'Intern'
-  };
-  const workModelMap = {
-    1: 'Remote',
-    2: 'On-site',
-    3: 'Hybrid'
-  };
-
-  const natureOptions = Object.entries(natureMap)
-    .map(([value, label]) => ({ value, label }));
-  const workModelOptions = Object.entries(workModelMap)
-    .map(([value, label]) => ({ value, label }));
-  
-  const { element: natureEl, getSelectedValues: getNatures     } =
-    generateCheckboxes(natureOptions,   savedPrefs.nature,    'nature');
-  const { element: workEl,   getSelectedValues: getWorkModels } =
-    generateCheckboxes(workModelOptions, savedPrefs.workModel, 'workModel');
-
-  // helper to wrap sections
-  const makeSection = (title, el) => {
-    const sec = document.createElement('section');
-    sec.className = 'pref-section';
-    sec.innerHTML = `<h3>${title}</h3>`;
-    sec.append(el);
-    return sec;
+  const natureMap = {1:'Full-time',2:'Part-time',3:'Intern'};
+  const workModelMap = {1:'Remote',2:'On-site',3:'Hybrid'};
+  const sectionTitles = {
+    skills:     'Preferred Skills',
+    locations:  'Locations',
+    industries: 'Industries',
+    roles:      'Roles',
+    salary:     'Salary',
+    nature:     'Employment Type',
+    workModel:  'Work Model'
   };
 
-  // append all your preference controls (no save button needed)
+  const natureOpts = Object.entries(natureMap).map(([v,l]) => ({ value: v, label: l }));
+  const workOpts   = Object.entries(workModelMap).map(([v,l]) => ({ value: v, label: l }));
+
+  const sections = [
+    { key:'skills',     control: generateTags(skills,     savedPrefs.skills,     'skills') },
+    { key:'locations',  control: generateTags(locations,  savedPrefs.locations,  'locations') },
+    { key:'industries', control: generateTags(industries, savedPrefs.industries, 'industries') },
+    { key:'roles',      control: generateTags(roles,      savedPrefs.roles,      'roles') },
+    { key:'salary',     control: { element: salaryInput, getState: () => [salaryInput.value].filter(v=>v) } },
+    { key:'nature',     control: generateCheckboxes(natureOpts, savedPrefs.nature,     'nature') },
+    { key:'workModel',  control: generateCheckboxes(workOpts,   savedPrefs.workModel,  'workModel') }
+  ];
+
+  const menus = sections.map(({ key, control }) =>
+    makeQuickMenu(key, control.element, control.getState, sectionTitles[key])
+  );
+
+  const header = document.createElement('div');
+  header.className = 'preferences-header';
+  Object.assign(header.style, {
+    display: 'flex',
+    overflowX: 'auto',
+    whiteSpace: 'nowrap',
+    gap: '8px',
+    cursor: 'grab'
+  });
+
+  // drag-scroll logic (unchanged)
+  let isDown=false, startX, scrollLeft;
+  header.addEventListener('mousedown',e=>{isDown=true; header.style.cursor='grabbing'; startX=e.pageX-header.offsetLeft; scrollLeft=header.scrollLeft;});
+  header.addEventListener('mouseleave',()=>{isDown=false; header.style.cursor='grab';});
+  header.addEventListener('mouseup',  ()=>{isDown=false; header.style.cursor='grab';});
+  header.addEventListener('mousemove',e=>{if(!isDown) return; e.preventDefault(); const x=e.pageX-header.offsetLeft; const walk=(x-startX); header.scrollLeft=scrollLeft-walk;});
+
+  // Overlay helpers
+  function showOverlay() {
+    if (!document.querySelector('.menu-overlay')) {
+      const overlay = document.createElement('div');
+      overlay.className = 'menu-overlay';
+      container.appendChild(overlay);
+    }
+  }
+
+  function removeOverlay() {
+    const ov = document.querySelector('.menu-overlay');
+    if (ov) ov.remove();
+  }
+
+
+  menus.forEach(menu => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'section-btn';
+
+    const updateLabel = () => {
+      const vals = menu.getState();
+      let preview = sectionTitles[menu.key];
+      if (vals.length > 0) {
+        if (menu.key === 'nature')     preview = natureMap[+vals[0]];
+        else if (menu.key === 'workModel') preview = workModelMap[+vals[0]];
+        else preview = vals[0];
+        if (vals.length > 1) preview += ` +${vals.length - 1}`;
+      }
+      btn.textContent = `${preview} ▼`;
+    };
+
+    btn.addEventListener('click', () => {
+      const isOpen = menu.el.classList.contains('open');
+      menus.forEach(m => m.el.classList.remove('open'));
+      if (!isOpen) menu.el.classList.add('open');
+    });
+
+    updateLabel();
+    window.addEventListener('prefsUpdated', updateLabel);
+
+    header.append(btn);
+
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'close-menu';
+    closeBtn.innerHTML = '×';
+    closeBtn.addEventListener('click', () => {
+      menu.el.classList.remove('open');
+      // reload only when menu closed
+      window.location.reload();
+    });
+    menu.el.prepend(closeBtn);
+  });
+
+  container.append(header);
+  menus.forEach(menu => container.append(menu.el));
+}
+
+// ── Original Page Renderer ──
+export async function renderPreferencesPage(container) {
+  container.innerHTML = '';
+  const skills     = await getUniqueValues('relevantSkills', { flatten: true });
+  const locations  = await getUniqueValues('location');
+  const industries = await getUniqueValues('industry');
+  const roles      = await getUniqueValues('jobRole');
+
+  const { element: skillsEl } = generateTags(skills, savedPrefs.skills, 'skills');
+  const { element: locEl    } = generateTags(locations, savedPrefs.locations, 'locations');
+  const { element: indEl    } = generateTags(industries, savedPrefs.industries, 'industries');
+  const { element: roleEl   } = generateTags(roles, savedPrefs.roles, 'roles');
+
+  const salaryInput = document.createElement('input');
+  salaryInput.type = 'number';
+  salaryInput.placeholder = 'Preferred salary';
+  salaryInput.value = savedPrefs.salary;
+  salaryInput.addEventListener('input', () => { savedPrefs.salary = salaryInput.value; savePrefs(); });
+
+  const natureMap = {1:'Full-time',2:'Part-time',3:'Intern'};
+  const workModelMap = {1:'Remote',2:'On-site',3:'Hybrid'};
+  const natureEl = generateCheckboxes(Object.entries(natureMap).map(([v,l])=>({value:v,label:l})), savedPrefs.nature, 'nature').element;
+  const workEl   = generateCheckboxes(Object.entries(workModelMap).map(([v,l])=>({value:v,label:l})), savedPrefs.workModel, 'workModel').element;
+
+  const makeSection = (title, el) => { const sec = document.createElement('section'); sec.className='pref-section'; sec.innerHTML=`<h3>${title}</h3>`; sec.append(el); return sec; };
   container.append(
-    makeSection('Preferred Skills',      skillsEl),
-    makeSection('Preferred Locations',   locEl),
-    makeSection('Preferred Industries',  indEl),
-    makeSection('Preferred Roles',       roleEl),
-    makeSection('Preferred Salary',      salaryInput),
-    makeSection('Employment Type',       natureEl),
-    makeSection('Work Model',            workEl)
+    makeSection('Preferred Skills', skillsEl),
+    makeSection('Preferred Locations', locEl),
+    makeSection('Preferred Industries', indEl),
+    makeSection('Preferred Roles', roleEl),
+    makeSection('Preferred Salary', salaryInput),
+    makeSection('Employment Type', natureEl),
+    makeSection('Work Model', workEl)
   );
 }
 
-/**
- * loadUserPreferences()
- *
- * Reads from `savedPrefs` (which was initialized from localStorage)
- * and returns an object keyed exactly for CardDeck’s constructor:
- *   {
- *     userSkills:  [...],
- *     industries:  [...],
- *     locations:   [...],
- *     workModels:  [...],
- *     natures:     [...],
- *     roles:       [...]
- *   }
- *
- * (We ignore `salary` here because CardDeck doesn’t use it.)
- */
 export function loadUserPreferences() {
   return {
     userSkills:  Array.isArray(savedPrefs.skills)     ? savedPrefs.skills     : [],
