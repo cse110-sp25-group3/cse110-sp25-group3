@@ -5,10 +5,9 @@ import { computeJobScore }   from "../../functions/score-heuristic.js";
 /**
  * Given:
  *   - jobs: Array of raw job objects (with .pay, requiredSkills, relevantSkills, etc.)
- *   - prefs: {
+ *   - prefs (an object with a list of user pref): {
  *       userSkills, industries, locations, workModels, natures, roles,
- *       salaryHourly,    // string or number
- *       salaryYearly     // string or number
+ *       salaryYearly     // string
  *     }
  *
  * Returns enriched jobs, each with:
@@ -23,14 +22,6 @@ export function runFeedAlgorithm(jobs, prefs) {
            prefs.industries.length === 0 ||
            prefs.industries.includes(job.industry);
   });
-
-  // Prep user salary range (annualized)
-  const userMin = (() => {
-    if (prefs.salaryYearly)  return parseFloat(prefs.salaryYearly);
-    if (prefs.salaryHourly)  return parseFloat(prefs.salaryHourly) * 2080;
-    return 0;
-  })();
-  const userMax = userMin; // exact or midpoint only
 
   // 2) Score each job
   filtered.forEach(job => {
@@ -53,8 +44,11 @@ export function runFeedAlgorithm(jobs, prefs) {
     job.dateScore = datePostedScore(job.datePosted, 30);
 
     // d) Pay score
-    const annualPay = parsePay(job.pay);
-    job.payScore = payScore(annualPay, userMin, userMax);
+    // prefPay = an int that represents user's prefer minimum-max wage for the job - 
+    // anything above this is perfect but below is also tolerable
+    const prefPay = sanitizeSalary(prefs.salaryYearly); // verify the input and typecast to int
+    const jobPay = parsePay(job.pay);
+    job.payScore = payScore(jobPay, prefPay);
 
     // e) Matched/Lost skills
     const rel = Array.isArray(job.relevantSkills) ? job.relevantSkills : [];
@@ -81,7 +75,29 @@ export function runFeedAlgorithm(jobs, prefs) {
   return filtered;
 }
 
-// -- parsePay, payScore, datePostedScore unchanged except import datePostedScore --
+/**
+ * Take any input, strip out non‐digits, and return as a non‐negative integer.
+ * @param {string} raw – the original prefs.salaryYearly string
+ * @param {number} [defaultInput=0] – value to use if nothing parseable remains
+ * @returns {number}
+ */
+function sanitizeSalary(raw, defaultInput = 0) {
+  // if raw is not null, assign asStr with make sure to assign raw as String, otherwise empty string
+  const asStr = (raw != null ? String(raw) : "");
+  // strip out any non-digit character in the input
+  const digitsOnly = asStr.replace(/\D/g, "");
+
+  if (digitsOnly === '') return defaultInput;
+  const n = Number(digitsOnly); //typecast the str to int
+  return Number.isNaN(n) ? defaultInput : n; // if n is NaN, return 0, otherwise n
+}
+
+/**
+ * parsePay()
+ *
+ * Attempts to turn a job.pay string (e.g. "$80k", "70k-90k", "$25/hr") into a
+ * single annualized number like 80000 or 80000 (midpoint). Returns NaN on failure.Add commentMore actions
+ */
 function parsePay(payString) {
   if (typeof payString !== "string") return NaN;
   let s = payString.trim().replace(/\$/g, "").replace(/,/g, "").toLowerCase();
@@ -108,7 +124,7 @@ function parsePay(payString) {
   return isNaN(val) ? NaN : val;
 }
 
-function payScore(jobSalary, userMin = 0, userMax = 0) {
+function payScore(jobSalary, userMin = 0) {
   if (!userMin || userMin <= 0) return 50; // neutral
   if (jobSalary < userMin) return 0;
   if (jobSalary > userMax) return 100;
