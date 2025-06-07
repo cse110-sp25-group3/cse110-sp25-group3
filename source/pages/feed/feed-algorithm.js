@@ -84,12 +84,17 @@ export function runFeedAlgorithm(jobs, prefs) {
 function sanitizeSalary(raw, defaultInput = 0) {
   // if raw is not null, assign asStr with make sure to assign raw as String, otherwise empty string
   const asStr = (raw != null ? String(raw) : "");
-  // strip out any non-digit character in the input
-  const digitsOnly = asStr.replace(/\D/g, "");
+  // strip out any characters that are NOT digits or dot (so 25.50 doesn't become 2,550)
+  let cleaned = asStr.replace(/[^0-9.]/g, "");
 
-  if (digitsOnly === '') return defaultInput;
-  const n = Number(digitsOnly); //typecast the str to int
-  return Number.isNaN(n) ? defaultInput : n; // if n is NaN, return 0, otherwise n
+  // If there's more than one dot, keep only the first
+  const [head, ...rest] = cleaned.split(".");
+  cleaned = head + (rest.length ? "." + rest.join("") : "");
+
+  if (cleaned === '') return defaultInput;
+  
+  const n = Number(cleaned); //typecast the str to int
+  return Number.isNaN(n) ? defaultInput : Math.round(n); // if n is NaN, return 0, otherwise return rounded n
 }
 
 /**
