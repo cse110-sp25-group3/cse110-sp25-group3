@@ -1,81 +1,42 @@
 let resumeCounter = 0;
 let resumeParser = null;
-let isProcessing = false; // Add flag to prevent multiple simultaneous uploads
-let processedFiles = new Set(); // Track processed files to prevent duplicates
+let isProcessing = false;
+let processedFiles = new Set();
 
-// Initialize PDF.js and parser when the module loads
 async function initializePDFParser() {
   try {
-    // Check if BrowserResumeParser is available
-    if (typeof BrowserResumeParser === 'undefined') {
-      console.error('BrowserResumeParser not found. Make sure ../functions/browser-resume-parser.js is loaded.');
-      throw new Error('BrowserResumeParser class not available');
-    }
-    
-    // Load PDF.js library if not already loaded
-    if (typeof pdfjsLib === 'undefined') {
-      console.log('Loading PDF.js...');
-      await loadPDFJS();
-    }
-    
-    // Initialize the resume parser with full sophistication
+    if (typeof BrowserResumeParser === 'undefined') throw new Error('Parser unavailable');
+    if (typeof pdfjsLib === 'undefined') await loadPDFJS();
     resumeParser = new BrowserResumeParser();
-    console.log('Complete resume parser initialized successfully');
     return true;
-  } catch (error) {
-    console.error('Failed to initialize PDF parser:', error);
+  } catch {
     return false;
   }
 }
 
-// Load PDF.js library dynamically
 function loadPDFJS() {
   return new Promise((resolve, reject) => {
-    // Check if already loaded
-    if (typeof pdfjsLib !== 'undefined') {
-      resolve();
-      return;
-    }
-    
-    console.log('Loading PDF.js from CDN...');
+    if (typeof pdfjsLib !== 'undefined') return resolve();
     const script = document.createElement('script');
     script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
     script.onload = () => {
-      try {
-        // Set worker path
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-        console.log('PDF.js loaded successfully');
-        resolve();
-      } catch (error) {
-        console.error('Error setting up PDF.js:', error);
-        reject(error);
-      }
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      resolve();
     };
-    script.onerror = (error) => {
-      console.error('Failed to load PDF.js:', error);
-      reject(new Error('Failed to load PDF.js library'));
-    };
+    script.onerror = () => reject(new Error('PDF.js failed to load'));
     document.head.appendChild(script);
   });
 }
 
 export async function renderDocuments(container) {
-  // Initialize PDF parser first
   const initSuccess = await initializePDFParser();
-  
-  // Reset counter when page is rendered to prevent accumulation
   resumeCounter = 0;
   processedFiles.clear();
-  
+
   container.innerHTML = `
     <div class="section">
       <h2 class="section-title">Manage Resumes</h2>
-      ${!initSuccess ? `
-        <div class="error-message">
-          ⚠️ Resume parsing is not available. Please check that all required files are loaded properly.
-          <br><small>Check the browser console for detailed error information.</small>
-        </div>
-      ` : ''}
+      ${!initSuccess ? `<div class="error-message">⚠️ Resume parsing unavailable.</div>` : ''}
       <div class="upload-area">
         <input type="file" id="resume-input" accept=".pdf" hidden ${!initSuccess ? 'disabled' : ''}>
         <button id="upload-btn" class="btn btn-blue" ${!initSuccess ? 'disabled' : ''}>
@@ -92,219 +53,149 @@ export async function renderDocuments(container) {
       <h2 class="section-title">Personal Information</h2>
       <div id="auto-fill-status" class="auto-fill-status"></div>
       <form id="info-form" class="info-form">
-        <label>First Name</label>
-        <input type="text" name="name" id="name-input" required>
-        <label>Last Name</label>
-        <input type="text" name="lname" id="lname-input" required>
-
-        <label>Date of Birth</label>
-        <input type="date" name="dob" id="dob-input">
-
+        <label>First Name</label><input type="text" name="name" id="name-input" required>
+        <label>Last Name</label><input type="text" name="lname" id="lname-input" required>
+        <label>Date of Birth</label><input type="date" name="dob" id="dob-input">
         <label>Gender</label>
-        <select name="dob" id="dob-input">
-        <option value="">Select</option>
-        <option value="Male">Male</option>
-        <option value="Female">Female</option>
+        <select name="gender" id="gender-input">
+          <option value="">Select</option>
+          <option>Male</option>
+          <option>Female</option>
         </select>
-
-        <label>Phone Number</label>
-        <input type="tel" name="phone" id="phone-input" required>
-
-        <label>Email</label>
-        <input type="email" name="email" id="email-input" required>
-        <label>Location</label>
-        <input type="text" name="location" id="location-input">
-
-        <label>School / University</label>
-        <input type="text" name="school" id="school-input">
-
-        <label>Degree</label>
-        <input type="text" name="degree" id="degree-input">
-
-        <label>Graduation Year</label>
-        <input type="number" name="gradYear" id="gradYear-input" min="1900" max="2100">
-
-        <label>Work History</label>
-        <textarea name="history" id="history-input" rows="3"></textarea>
-
-        <label>Skills</label>
-        <textarea name="skills" id="skills-input" rows="2"></textarea>
-
-        <label>Certifications</label>
-        <textarea name="certifications" id="certifications-input" rows="2"></textarea>
-
-        <label>Languages</label>
-        <textarea name="languages" id="languages-input" rows="2"></textarea>
+        <label>Phone Number</label><input type="tel" name="phone" id="phone-input" required>
+        <label>Email</label><input type="email" name="email" id="email-input" required>
+        <label>Location</label><input type="text" name="location" id="location-input">
+        <label>School / University</label><input type="text" name="school" id="school-input">
+        <label>Degree</label><input type="text" name="degree" id="degree-input">
+        <label>Graduation Year</label><input type="number" name="gradYear" id="gradYear-input" min="1900" max="2100">
+        <label>Work History</label><textarea name="history" id="history-input" rows="3"></textarea>
+        <label>Skills</label><textarea name="skills" id="skills-input" rows="2"></textarea>
+        <label>Certifications</label><textarea name="certifications" id="certifications-input" rows="2"></textarea>
+        <label>Languages</label><textarea name="languages" id="languages-input" rows="2"></textarea>
         <hr class="divider">
-        <label>Linkedin</label>
-        <input type="text" name="linkedin" id="linkedin-input">
-
+        <label>LinkedIn</label><input type="text" name="linkedin" id="linkedin-input">
         <label>Are you Hispanic or Latinx?</label>
         <select name="hispanic" id="hispanic-input">
-        <option value="">Select</option>
-        <option value="Yes">Yes</option>
-        <option value="No">No</option>
+          <option value="">Select</option>
+          <option>Yes</option>
+          <option>No</option>
         </select>
-
         <label>Race</label>
         <select name="race" id="race-input">
-        <option value="">Select</option>
-        <option value="American Indian or Alaska Native">American Indian or Alaska Native</option>
-        <option value="Asian">Asian</option>
-        <option value="Black or African American">Black or African American</option>
-        <option value="Hispanic or Latino">Hispanic or Latino</option>
-        <option value="Native Hawaiian or Other Pacific Islander">Native Hawaiian or Other Pacific Islander</option>
-        <option value="Two or more races">Two or more races</option>
-        <option value="I don't wish to answer">I don't wish to answer</option>
+          <option value="">Select</option>
+          <option>American Indian or Alaska Native</option>
+          <option>Asian</option>
+          <option>Black or African American</option>
+          <option>Hispanic or Latino</option>
+          <option>Native Hawaiian or Other Pacific Islander</option>
+          <option>Two or more races</option>
+          <option>I don't wish to answer</option>
         </select>
-
         <label>Protected Veteran Status</label>
         <select name="veteran" id="veteran-input">
-        <option value="">Select</option>
-        <option value="I am one or more of the classifications of protected veterans">I am one or more of the classifications of protected veterans</option>
-        <option value="I am not a Protected Veteran">I am not a Protected Veteran</option>
-        <option value="I don't wish to answer">I don't wish to answer</option>
+          <option value="">Select</option>
+          <option>I am one or more of the classifications of protected veterans</option>
+          <option>I am not a Protected Veteran</option>
+          <option>I don't wish to answer</option>
         </select>
-
         <label>Disability Status</label>
         <select name="disability" id="disability-input">
-        <option value="">Select</option>
-        <option value="Yes">Yes</option>
-        <option value="No">No</option>
+          <option value="">Select</option>
+          <option>Yes</option>
+          <option>No</option>
         </select>
-
         <button type="submit" class="btn btn-green">Save Information</button>
-        <button type="button" id="clear-form" class="btn btn-gray">Clear Form</button>
       </form>
+
+      <button id="clear-form" class="btn btn-gray">Clear Form</button>
     </div>
   `;
 
+  // References
   const uploadInput = container.querySelector('#resume-input');
   const uploadBtn = container.querySelector('#upload-btn');
-  const uploadStatus = container.querySelector('#upload-status');
-  const autoFillStatus = container.querySelector('#auto-fill-status');
   const resumeList = container.querySelector('#resume-list');
   const form = container.querySelector('#info-form');
   const clearBtn = container.querySelector('#clear-form');
+  const autoFillStatus = container.querySelector('#auto-fill-status');
+  const exportBtn = container.querySelector('#export-skills');
 
-  // Only add upload functionality if parser is initialized
-  if (initSuccess && uploadBtn && uploadInput) {
-    // Remove any existing event listeners by cloning the element
-    const newUploadInput = uploadInput.cloneNode(true);
-    const newUploadBtn = uploadBtn.cloneNode(true);
-    
-    uploadInput.parentNode.replaceChild(newUploadInput, uploadInput);
-    uploadBtn.parentNode.replaceChild(newUploadBtn, uploadBtn);
-    
-    // Add event listeners to clean elements
-    newUploadBtn.addEventListener('click', () => newUploadInput.click());
-
-    newUploadInput.addEventListener('change', async function (event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      // Create unique file signature
-      const fileSignature = `${file.name}-${file.size}-${file.lastModified}`;
-      
-      // Check if this exact file has already been processed
-      if (processedFiles.has(fileSignature)) {
-        event.target.value = ''; // Clear input
-        return;
-      }
-
-      // Prevent multiple simultaneous uploads
-      if (isProcessing) {
-        event.target.value = ''; // Clear input
-        return;
-      }
-
-      // Check if it's a PDF
-      if (file.type !== 'application/pdf') {
-        showUploadStatus('Please upload a PDF file.', 'error');
-        event.target.value = ''; // Clear input
-        return;
-      }
-
-      // Mark this file as being processed
-      processedFiles.add(fileSignature);
-
-      const resumeId = `resume-${resumeCounter++}`;
-      
+  // Resume handlers (unchanged)
+  if (initSuccess) {
+    const fileIn = uploadInput.cloneNode(true);
+    const btn = uploadBtn.cloneNode(true);
+    uploadInput.replaceWith(fileIn);
+    uploadBtn.replaceWith(btn);
+    btn.addEventListener('click', () => fileIn.click());
+    fileIn.addEventListener('change', async e => {
+      const file = e.target.files[0];
+      if (!file || file.type !== 'application/pdf' || isProcessing) return;
+      const sig = `${file.name}-${file.size}-${file.lastModified}`;
+      if (processedFiles.has(sig)) return;
+      processedFiles.add(sig);
+      isProcessing = true;
+      showUploadStatus('Processing…', 'processing');
+      const card = createResumeCard(file, `resume-${resumeCounter++}`);
+      resumeList.append(card);
+      card.originalFile = file;
       try {
-        isProcessing = true; // Set processing flag
-        
-        // Show processing status
-        showUploadStatus('Processing resume with advanced parsing...', 'processing');
-        showAutoFillStatus('Extracting comprehensive information from resume...', 'processing');
-        
-        // Create resume card first
-        const resumeCard = createResumeCard(file, resumeId);
-        resumeList.appendChild(resumeCard);
-        
-        // Store the original file for viewing
-        resumeCard.originalFile = file;
-        
-        // Parse the PDF using the complete sophisticated parser
-        if (!resumeParser) {
-          throw new Error('Resume parser not initialized');
-        }
-        
-        const resumeData = await resumeParser.parseResumeFromFile(file);
-        console.log('Parsed resume data:', resumeData);
-        
-        // Auto-fill the form with extracted data
-        populateForm(resumeData);
-        
-        showUploadStatus('Resume processed successfully!', 'success');
-        showAutoFillStatus('Form auto-filled with comprehensive resume data. Please review and edit as needed.', 'success');
-        
-        // Store parsed data with the resume card for future reference
-        resumeCard.dataset.resumeData = JSON.stringify(resumeData);
-        
-      } catch (error) {
-        console.error('Error processing resume:', error);
-        showUploadStatus('Error processing resume. Please try again.', 'error');
-        showAutoFillStatus('', '');
-        
-        // Remove from processed files set since it failed
-        processedFiles.delete(fileSignature);
-        
-        // Remove the card if processing failed
-        const cardToRemove = document.getElementById(resumeId);
-        if (cardToRemove) {
-          cardToRemove.remove();
-        }
+        const data = await resumeParser.parseResumeFromFile(file);
+        populateForm(data);
+        card.dataset.resumeData = JSON.stringify(data);
+        showUploadStatus('Done!', 'success');
+        showAutoFillStatus('Form updated from resume.', 'success');
+      } catch {
+        processedFiles.delete(sig);
+        card.remove();
+        showUploadStatus('Error parsing.', 'error');
       } finally {
-        isProcessing = false; // Clear processing flag
-        event.target.value = ''; // Clear file input
-      }
-    });
-  } else if (!initSuccess) {
-    console.warn('Resume parsing functionality disabled due to initialization failure');
-  }
-
-  // Form submit handler
-  if (form) {
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      
-      const formData = new FormData(form);
-      const data = Object.fromEntries(formData);
-      localStorage.setItem('userData', JSON.stringify(data))  
-      console.log('Saved form data:', data);
-      showAutoFillStatus('Information saved successfully!', 'success');
-    });
-  }
-
-  // Clear form button handler
-  if (clearBtn) {
-    clearBtn.addEventListener('click', function() {
-      if (form) {
-        form.reset();
-        showAutoFillStatus('Form cleared.', 'info');
+        isProcessing = false;
+        e.target.value = '';
       }
     });
   }
+
+  // Auto-save logic
+  function loadData() {
+    try { return JSON.parse(localStorage.getItem('userData')) || {}; } catch { return {}; }
+  }
+
+  const saved = loadData();
+  Object.entries(saved).forEach(([k, v]) => { if (form.elements[k]) form.elements[k].value = v; });
+
+  form.querySelectorAll('[name]').forEach(el => el.addEventListener('input', () => {
+    const data = Object.fromEntries(new FormData(form).entries());
+    localStorage.setItem('userData', JSON.stringify(data));
+    showAutoFillStatus('Auto-saved!', 'info');
+  }));
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(form).entries());
+    localStorage.setItem('userData', JSON.stringify(data));
+    showAutoFillStatus('Information saved!', 'success');
+  });
+
+  clearBtn.addEventListener('click', () => {
+    form.reset();
+    localStorage.removeItem('userData');
+    showAutoFillStatus('Form and data cleared.', 'info');
+  });
+
+  exportBtn.addEventListener('click', () => {
+    const data = loadData();
+    const skills = data.skills || '';
+    const items = skills.split(/,\s*/).filter(s => s);
+    const blob = new Blob([items.join('\n')], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'skills.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
 }
 
 function createResumeCard(file, resumeId) {
