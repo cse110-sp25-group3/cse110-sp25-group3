@@ -207,7 +207,8 @@
 
 /* Inputs and textareas */
 .info-form input,
-.info-form textarea {
+.info-form textarea,
+.info-form select {
   width: 100%;
   padding: 0.5rem 0.75rem;
   border-radius: 8px;
@@ -219,7 +220,8 @@
 }
 
 .info-form input:focus,
-.info-form textarea:focus {
+.info-form textarea:focus ,
+.info-form select:focus {
   outline: none;
   border-color: #2563eb;
   box-shadow: 0 0 5px #93c5fd;
@@ -227,7 +229,7 @@
 
 /* Auto-filled input styling */
 .info-form input.auto-filled,
-.info-form textarea.auto-filled {
+.info-form textarea.auto-filled , .info-form select.auto-filled {
   border-color: #22c55e;
   background-color: #f0fdf4;
   animation: highlight 3s ease-out;
@@ -263,6 +265,7 @@
   transition: background-color 0.3s ease;
   font-family: 'Open-Sans', sans-serif;
   margin-right: 0.5rem;
+  min-width: 172px;
 }
 
 /* Save button */

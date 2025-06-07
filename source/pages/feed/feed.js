@@ -29,31 +29,19 @@ function getMatchDegree(job) {
 export async function renderFeed(container) {
   console.log("renderFeed called");
   container.innerHTML = '<div id="job-cards-container"></div>';
+
   const jobCardsContainer = document.getElementById("job-cards-container");
-  
+
   try {
     // Fetch raw jobs
     const rawJobs = await fetchJobs();
-  
-    // Load preferences
+
+    // Load prefs
     const prefs = loadUserPreferences();
     userSkills = Array.isArray(prefs.userSkills) ? prefs.userSkills : [];
-  
-    // Load previously applied jobs from localStorage
-    const appliedJobs = JSON.parse(localStorage.getItem('appliedJobs')) || [];
 
-    // Create a Set of composite keys to identify duplicates
-    const appliedSet = new Set(
-      appliedJobs.map(job => job.companyName + "::" + job.jobRole)
-    );
-
-    // Filter out jobs that were already applied to
-    const filteredJobs = rawJobs.filter(
-      job => !appliedSet.has(job.companyName + "::" + job.jobRole)
-    );
-
-    // Run feed algorithm only on remaining jobs
-    jobsData = runFeedAlgorithm(filteredJobs, {
+    // the feed algorithm that do filter&score&sort
+    jobsData = runFeedAlgorithm(rawJobs, {
       userSkills: prefs.userSkills,
       industries: prefs.industries,
       locations:  prefs.locations,
@@ -62,18 +50,17 @@ export async function renderFeed(container) {
       roles: prefs.roles
     });
 
+    // Reset index
     currentJobIndex = 0;
 
     createJobCards(jobCardsContainer);
     updateCardVisibility();
-    
   } catch (error) {
     console.error("Error fetching jobs:", error);
     jobCardsContainer.innerHTML +=
       "<p>Failed to load job listings. Please try again later.</p>";
   }
 }
-  
 
 function createJobCards(container) {
   jobsData.forEach((job, index) => {
@@ -116,7 +103,7 @@ function createJobCards(container) {
           </div>
           <div class="bottom-buttons">
             <button class="swipe-button skip-button" aria-label="Skip job">✕</button>
-            <button class="swipe-button apply-button" aria-label="Apply for job">✓</button>
+            <button class="swipe-button  apply-button" aria-label="Apply for job">✓</button>
           </div>
         </div>
         <div class="card-face card-back">
@@ -163,7 +150,7 @@ function createJobCards(container) {
           </div>
           <div class="bottom-buttons">
             <button class="swipe-button skip-button" aria-label="Skip job">✕</button>
-            <button class="swipe-button apply-button" aria-label="Apply for job">✓</button>
+            <button class="swipe-button  apply-button" aria-label="Apply for job">✓</button>
           </div>
         </div>
       </div>
@@ -244,18 +231,24 @@ function skipCurrentJob() {
 
 function applyToCurrentJob() {
   if (currentJobIndex < jobsData.length) {
+    const currentCard = document.querySelector(".job-card.active");
     const job = jobsData[currentJobIndex];
-
+    const data = localStorage.getItem('userData');
+    const jobs = encodeURIComponent(JSON.stringify(job));
+    // Encode data to safely pass via URL
+    const encodedData = encodeURIComponent(data);
+    const newWindow = window.open(`http://localhost:3000/?data=${encodedData}&jobs=${jobs}`, '_blank', 'width=600,height=400');
+     // Wait 3 seconds, then close the new window
+     setTimeout(() => {
+        if (newWindow && !newWindow.closed) {
+          newWindow.close();
+        }
+      },1500);
     saveJobToLocalStorage(job);
-
-    const cards = document.querySelectorAll('.job-card');
-    const currentCard = cards[currentJobIndex];
-
     if (currentCard) {
-      currentCard.classList.add('apply-animation');
+      currentCard.classList.add("apply-animation");
       setTimeout(() => {
-        jobsData.splice(currentJobIndex, 1);
-        currentCard.remove();
+        currentJobIndex++;
         updateCardVisibility();
       }, 500);
     }
@@ -267,7 +260,8 @@ function saveJobToLocalStorage(job) {
   const isDuplicate = existing.some(
     (saved) =>
       saved.companyName === job.companyName &&
-      saved.jobRole === job.jobRole
+      saved.jobRole === job.jobRole &&
+      saved.dateSubmitted === job.dateSubmitted
   );
 
   if (!isDuplicate) {

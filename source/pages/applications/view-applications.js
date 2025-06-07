@@ -8,11 +8,8 @@ export function renderApplications(container) {
 
     if (jobs.length === 0) {
         container.innerHTML = `
-            <div class="end-message">
-                <h3>No applications yet!</h3>
-                <p>Let's get applying!</p>
-                <button id='noapp'><a href='../../pages/feed/feed.html'>Job Feed</a></button>
-            </div>
+            <h2>Your Applications</h2>
+            <p>No job applications found. Apply to jobs from the feed page!</p>
         `;
         return;
     }
