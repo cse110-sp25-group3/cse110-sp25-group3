@@ -133,11 +133,21 @@ function parsePay(payString) {
   return pay;
 }
 
-function payScore(jobSalary, userMin = 0) {
-  if (!userMin || userMin <= 0) return 50; // neutral
-  if (jobSalary < userMin) return 0;
-  if (jobSalary > userMax) return 100;
-  return Math.round(((jobSalary - userMin) / (userMax - userMin)) * 100);
+/**
+ * payScore()
+ *
+ * Given a numeric jobSalary (e.g. 80000) and a user preference salary (the satisfy-point salary),
+ * returns a 0–100 score:
+ *   If prefSalary is undefined or zero => return 50 (neutral)
+ *   If jobSalary > prefSalary => 100
+ *   intolerable point = 0.72 (my personal take) // anything below this score a 0
+ *   If (intolerable point < jobSalary < satisfy point) => I use ((jobSalary - intolerable) / (satisfy - intolerable)) * 100
+ */
+function payScore(jobSalary, prefSalary = 0) {
+  if (!prefSalary || prefSalary <= 0) return 50; // neutral
+  if (jobSalary > prefSalary) return 100;
+  if (jobSalary < prefSalary * 0.72) return 0; // intolerable point for a job 
+  return Math.round(((jobSalary - (prefSalary * 0.72)) / (prefSalary - (prefSalary * 0.72))) * 100);
 }
 
 /**
