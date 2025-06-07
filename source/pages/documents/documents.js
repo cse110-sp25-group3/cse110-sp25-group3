@@ -107,7 +107,7 @@ export async function renderDocuments(container) {
         <button type="submit" class="btn btn-green">Save Information</button>
       </form>
 
-      <button id="clear-form" class="btn btn-gray">Clear Form</button>
+      <button id="clear-form" type="button" class="btn btn-gray">Clear Form</button>
     </div>
   `;
 
