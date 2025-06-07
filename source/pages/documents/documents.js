@@ -178,6 +178,7 @@ export async function renderDocuments(container) {
       </form>
     </div>
   `;
+  
 
   const uploadInput = container.querySelector('#resume-input');
   const uploadBtn = container.querySelector('#upload-btn');

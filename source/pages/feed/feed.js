@@ -1,5 +1,5 @@
 import { fetchJobs } from "../../functions/fetch-jobs.js";
-import { loadUserPreferences, renderPreferences } from "../preferences/job-preferences.js";
+import { loadUserPreferences, renderFeedPreferences } from "../preferences/job-preferences.js";
 import { runFeedAlgorithm } from "./feed-algorithm.js";
 
 let jobsData = [];
@@ -195,7 +195,7 @@ export async function renderFeed(container) {
   container.innerHTML = "";
 
   // Render preferences header (which wires showOverlay/removeOverlay)
-  renderPreferences(container);
+  renderFeedPreferences(container);
 
   // Append job cards container
   const jobCardsContainer = document.createElement("div");

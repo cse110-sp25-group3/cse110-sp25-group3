@@ -1,4 +1,8 @@
 /* Styling for the main feed container */
+#app{
+  overflow-y: hidden !important;
+}
+
 
 .container{
   overflow: hidden !important;
@@ -16,7 +20,7 @@
   height: 350px;
   perspective: 1000px;
   cursor: pointer;
-  margin: 20px;
+  margin: 15px;
 }
 
 .behindCard{
@@ -25,8 +29,8 @@
   height: 350px;
   perspective: 1000px;
   cursor: pointer;
-  margin: 20px;
-  background-color: #B5C5F4;
+  margin: 15px;
+  background-color: #d9e6ff;
   transform: rotate(7deg);
   border-radius: 1em;
 }

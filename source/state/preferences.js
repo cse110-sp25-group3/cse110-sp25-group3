@@ -2,13 +2,14 @@
 const STORAGE_KEY = 'jobPreferences';
 
 const defaultPrefs = {
-  skills:    [],
-  locations: [],
-  industries:[],
-  roles:     [],
-  nature:    [],
-  workModel: [],
-  salary:    ''
+  skills:        [],
+  locations:     [],
+  industries:    [],
+  roles:         [],
+  nature:        [],
+  workModel:     [],
+  salaryHourly:  '',   // new
+  salaryYearly:  ''    // new
 };
 
 // load or fallback
@@ -32,20 +33,27 @@ export function setPreference(key, values) {
   save();
 }
 
-export function setSalary(val) {
-  preferences.salary = val;
+// replace setSalary() with two setters:
+export function setSalaryHourly(val) {
+  preferences.salaryHourly = String(val);
+  save();
+}
+
+export function setSalaryYearly(val) {
+  preferences.salaryYearly = String(val);
   save();
 }
 
 export function getPreferences() {
   // return a copy
   return {
-    skills:    [...preferences.skills],
-    locations: [...preferences.locations],
-    industries:[...preferences.industries],
-    roles:     [...preferences.roles],
-    nature:    [...preferences.nature],
-    workModel: [...preferences.workModel],
-    salary:    preferences.salary
+    skills:        [...preferences.skills],
+    locations:     [...preferences.locations],
+    industries:    [...preferences.industries],
+    roles:         [...preferences.roles],
+    nature:        [...preferences.nature],
+    workModel:     [...preferences.workModel],
+    salaryHourly:  preferences.salaryHourly,
+    salaryYearly:  preferences.salaryYearly
   };
 }

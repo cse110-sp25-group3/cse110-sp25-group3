@@ -1,7 +1,6 @@
 /* ─── Layout & Container ─── */
 .container {
   max-width: 600px;
-  margin: 2rem auto;
   padding: 0 1rem;
   display: flex;
   flex-direction: column;
@@ -14,7 +13,7 @@
 /* ─── Section Headers ─── */
 .pref-section {
   display: grid;
-  grid-template-columns: 145px 1fr;
+  grid-template-columns: 115px 1fr;
   column-gap: 1rem;
   align-items: baseline;
   padding: 0.75rem 0;
@@ -43,6 +42,18 @@
   box-sizing: border-box;
   font-size: 0.95rem;
   margin-bottom: 10px;
+  width: 200px;
+}
+
+.salary-input{
+  width: auto;
+  padding: 0.5rem 0.1rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  box-sizing: border-box;
+  font-size: 0.95rem;
+  margin-bottom: 10px;
+  width: 70px;
 }
 
 /* Add button */
@@ -164,7 +175,6 @@
   position: absolute;
   bottom: 0;
   left: 0;
-  width: 100%;
   height: 60%;
   transform: translateY(100%);
   transition: transform 0.3s ease-in-out;
