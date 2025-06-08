@@ -289,6 +289,7 @@ class AppCard extends HTMLElement {
                     ${data.relevantSkills.map(skill => `<span class="skill">${skill}</span>`).join('')}
                 </div>
                 <a class="apply-link" href="${data.applicationLink}" target="_blank" rel="noopener">Link to Application</a>
+                <button class="remove-app">Remove Application</button>
             </section>
         `;
 
@@ -301,6 +302,15 @@ class AppCard extends HTMLElement {
             detailSection.classList.toggle('expanded', !isExpanded);
             toggleBtn.setAttribute('aria-expanded', !isExpanded);
             toggleBtn.textContent = isExpanded ? 'Details' : 'Hide';
+        });
+
+        const removeBtn = this.article.querySelector('.remove-app');
+        removeBtn.addEventListener('click', () => {
+            const event = new CustomEvent('remove-app', {
+                bubbles: true,
+                detail: data
+            });
+            this.dispatchEvent(event);
         });
     }
 }
