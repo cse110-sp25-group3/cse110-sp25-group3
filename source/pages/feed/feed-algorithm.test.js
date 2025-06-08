@@ -3,183 +3,189 @@
 
 import { runFeedAlgorithm } from "./feed-algorithm.js";
 
-// Mock skillAssessment and computeJobScore so we can control outputs
 jest.mock("../../functions/skill-assessment.js", () => ({
-    skillAssessment: jest.fn()
+  skillAssessment: jest.fn()
 }));
 import { skillAssessment } from "../../functions/skill-assessment.js";
 
 jest.mock("../../functions/score-heuristic.js", () => ({
-     computeJobScore: jest.fn()
+  computeJobScore: jest.fn()
 }));
 import { computeJobScore } from "../../functions/score-heuristic.js";
 
-describe("runFeedAlgorithm (with date freshness)", () => {
-    let jobs;
-    let prefs;
-    let fakeNow;
+describe("runFeedAlgorithm (with date freshness and composite scoring)", () => {
+  let jobs;
+  let prefs;
+  const fakeNowDate = "2025-05-30T00:00:00Z";
+  let fakeNow;
 
-    beforeAll(() => {
-        // Freeze time at 2025-05-30T00:00:00Z
-        fakeNow = new Date("2025-05-30T00:00:00Z").getTime();
-        jest.spyOn(Date, "now").mockImplementation(() => fakeNow);
-    });
+  beforeAll(() => {
+    fakeNow = new Date(fakeNowDate).getTime();
+    jest.spyOn(Date, "now").mockImplementation(() => fakeNow);
+  });
 
-    afterAll(() => {
-        Date.now.mockRestore();
-    });
+  afterAll(() => {
+    Date.now.mockRestore();
+  });
 
-    beforeEach(() => {
-        jest.clearAllMocks();
+  beforeEach(() => {
+    jest.clearAllMocks();
+    jobs = [
+      { id: "job1", industry: "tech", datePosted: "2025-05-30", relevantSkills: ["JS","CSS"], requiredSkills: ["JS","CSS"], pay: "0" },
+      { id: "job2", industry: "tech", datePosted: "2025-05-15", relevantSkills: ["HTML"],   requiredSkills: ["HTML"],   pay: "0" },
+      { id: "job3", industry: "finance", datePosted: "2025-04-30", relevantSkills: ["Excel"], requiredSkills: ["Excel"], pay: "0" }
+    ];
+    prefs = {
+      userSkills: ["JS"],
+      industries: ["tech"],
+      locations: [],
+      workModels: [],
+      natures: [],
+      roles: [],
+      salaryYearly: undefined
+    };
+  });
 
-        // Three sample jobs with varying datePosted and industries
-        jobs = [
-            {
-                id: "job1",
-                industry: "tech",
-                datePosted: "2025-05-30", // same as fakeNow => age = 0 days => dateScore = 100
-                relevantSkills: ["JS", "CSS"],
-                requiredSkills: ["JS", "CSS"]
-            },
-            {
-                id: "job2",
-                industry: "tech",
-                datePosted: "2025-05-15", // 15 days old => dateScore = ((30 - 15)/30)*100 = 50
-                relevantSkills: ["HTML"],
-                requiredSkills: ["HTML"]
-            },
-            {
-                id: "job3",
-                industry: "finance",
-                datePosted: "2025-04-30", // 30 days old => dateScore = 0
-                relevantSkills: ["Excel"],
-                requiredSkills: ["Excel"]
-            }
-        ];
+  test("filters out non-matching industry", () => {
+    computeJobScore.mockReturnValue(10);
+    skillAssessment.mockReturnValue(20);
 
-        // Preferences: only “tech” industry passes; userSkills include "JS" only
-        prefs = {
-            userSkills: ["JS"],
-            industries: ["tech"],
-            locations: [],
-            workModels: [],
-            natures: [],
-            roles: []
-        };
-    });
+    const result = runFeedAlgorithm(jobs, prefs);
+    expect(result.map(j => j.id)).toEqual(["job1", "job2"]);
+  });
 
-    test("filters out non-matching industry", () => {
-        computeJobScore.mockReturnValue(10);
-        skillAssessment.mockReturnValue(20);
+  test("assigns correct dateScore for today and 15 days old", () => {
+    computeJobScore.mockReturnValue(0);
+    skillAssessment.mockReturnValue(0);
 
-        const result = runFeedAlgorithm(jobs, prefs);
+    const result = runFeedAlgorithm(jobs, prefs);
+    const job1 = result.find(j => j.id === "job1");
+    const job2 = result.find(j => j.id === "job2");
+    expect(job1.dateScore).toBe(100);
+    expect(job2.dateScore).toBe(50);
+  });
 
-        // job3 (industry: "finance") should be filtered out
-        const ids = result.map(j => j.id);
-        expect(ids).toEqual(["job1", "job2"]);
-    });
+  test("handles invalid datePosted and compositeScore includes neutral payScore", () => {
+    const badJob = {
+      id: "jobBad",
+      industry: "tech",
+      datePosted: "not-a-date",
+      relevantSkills: [],
+      requiredSkills: [],
+      pay: "50k"
+    };
+    jobs.push(badJob);
 
-    test("assigns correct dateScore for today and 15 days old", () => {
-        // We'll set computeJobScore to a constant so composite depends only on dateScore
-        computeJobScore.mockReturnValue(0);
-        skillAssessment.mockReturnValue(0);
+    computeJobScore.mockReturnValue(10);
+    skillAssessment.mockReturnValue(0);
 
-        const result = runFeedAlgorithm(jobs, prefs);
+    const result = runFeedAlgorithm(jobs, prefs);
+    const jobBad = result.find(j => j.id === "jobBad");
+    expect(jobBad.dateScore).toBe(0);
+    // baseScore=10, dateScore=0, payScore(neutral)=50
+    // composite = round(10*0.5 + 0*0.2 + 50*0.3) = round(5 + 0 + 15) = 20
+    expect(jobBad.compositeScore).toBe(20);
+  });
 
-        // job1.dateScore => 100, job2.dateScore => 50
-        const job1 = result.find(j => j.id === "job1");
-        const job2 = result.find(j => j.id === "job2");
+  test("calculates compositeScore with correct weights and neutral payScore", () => {
+    computeJobScore.mockImplementation(job => (job.id === "job1" ? 80 : 60));
+    skillAssessment.mockReturnValue(0);
 
-        expect(job1.dateScore).toBe(100);
-        expect(job2.dateScore).toBe(50);
-    });
+    const result = runFeedAlgorithm(jobs, prefs);
+    const job1 = result.find(j => j.id === "job1");
+    const job2 = result.find(j => j.id === "job2");
+    // job1: 80*0.5 + 100*0.2 + 50*0.3 = 40 + 20 + 15 = 75
+    // job2: 60*0.5 +  50*0.2 + 50*0.3 = 30 + 10 + 15 = 55
+    expect(job1.compositeScore).toBe(75);
+    expect(job2.compositeScore).toBe(55);
+  });
 
-    test("handles invalid datePosted as dateScore = 0", () => {
-        // Add a job with invalid date
-        const badJob = {
-            id: "jobBad",
-            industry: "tech",
-            datePosted: "not-a-date",
-            relevantSkills: [],
-            requiredSkills: []
-        };
-        jobs.push(badJob);
+  test("returns jobs sorted by compositeScore descending", () => {
+    computeJobScore.mockImplementation(job => (job.id === "job1" ? 80 : 60));
+    skillAssessment.mockReturnValue(0);
 
-        computeJobScore.mockReturnValue(10);
-        skillAssessment.mockReturnValue(0);
+    const result = runFeedAlgorithm(jobs, prefs);
+    expect(result.map(j => j.id)).toEqual(["job1", "job2"]);
+  });
 
-        const result = runFeedAlgorithm(jobs, prefs);
-        const jobBad = result.find(j => j.id === "jobBad");
+  test("populates matchedSkills and lostSkills based on userSkills", () => {
+    computeJobScore.mockReturnValue(0);
+    skillAssessment.mockReturnValue(0);
 
-        expect(jobBad.dateScore).toBe(0);
-        // baseScore = 10, W_BASE = 0.6 => composite = round(10 * 0.6 + 0 * 0.4) = 6
-        expect(jobBad.compositeScore).toBe(6);
-    });
+    const result = runFeedAlgorithm(jobs, prefs);
+    const job1 = result.find(j => j.id === "job1");
+    expect(job1.matchedSkills).toEqual(["JS"]);
+    expect(job1.lostSkills   ).toEqual(["CSS"]);
 
-    test("calculates compositeScore = 0.6*baseScore + 0.4*dateScore", () => {
-        // Setup computeJobScore to return distinct baseScores
-        computeJobScore.mockImplementation(job => {
-            if (job.id === "job1") return 80;
-            if (job.id === "job2") return 60;
-            return 0;
-        });
-        skillAssessment.mockReturnValue(0);
+    const job2 = result.find(j => j.id === "job2");
+    expect(job2.matchedSkills).toEqual([]);
+    expect(job2.lostSkills   ).toEqual(["HTML"]);
+  });
 
-        const result = runFeedAlgorithm(jobs, prefs);
-        // job1: baseScore=80, dateScore=100 => composite = round(80*0.6 + 100*0.4) = round(48 + 40) = 88
-        // job2: baseScore=60, dateScore=50  => composite = round(60*0.6 + 50*0.4) = round(36 + 20) = 56
+  test("filters nothing when prefs.industries is empty array", () => {
+    prefs.industries = [];
+    computeJobScore.mockReturnValue(10);
+    skillAssessment.mockReturnValue(5);
 
-        const job1 = result.find(j => j.id === "job1");
-        const job2 = result.find(j => j.id === "job2");
+    const result = runFeedAlgorithm(jobs, prefs);
+    expect(result.map(j => j.id).sort())
+      .toEqual(["job1","job2","job3"].sort());
+  });
 
-        expect(job1.compositeScore).toBe(88);
-        expect(job2.compositeScore).toBe(56);
-    });
+  test("filters nothing when prefs.industries is undefined", () => {
+    delete prefs.industries;
+    computeJobScore.mockReturnValue(10);
+    skillAssessment.mockReturnValue(5);
 
-    test("returns jobs sorted by compositeScore descending", () => {
-        // job1 => composite 88, job2 => 56
-        computeJobScore.mockImplementation(job => (job.id === "job1" ? 80 : 60));
-        skillAssessment.mockReturnValue(0);
+    const result = runFeedAlgorithm(jobs, prefs);
+    expect(result.map(j => j.id).sort())
+      .toEqual(["job1","job2","job3"].sort());
+  });
+});
 
-        const result = runFeedAlgorithm(jobs, prefs);
+describe("pay parsing and scoring via runFeedAlgorithm", () => {
+  let prefs;
+  const commonJob = {
+    industry: "tech",
+    datePosted: "2025-05-30",
+    relevantSkills: [],
+    requiredSkills: []
+  };
 
-        expect(result.map(j => j.id)).toEqual(["job1", "job2"]);
-    });
+  beforeEach(() => {
+    jest.clearAllMocks();
+    computeJobScore.mockReturnValue(0);
+    skillAssessment.mockReturnValue(0);
+    prefs = {
+      userSkills:   [],
+      industries:   ["tech"],
+      locations:    [],
+      workModels:   [],
+      natures:      [],
+      roles:        [],
+      salaryYearly: "50000"
+    };
+  });
 
-    test("populates matchedSkills and lostSkills based on userSkills", () => {
-        // For job1, relevantSkills ["JS","CSS"], userSkills ["JS"] => matched=["JS"], lost=["CSS"]
-        computeJobScore.mockReturnValue(0);
-        skillAssessment.mockReturnValue(0);
+  test.each([
+    ["$80k",       100],
+    ["70k-90k",    100],
+    ["30k",         0],
+    ["40k", Math.round(((40000 - (50000 * 0.72)) / (50000 - (50000 * 0.72))) * 100)],
+    ["25.5/hr",    100],
+    ["20/hr - 30/hr", 100],
+    ["invalid",     0]
+  ])("job.pay = '%s' yields payScore = %i", (payString, expected) => {
+    const job = { id: payString, ...commonJob, pay: payString };
+    const [res] = runFeedAlgorithm([job], prefs);
+    expect(res.payScore).toBe(expected);
+  });
 
-        const result = runFeedAlgorithm(jobs, prefs);
-        const job1 = result.find(j => j.id === "job1");
-        expect(job1.matchedSkills).toEqual(["JS"]);
-        expect(job1.lostSkills).toEqual(["CSS"]);
-
-        // For job2, relevantSkills ["HTML"], userSkills=["JS"] => matched=[], lost=["HTML"]
-        const job2 = result.find(j => j.id === "job2");
-        expect(job2.matchedSkills).toEqual([]);
-        expect(job2.lostSkills).toEqual(["HTML"]);
-    });
-
-    test("filters nothing when prefs.industries is empty array", () => {
-        prefs.industries = [];
-        computeJobScore.mockReturnValue(10);
-        skillAssessment.mockReturnValue(5);
-
-        const result = runFeedAlgorithm(jobs, prefs);
-        // Should include job1 and job2 and job3, but job3 loses matched unless we redefine userSkills
-        const ids = result.map(j => j.id).sort();
-        expect(ids).toEqual(["job1", "job2", "job3"].sort());
-    });
-
-    test("filters nothing when prefs.industries is undefined", () => {
-        delete prefs.industries;
-        computeJobScore.mockReturnValue(10);
-        skillAssessment.mockReturnValue(5);
-
-        const result = runFeedAlgorithm(jobs, prefs);
-        const ids = result.map(j => j.id).sort();
-        expect(ids).toEqual(["job1", "job2", "job3"].sort());
-    });
+  test("returns neutral payScore = 50 when no salary preference is set", () => {
+    const job = { id: "noPref", ...commonJob, pay: "100k" };
+    const noPref = { ...prefs };
+    delete noPref.salaryYearly;
+    const [res] = runFeedAlgorithm([job], noPref);
+    expect(res.payScore).toBe(50);
+  });
 });
