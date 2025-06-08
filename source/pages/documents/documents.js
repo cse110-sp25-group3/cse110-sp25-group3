@@ -42,8 +42,8 @@ export async function renderDocuments(container) {
         <button id="upload-btn" class="btn btn-blue" ${!initSuccess ? 'disabled' : ''}>
           ${initSuccess ? 'Upload New Resume' : 'Upload Disabled'}
         </button>
-        <div id="upload-status" class="upload-status"></div>
       </div>
+      <div id="upload-status" class="upload-status"></div>
       <div id="resume-list" class="resume-list"></div>
     </div>
 
@@ -104,10 +104,11 @@ export async function renderDocuments(container) {
           <option>Yes</option>
           <option>No</option>
         </select>
-        <button type="submit" class="btn btn-green">Save Information</button>
+        <div class="button-group">
+          <button type="submit" class="btn btn-green">Save Information</button>
+          <button id="clear-form" type="button" class="btn btn-gray">Clear Form</button>
+        </div>
       </form>
-
-      <button id="clear-form" type="button" class="btn btn-gray">Clear Form</button>
     </div>
   `;
   
