@@ -1,272 +1,419 @@
 // preferences.js
 import { getUniqueValues } from "../../functions/fetch-jobs.js";
 
-// ── Persistence setup ──
+// ── Constants ──
 const STORAGE_KEY = 'jobPreferences';
-const defaultPrefs = {
-  skills:     [],
-  locations:  [],
-  industries: [],
-  roles:      [],
-  nature:     [],
-  workModel:  [],
-  salary:     '',       // numeric as string
-  salaryUnit: 'year'    // 'year' or 'hour'
+const CONSTANTS = {
+  NATURE_MAP: { 1: 'Full-time', 2: 'Part-time', 3: 'Intern' },
+  WORK_MODEL_MAP: { 1: 'Remote', 2: 'On-site', 3: 'Hybrid' },
+  SECTION_TITLES: {
+    skills: 'Preferred Skills',
+    locations: 'Locations', 
+    industries: 'Industries',
+    roles: 'Roles',
+    salary: 'Salary',
+    nature: 'Employment Type',
+    workModel: 'Work Model'
+  }
 };
 
-let savedPrefs;
-try {
-  const raw = localStorage.getItem(STORAGE_KEY);
-  savedPrefs = raw ? JSON.parse(raw) : { ...defaultPrefs };
-} catch {
-  savedPrefs = { ...defaultPrefs };
+const DEFAULT_PREFS = {
+  skills: [],
+  locations: [],
+  industries: [],
+  roles: [],
+  nature: [],
+  workModel: [],
+  salaryHourly: '',
+  salaryYearly: ''
+};
+
+// ── State Management ──
+class PreferencesManager {
+  constructor() {
+    this.prefs = this.loadPrefs();
+  }
+
+  loadPrefs() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? { ...DEFAULT_PREFS, ...JSON.parse(raw) } : { ...DEFAULT_PREFS };
+    } catch {
+      return { ...DEFAULT_PREFS };
+    }
+  }
+
+  savePrefs() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.prefs));
+      window.dispatchEvent(new CustomEvent('prefsUpdated', { detail: { ...this.prefs } }));
+    } catch {}
+  }
+
+  updatePref(key, value) {
+    this.prefs[key] = value;
+    this.savePrefs();
+  }
+
+  getPref(key) {
+    return this.prefs[key];
+  }
+
+  getAllPrefs() {
+    return { ...this.prefs };
+  }
 }
 
-function savePrefs() {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(savedPrefs));
-    // ← notify everyone that prefs have changed
-    window.dispatchEvent(new CustomEvent('prefsUpdated', {
-      detail: { ...savedPrefs }
-    }));
-  } catch {}
-}
+const prefsManager = new PreferencesManager();
 
-// ── Helpers ──
-function generateTags(items, initialSelected = [], prefKey) {
-  const selectedTags = [];
-  const container = document.createElement('div');
-  container.className = 'tag-selector';
+// ── Control Generators ──
+class ControlGenerator {
+  static createTagSelector(items, prefKey) {
+    const selectedTags = [...(prefsManager.getPref(prefKey) || [])];
+    const container = document.createElement('div');
+    container.className = 'tag-selector';
 
-  const input = document.createElement('input');
-  input.type = 'text';
-  input.placeholder = 'Type to add…';
-  input.className = 'tag-input';
-  container.append(input);
+    const elements = this.createTagElements(container);
+    const handlers = this.createTagHandlers(items, selectedTags, prefKey, elements);
+    
+    this.setupTagEventListeners(elements, handlers);
+    this.initializeSelectedTags(selectedTags, elements, handlers);
+    handlers.updateSuggestions();
 
-  const selectedContainer = document.createElement('div');
-  selectedContainer.className = 'selected-tags';
-  container.append(selectedContainer);
+    return {
+      element: container,
+      getState: () => [...selectedTags]
+    };
+  }
 
-  const suggestedTag = document.createElement('div');
-  suggestedTag.className = 'tag-suggestions';
-  container.append(suggestedTag);
+  static createTagElements(container) {
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.placeholder = 'Type to add…';
+    input.className = 'tag-input';
 
-  function updateSuggestions() {
-    const q = input.value.trim().toLowerCase();
-    const list = q
-      ? items.filter(t => !selectedTags.includes(t) && t.toLowerCase().startsWith(q)).slice(0,3)
-      : items.filter(t => !selectedTags.includes(t)).sort(() => 0.5 - Math.random()).slice(0,3);
-    suggestedTag.innerHTML = '';
-    list.forEach(tag => {
+    const selectedContainer = document.createElement('div');
+    selectedContainer.className = 'selected-tags';
+
+    const suggestedContainer = document.createElement('div');
+    suggestedContainer.className = 'tag-suggestions';
+
+    container.append(input, selectedContainer, suggestedContainer);
+
+    return { input, selectedContainer, suggestedContainer };
+  }
+
+  static createTagHandlers(items, selectedTags, prefKey, elements) {
+    const { input, selectedContainer, suggestedContainer } = elements;
+
+    const updateSuggestions = () => {
+      const query = input.value.trim().toLowerCase();
+      const available = items.filter(item => !selectedTags.includes(item));
+      const filtered = query 
+        ? available.filter(item => item.toLowerCase().startsWith(query))
+        : available.sort(() => 0.5 - Math.random());
+      
+      this.renderSuggestions(filtered.slice(0, 3), suggestedContainer, selectTag);
+    };
+
+    const selectTag = (tag) => {
+      if (selectedTags.includes(tag)) return;
+      
+      selectedTags.unshift(tag);
+      prefsManager.updatePref(prefKey, [...selectedTags]);
+      
+      this.renderSelectedTag(tag, selectedContainer, () => removeTag(tag));
+      input.value = '';
+      updateSuggestions();
+    };
+
+    const removeTag = (tag) => {
+      const index = selectedTags.indexOf(tag);
+      if (index > -1) {
+        selectedTags.splice(index, 1);
+        prefsManager.updatePref(prefKey, [...selectedTags]);
+        updateSuggestions();
+      }
+    };
+
+    return { updateSuggestions, selectTag, removeTag };
+  }
+
+  static renderSuggestions(suggestions, container, onSelect) {
+    container.innerHTML = '';
+    suggestions.forEach(tag => {
       const pill = document.createElement('button');
       pill.type = 'button';
       pill.className = 'tag-suggestion-pill';
       pill.textContent = `${tag} +`;
-      pill.addEventListener('click', () => selectTag(tag));
-      suggestedTag.append(pill);
+      pill.addEventListener('click', () => onSelect(tag));
+      container.append(pill);
     });
   }
 
-  function selectTag(tag) {
-    if (selectedTags.includes(tag)) return;
-    selectedTags.unshift(tag);
-    savedPrefs[prefKey] = [...selectedTags];
-    savePrefs();
-
+  static renderSelectedTag(tag, container, onRemove) {
     const pill = document.createElement('button');
     pill.type = 'button';
     pill.className = 'tag-pill';
     pill.textContent = `${tag} –`;
     pill.addEventListener('click', () => {
-      selectedTags.splice(selectedTags.indexOf(tag),1);
-      selectedContainer.removeChild(pill);
-      savedPrefs[prefKey] = [...selectedTags];
-      savePrefs();
-      updateSuggestions();
+      container.removeChild(pill);
+      onRemove();
     });
-    selectedContainer.prepend(pill);
-    input.value = '';
-    updateSuggestions();
+    container.prepend(pill);
   }
 
-  input.addEventListener('input', updateSuggestions);
-  (Array.isArray(initialSelected) ? initialSelected : []).forEach(tag => {
-    if (items.includes(tag)) selectTag(tag);
-  });
-  updateSuggestions();
+  static setupTagEventListeners(elements, handlers) {
+    elements.input.addEventListener('input', handlers.updateSuggestions);
+  }
 
-  return { element: container, getState: () => [...selectedTags] };
-}
+  static initializeSelectedTags(selectedTags, elements, handlers) {
+    selectedTags.forEach(tag => {
+      this.renderSelectedTag(tag, elements.selectedContainer, () => handlers.removeTag(tag));
+    });
+  }
 
-function generateCheckboxes(options, initialSelected = [], prefKey) {
-  const container = document.createElement('div');
-  container.className = 'checkbox-group';
-  options.forEach(({value,label}) => {
-    const id = `chk-${label.replace(/\s+/g,'-').toLowerCase()}`;
+  static createCheckboxGroup(options, prefKey) {
+    const container = document.createElement('div');
+    container.className = 'checkbox-group';
+    const initialSelected = prefsManager.getPref(prefKey) || [];
+
+    const updatePrefs = () => {
+      const selected = Array.from(container.querySelectorAll('input:checked')).map(cb => cb.value);
+      prefsManager.updatePref(prefKey, selected);
+    };
+
+    options.forEach(({ value, label }) => {
+      const wrapper = this.createCheckboxItem(value, label, initialSelected.includes(String(value)), updatePrefs);
+      container.append(wrapper);
+    });
+
+    return {
+      element: container,
+      getState: () => Array.from(container.querySelectorAll('input:checked')).map(cb => cb.value)
+    };
+  }
+
+  static createCheckboxItem(value, label, checked, onChange) {
+    const id = `chk-${label.replace(/\s+/g, '-').toLowerCase()}`;
     const wrapper = document.createElement('div');
     wrapper.className = 'checkbox-item';
+
     const input = document.createElement('input');
-    input.type = 'checkbox';
-    input.id = id;
-    input.value = String(value);
-    input.checked = Array.isArray(initialSelected) && initialSelected.includes(String(value));
-    input.addEventListener('change', () => {
-      const vals = Array.from(container.querySelectorAll('input:checked')).map(cb => cb.value);
-      savedPrefs[prefKey] = vals;
-      savePrefs();
+    Object.assign(input, {
+      type: 'checkbox',
+      id,
+      value: String(value),
+      checked
     });
-    const lbl = document.createElement('label');
-    lbl.htmlFor = id;
-    lbl.textContent = label;
-    wrapper.append(input, lbl);
-    container.append(wrapper);
-  });
-  return { element: container, getState: () => Array.from(container.querySelectorAll('input:checked')).map(cb => cb.value) };
+    input.addEventListener('change', onChange);
+
+    const labelEl = document.createElement('label');
+    labelEl.htmlFor = id;
+    labelEl.textContent = label;
+
+    wrapper.append(input, labelEl);
+    return wrapper;
+  }
+
+  static createSalaryControl() {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'salary-wrapper';
+
+    const createSalaryInput = (type, placeholder) => {
+      const input = document.createElement('input');
+      Object.assign(input, {
+        className: 'salary-input',
+        type: 'number',
+        placeholder,
+        value: prefsManager.getPref(`salary${type}`) || ''
+      });
+      
+      input.addEventListener('input', () => {
+        prefsManager.updatePref(`salary${type}`, input.value);
+      });
+      
+      return input;
+    };
+
+    const hourInput = createSalaryInput('Hourly', 'Hourly');
+    const yearInput = createSalaryInput('Yearly', 'Yearly');
+
+    wrapper.append(
+      hourInput,
+      this.createLabel('/hour'),
+      yearInput,
+      this.createLabel('/year')
+    );
+
+    return {
+      element: wrapper,
+      getState: () => {
+        const states = [];
+        const hourly = prefsManager.getPref('salaryHourly');
+        const yearly = prefsManager.getPref('salaryYearly');
+        if (hourly) states.push(`$${hourly}/hour`);
+        if (yearly) states.push(`$${yearly}/year`);
+        return states;
+      }
+    };
+  }
+
+  static createLabel(text) {
+    const span = document.createElement('span');
+    span.textContent = text;
+    return span;
+  }
 }
 
-function makeQuickMenu(key, controlEl, getState, title) {
-  const quickMenu = document.createElement('div');
-  quickMenu.className = 'quick-menu';
-  quickMenu.dataset.section = key;
-  const h3 = document.createElement('h3');
-  h3.textContent = title;
-  quickMenu.append(h3, controlEl);
-  return { key, el: quickMenu, getState };
+// ── Section Management ──
+class SectionManager {
+  static async createSections() {
+    const data = await this.fetchSectionData();
+    const options = this.createSectionOptions();
+    
+    return [
+      { key: 'skills', control: ControlGenerator.createTagSelector(data.skills, 'skills') },
+      { key: 'locations', control: ControlGenerator.createTagSelector(data.locations, 'locations') },
+      { key: 'industries', control: ControlGenerator.createTagSelector(data.industries, 'industries') },
+      { key: 'roles', control: ControlGenerator.createTagSelector(data.roles, 'roles') },
+      { key: 'salary', control: ControlGenerator.createSalaryControl() },
+      { key: 'nature', control: ControlGenerator.createCheckboxGroup(options.nature, 'nature') },
+      { key: 'workModel', control: ControlGenerator.createCheckboxGroup(options.workModel, 'workModel') }
+    ];
+  }
+
+  static async fetchSectionData() {
+    const [skills, locations, industries, roles] = await Promise.all([
+      getUniqueValues('relevantSkills', { flatten: true }),
+      getUniqueValues('location'),
+      getUniqueValues('industry'),
+      getUniqueValues('jobRole')
+    ]);
+    
+    return { skills, locations, industries, roles };
+  }
+
+  static createSectionOptions() {
+    const mapToOptions = (map) => Object.entries(map).map(([value, label]) => ({ value, label }));
+    
+    return {
+      nature: mapToOptions(CONSTANTS.NATURE_MAP),
+      workModel: mapToOptions(CONSTANTS.WORK_MODEL_MAP)
+    };
+  }
+
+  static createSection(title, element) {
+    const section = document.createElement('section');
+    section.className = 'pref-section';
+    section.innerHTML = `<h3>${title}</h3>`;
+    section.append(element);
+    return section;
+  }
+
+  static createQuickMenu(key, controlEl, getState) {
+    const quickMenu = document.createElement('div');
+    quickMenu.className = 'quick-menu';
+    quickMenu.dataset.section = key;
+    
+    const h3 = document.createElement('h3');
+    h3.textContent = CONSTANTS.SECTION_TITLES[key];
+    quickMenu.append(h3, controlEl);
+    
+    return { key, el: quickMenu, getState };
+  }
 }
 
-// ── Salary Control (two radio + two inputs) ──
-function createSalaryControl() {
-  const wrapper = document.createElement('div');
-  wrapper.className = 'salary-wrapper';
+// ── Header Management ──
+class HeaderManager {
+  static createHeader(menus, container) {
+    const header = document.createElement('div');
+    header.className = 'preferences-header';
+    Object.assign(header.style, {
+      display: 'flex',
+      overflowX: 'auto',
+      whiteSpace: 'nowrap',
+      gap: '8px',
+      cursor: 'grab'
+    });
 
-  // Hourly input
-  const hourInput = document.createElement('input');
-  hourInput.className = 'salary-input';
-  hourInput.type = 'number';
-  hourInput.placeholder = 'Hourly';
-  hourInput.value = savedPrefs.salaryHourly;
-  hourInput.addEventListener('input', () => {
-    savedPrefs.salaryHourly = hourInput.value;
-    savePrefs();
-  });
+    this.setupDragScroll(header);
+    this.createMenuButtons(menus, header, container);
+    
+    return header;
+  }
 
-  const hourLabel = document.createElement('span');
-  hourLabel.textContent = '/hour';
+  static setupDragScroll(header) {
+    let isDown = false, startX, scrollLeft;
+    
+    header.addEventListener('mousedown', e => {
+      isDown = true;
+      startX = e.pageX - header.offsetLeft;
+      scrollLeft = header.scrollLeft;
+    });
 
-  // Yearly input
-  const yearInput = document.createElement('input');
-  yearInput.className = 'salary-input';
-  yearInput.type = 'number';
-  yearInput.placeholder = 'Yearly';
-  yearInput.value = savedPrefs.salaryYearly;
-  yearInput.addEventListener('input', () => {
-    savedPrefs.salaryYearly = yearInput.value;
-    savePrefs();
-  });
+    ['mouseleave', 'mouseup'].forEach(event => 
+      header.addEventListener(event, () => isDown = false)
+    );
 
-  const yearLabel = document.createElement('span');
-  yearLabel.textContent = '/year';
+    header.addEventListener('mousemove', e => {
+      if (!isDown) return;
+      e.preventDefault();
+      header.scrollLeft = scrollLeft - (e.pageX - header.offsetLeft - startX);
+    });
+  }
 
-  wrapper.append(hourInput, hourLabel, yearInput, yearLabel);
+  static createMenuButtons(menus, header, container) {
+    menus.forEach(menu => {
+      const btn = this.createMenuButton(menu, menus);
+      const closeBtn = this.createCloseButton(menu);
+      
+      menu.el.prepend(closeBtn);
+      header.append(btn);
+      container.append(menu.el);
+    });
+  }
 
-  return {
-    element: wrapper,
-    getState: () => {
-      const states = [];
-      if (savedPrefs.salaryHourly)  states.push(`$${savedPrefs.salaryHourly}/hour`);
-      if (savedPrefs.salaryYearly)  states.push(`$${savedPrefs.salaryYearly}/year`);
-      return states;
-    }
-  };
-}
-
-// ── Header Renderer ──
-export async function renderFeedPreferences(container) {
-  container.innerHTML = '';
-  const skills     = await getUniqueValues('relevantSkills', { flatten: true });
-  const locations  = await getUniqueValues('location');
-  const industries = await getUniqueValues('industry');
-  const roles      = await getUniqueValues('jobRole');
-
-  const salaryControl = createSalaryControl();
-
-  const natureMap    = {1:'Full-time',2:'Part-time',3:'Intern'};
-  const workModelMap = {1:'Remote',2:'On-site',3:'Hybrid'};
-  const sectionTitles = {
-    skills:     'Preferred Skills',
-    locations:  'Locations',
-    industries: 'Industries',
-    roles:      'Roles',
-    salary:     'Salary',
-    nature:     'Employment Type',
-    workModel:  'Work Model'
-  };
-
-  const natureOpts = Object.entries(natureMap).map(([v,l]) => ({ value: v, label: l }));
-  const workOpts   = Object.entries(workModelMap).map(([v,l]) => ({ value: v, label: l }));
-
-  const sections = [
-    { key:'skills',     control: generateTags(skills,     savedPrefs.skills,     'skills') },
-    { key:'locations',  control: generateTags(locations,  savedPrefs.locations,  'locations') },
-    { key:'industries', control: generateTags(industries, savedPrefs.industries, 'industries') },
-    { key:'roles',      control: generateTags(roles,      savedPrefs.roles,      'roles') },
-    { key:'salary',     control: salaryControl },
-    { key:'nature',     control: generateCheckboxes(natureOpts, savedPrefs.nature,     'nature') },
-    { key:'workModel',  control: generateCheckboxes(workOpts,   savedPrefs.workModel,  'workModel') }
-  ];
-
-  const menus = sections.map(({ key, control }) =>
-    makeQuickMenu(key, control.element, control.getState, sectionTitles[key])
-  );
-
-  const header = document.createElement('div');
-  header.className = 'preferences-header';
-  Object.assign(header.style, { display: 'flex', overflowX: 'auto', whiteSpace: 'nowrap', gap: '8px', cursor: 'grab' });
-
-  // drag-scroll logic 
-  let isDown=false, startX, scrollLeft;
-  header.addEventListener('mousedown', e => { isDown=true; startX=e.pageX-header.offsetLeft; scrollLeft=header.scrollLeft; });
-  ['mouseleave','mouseup'].forEach(evt => header.addEventListener(evt, () => isDown=false));
-  header.addEventListener('mousemove', e => { if(!isDown) return; e.preventDefault(); header.scrollLeft=scrollLeft-(e.pageX-header.offsetLeft-startX); });
-  Object.assign(header.style, { display: 'flex', overflowX: 'auto', whiteSpace: 'nowrap', gap: '8px', cursor: 'grab' });
-
-
-
-  menus.forEach(menu => {
+  static createMenuButton(menu, allMenus) {
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'section-btn';
 
     const updateLabel = () => {
-    const vals = menu.getState();
-    let preview;
-    if (vals.length === 0) {
-      preview = sectionTitles[menu.key];
-    } else {
-      // for checkbox‐type menus, values are strings like "1","2","3"
-      if (menu.key === 'nature') {
-        // map “1”→“Full‐time”, etc.
-        preview = natureMap[+vals[0]];
-      } else if (menu.key === 'workModel') {
-        preview = workModelMap[+vals[0]];
-      } else {
-        // tags and salary just show the tag text
-        preview = vals[0];
-      }
-      if (vals.length > 1) preview += ` +${vals.length - 1}`;
-    }
-    btn.textContent = `${preview} ▼`;
-  };
+      const vals = menu.getState();
+      const preview = this.getPreviewText(menu.key, vals);
+      btn.textContent = `${preview} ▼`;
+    };
 
     btn.addEventListener('click', () => {
-      menus.forEach(m => m.el.classList.remove('open'));
+      allMenus.forEach(m => m.el.classList.remove('open'));
       menu.el.classList.toggle('open');
     });
 
     updateLabel();
     window.addEventListener('prefsUpdated', updateLabel);
+    
+    return btn;
+  }
 
+  static getPreviewText(key, values) {
+    if (values.length === 0) {
+      return CONSTANTS.SECTION_TITLES[key];
+    }
+
+    let preview;
+    if (key === 'nature') {
+      preview = CONSTANTS.NATURE_MAP[+values[0]];
+    } else if (key === 'workModel') {
+      preview = CONSTANTS.WORK_MODEL_MAP[+values[0]];
+    } else {
+      preview = values[0];
+    }
+
+    return values.length > 1 ? `${preview} +${values.length - 1}` : preview;
+  }
+
+  static createCloseButton(menu) {
     const closeBtn = document.createElement('button');
     closeBtn.className = 'close-menu';
     closeBtn.textContent = '×';
@@ -274,58 +421,48 @@ export async function renderFeedPreferences(container) {
       menu.el.classList.remove('open');
       window.location.reload();
     });
-    menu.el.prepend(closeBtn);
+    return closeBtn;
+  }
+}
 
-    header.append(btn);
-    container.append(menu.el);
-  });
-
+// ── Public API ──
+export async function renderFeedPreferences(container) {
+  container.innerHTML = '';
+  
+  const sections = await SectionManager.createSections();
+  const menus = sections.map(({ key, control }) =>
+    SectionManager.createQuickMenu(key, control.element, control.getState)
+  );
+  
+  const header = HeaderManager.createHeader(menus, container);
   container.append(header);
 }
 
-// ── Original Page Renderer ──
 export async function renderPreferences(container) {
   container.innerHTML = '';
-  const skills     = await getUniqueValues('relevantSkills', { flatten: true });
-  const locations  = await getUniqueValues('location');
-  const industries = await getUniqueValues('industry');
-  const roles      = await getUniqueValues('jobRole');
-
-  const { element: skillsEl } = generateTags(skills,     savedPrefs.skills,     'skills');
-  const { element: locEl    } = generateTags(locations,  savedPrefs.locations,  'locations');
-  const { element: indEl    } = generateTags(industries, savedPrefs.industries, 'industries');
-  const { element: roleEl   } = generateTags(roles,      savedPrefs.roles,      'roles');
-
-  const salaryControl = createSalaryControl();
-
-  const natureMap    = {1:'Full-time',2:'Part-time',3:'Intern'};
-  const workModelMap = {1:'Remote',2:'On-site',3:'Hybrid'};
-  const natureEl = generateCheckboxes(Object.entries(natureMap).map(([v,l])=>({value:v,label:l})), savedPrefs.nature,'nature').element;
-  const workEl   = generateCheckboxes(Object.entries(workModelMap).map(([v,l])=>({value:v,label:l})), savedPrefs.workModel,'workModel').element;
-
-  const makeSection = (title, el) => { const sec=document.createElement('section'); sec.className='pref-section'; sec.innerHTML=`<h3>${title}</h3>`; sec.append(el); return sec; };
-
-  container.append(
-    makeSection('Preferred Skills', skillsEl),
-    makeSection('Preferred Locations', locEl),
-    makeSection('Preferred Industries', indEl),
-    makeSection('Preferred Roles', roleEl),
-    makeSection('Preferred Salary', salaryControl.element),
-    makeSection('Employment Type', natureEl),
-    makeSection('Work Model', workEl)
-  );
+  
+  const sections = await SectionManager.createSections();
+  
+  sections.forEach(({ key, control }) => {
+    const section = SectionManager.createSection(
+      CONSTANTS.SECTION_TITLES[key],
+      control.element
+    );
+    container.append(section);
+  });
 }
 
-// ── Loader ──
 export function loadUserPreferences() {
+  const prefs = prefsManager.getAllPrefs();
+  
   return {
-    userSkills:   Array.isArray(savedPrefs.skills)? savedPrefs.skills:[],
-    industries:   Array.isArray(savedPrefs.industries)? savedPrefs.industries:[],
-    locations:    Array.isArray(savedPrefs.locations)? savedPrefs.locations:[],
-    workModels:   Array.isArray(savedPrefs.workModel)? savedPrefs.workModel:[],
-    natures:      Array.isArray(savedPrefs.nature)? savedPrefs.nature:[],
-    roles:        Array.isArray(savedPrefs.roles)? savedPrefs.roles:[],
-    salaryHourly: savedPrefs.salaryHourly,
-    salaryYearly: savedPrefs.salaryYearly
+    userSkills: Array.isArray(prefs.skills) ? prefs.skills : [],
+    industries: Array.isArray(prefs.industries) ? prefs.industries : [],
+    locations: Array.isArray(prefs.locations) ? prefs.locations : [],
+    workModels: Array.isArray(prefs.workModel) ? prefs.workModel : [],
+    natures: Array.isArray(prefs.nature) ? prefs.nature : [],
+    roles: Array.isArray(prefs.roles) ? prefs.roles : [],
+    salaryHourly: prefs.salaryHourly,
+    salaryYearly: prefs.salaryYearly
   };
 }
