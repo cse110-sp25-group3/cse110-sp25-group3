@@ -30,6 +30,23 @@ export function renderApplications(container) {
     for (const job of jobs) {
         const card = document.createElement('app-card');
         card.data = job;
+
+        card.addEventListener('remove-app', (e) => {
+            const jobToRemove = e.detail;
+            let current = JSON.parse(localStorage.getItem('appliedJobs')) || [];
+            const updated = current.filter(storedJob =>
+                !(storedJob.companyName === jobToRemove.companyName &&
+                  storedJob.jobRole === jobToRemove.jobRole &&
+                  storedJob.dateSubmitted === jobToRemove.dateSubmitted)
+            );
+            localStorage.setItem('appliedJobs', JSON.stringify(updated));
+            card.remove();
+        
+            // Optionally, show the no-applications message if all are removed
+            if (updated.length === 0) {
+                renderApplications(container);
+            }
+        });
         container.appendChild(card);
     }
 
