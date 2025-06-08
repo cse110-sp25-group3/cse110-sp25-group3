@@ -147,6 +147,13 @@ function attachCardListeners(card, container) {
     renderCurrentCard(container);
   }
 
+  // updates the visible card after a skip or apply animation completes 
+  function updateCardVisibility() {
+    const container = document.getElementById("job-cards-container");
+    if (!container) return;
+    renderCurrentCard(container);
+  }
+
   function skipCurrentJob() {
     if (currentJobIndex < jobsData.length) {
       const currentCard = document.querySelector(".job-card.active");
