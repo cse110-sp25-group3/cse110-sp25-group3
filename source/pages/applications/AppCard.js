@@ -227,12 +227,14 @@ class AppCard extends HTMLElement {
             }
 
             .shrink-out {
-                max-height: 0 !important;
-                opacity: 0;
-                margin: 0;
-                padding: 0;
-                transition: all 0.4s ease;
+                transition: all 0.5s ease;
                 overflow: hidden;
+                max-height: 0;
+                opacity: 0;
+                padding-top: 0;
+                padding-bottom: 0;
+                margin-top: 0;
+                margin-bottom: 0;
             }
         `;
 
@@ -335,11 +337,20 @@ class AppCard extends HTMLElement {
 
         const removeBtn = this.article.querySelector('.remove-app');
         removeBtn.addEventListener('click', () => {
-            const event = new CustomEvent('remove-app', {
-                bubbles: true,
-                detail: data
+            // Smoothly collapse from current height
+            this.article.style.maxHeight = `${this.article.scrollHeight}px`; // set initial height
+            requestAnimationFrame(() => {
+                this.article.classList.add('shrink-out');
+                this.article.style.maxHeight = '0px'; // collapse to 0 smoothly
             });
-            this.dispatchEvent(event);
+        
+            setTimeout(() => {
+                const event = new CustomEvent('remove-app', {
+                    bubbles: true,
+                    detail: data
+                });
+                this.dispatchEvent(event);
+            }, 900); // matches transition
         });
     }
 }
