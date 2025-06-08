@@ -36,7 +36,7 @@ export async function renderDocuments(container) {
   container.innerHTML = `
     <div class="section">
       <h2 class="section-title">Manage Resumes</h2>
-      ${!initSuccess ? `<div class="error-message">⚠️ Resume parsing unavailable.</div>` : ''}
+      ${!initSuccess ? `<div class="error-message">Resume parsing unavailable.</div>` : ''}
       <div class="upload-area">
         <input type="file" id="resume-input" accept=".pdf" hidden ${!initSuccess ? 'disabled' : ''}>
         <button id="upload-btn" class="btn btn-blue" ${!initSuccess ? 'disabled' : ''}>
