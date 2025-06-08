@@ -1,4 +1,3 @@
-// feed.js
 import { fetchJobs } from "../../functions/fetch-jobs.js";
 import { loadUserPreferences, renderFeedPreferences } from "../preferences/job-preferences.js";
 import { runFeedAlgorithm } from "./feed-algorithm.js";
