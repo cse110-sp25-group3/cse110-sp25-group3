@@ -26,13 +26,31 @@ describe("skill‐matching helpers", () => {
     expect(getMatchedSkills(job)).toEqual(["JS","HTML"]);
   });
 
+  test("getMatchedSkills picks up nothing when there's no match", () => {
+    const job = { relevantSkills: ["C++","CSS","C#"] };
+    expect(getMatchedSkills(job)).toEqual([]);
+  });
+
   test("getLostSkills picks only missing skills", () => {
     const job = { relevantSkills: ["JS","CSS","HTML"] };
     expect(getLostSkills(job)).toEqual(["CSS"]);
   });
 
+  test("getLostSkills picks nothing when everything match", () => {
+    const job = { relevantSkills: ["JS","HTML"] };
+    expect(getLostSkills(job)).toEqual([]);
+  });
+
   test("getMatchPercent returns 0 when no skills", () => {
     expect(getMatchPercent({ relevantSkills: [] })).toBe(0);
+  });
+
+  test("getMatchPercent returns 100 when match perfectly", () => {
+    expect(getMatchPercent({ relevantSkills: ["JS","HTML"] })).toBe(100);
+  });
+
+  test("getMatchPercent returns 50 when match partially", () => {
+    expect(getMatchPercent({ relevantSkills: ["JS","CSS"] })).toBe(50);
   });
 
   test("getMatchPercent computes correct percentage", () => {
