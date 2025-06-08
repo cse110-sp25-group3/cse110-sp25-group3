@@ -183,6 +183,7 @@
   padding: 15px;
   background-color: white;
   pointer-events: none;
+  width: 100%
 }
 
 .quick-menu.open {
@@ -193,7 +194,7 @@
 .close-menu {
   position: absolute;
   top: 8px;
-  right: 8px;
+  right: 40px;
   background: none;
   border: none;
   font-size: 2.5rem;
