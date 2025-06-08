@@ -20,17 +20,17 @@ import { computeJobScore } from "../../functions/score-heuristic.js";
 
 describe("sanitizeSalary", () => {
   test.each([
-    [null,               0],
-    [undefined,          0],
-    ["",                 0],
-    ["123",            123],
-    ["abc",              0],
-    ["$2..59",           3],
-    ["$2.5.9",           3],
-    ["1.2.3.4",          1],
-    ["...10..",          0],
-    ["25.50",           26]
-  ])("sanitizeSalary(%j) → %f", (input, expected) => {
+    [null, 0],
+    [undefined, 0],
+    ["", 0],
+    ["123", 123],
+    ["abc", 0],
+    ["$2..59", 3],
+    ["$2.5.9", 3],
+    ["1.2.3.4", 1],
+    ["...10..", 0],
+    ["25.50", 26]
+  ])("sanitizeSalary(%j) => %f", (input, expected) => {
     expect(typeof sanitizeSalary(input)).toBe("number");
     expect(sanitizeSalary(input)).toBeCloseTo(expected, 3);
   });
@@ -43,14 +43,14 @@ describe("parsePay", () => {
   });
 
   test.each([
-    ["80000",      80000],
-    ["80k",        80000],
-    ["70k-90k",    (70000 + 90000) / 2],
-    ["25/hr",      25 * 2080],
-    ["20.5/hr",    21 * 2080],
+    ["80000", 80000],
+    ["80k", 80000],
+    ["70k-90k", (70000 + 90000) / 2],
+    ["25/hr", 25 * 2080],
+    ["20.5/hr", 21 * 2080],
     ["20/hr-30/hr",(20 + 30) / 2 * 2080],
-    ["invalid",    0]
-  ])("parsePay('%s') → %f", (input, expected) => {
+    ["invalid", 0]
+  ])("parsePay('%s') => %f", (input, expected) => {
     expect(parsePay(input)).toBeCloseTo(expected, 1);
   });
 });
@@ -83,19 +83,19 @@ describe("datePostedScore", () => {
   beforeAll(() => jest.spyOn(Date, "now").mockImplementation(() => fakeNow));
   afterAll(() => Date.now.mockRestore());
 
-  test("today → 100", () => {
+  test("today => 100", () => {
     expect(datePostedScore("2025-06-07", 30)).toBe(100);
   });
 
-  test("30 days ago → 0", () => {
+  test("30 days ago => 0", () => {
     expect(datePostedScore("2025-05-08", 30)).toBe(0);
   });
 
-  test("15 days ago → ~50", () => {
+  test("15 days ago => ~50", () => {
     expect(datePostedScore("2025-05-23", 30)).toBeCloseTo(50, 0);
   });
 
-  test("invalid date → 0", () => {
+  test("invalid date => 0", () => {
     expect(datePostedScore("nope", 30)).toBe(0);
   });
 });
