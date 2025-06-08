@@ -516,3 +516,130 @@ p {
     color: rgba(19, 25, 192, 0.9);
     cursor: pointer;
 }
+
+/* ----- Desktop Layout Adjustment ----- */
+@media screen and (min-width: 768px) and (max-height: 768px) {
+  /* For desktop, center the cards container in the middle of the page */
+  #job-cards-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin-top: 3%;
+    width: 80%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .job-card {
+    position: relative;
+    width: 350px;
+    height: 400px;
+    margin: 10px;
+    transition: transform 0.6s ease;
+  }
+
+  .behindCard {
+    transform: rotate(7deg);
+    z-index: 1;
+  }
+
+  .job-card.active {
+    transform: scale(1) translateY(0);
+    z-index: 3;
+  }
+
+  .job-card.next {
+    transform: scale(0.95) translateY(-10px);
+    z-index: 2;
+  }
+
+  .job-card.prev {
+    transform: scale(0.9) translateY(-20px);
+    z-index: 1;
+  }
+
+  .job-card.flipped .card-inner {
+    transform: rotateY(180deg);
+  }
+
+  .buttonContainer {
+    margin-top: 20px;
+  }
+
+  .bottom-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .swipe-button {
+    font-size: 2.5em;
+    width: 70px;
+    height: 70px;
+  }
+
+  .swipe-button:hover {
+    transform: scale(1.2);
+  }
+
+  /* Adjust swipe button positioning */
+  .buttonContainer {
+    position: absolute;
+    top: 40%;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transform: translateY(-50%);
+    width: 100%;
+    z-index: 2; /* Ensure buttons appear above cards */
+  }
+
+  .swipe-button {
+    font-size: 2.5em;
+    width: 70px;
+    height: 70px;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: background-color 0.3s, color 0.3s, transform 0.2s;
+  }
+
+  .swipe-button:hover {
+    transform: scale(1.2);
+  }
+
+  .skip-button {
+    background-color: var(--color-red-fill);
+    color: var(--color-red-outline);
+  }
+
+  .skip-button:hover {
+    background-color: var(--color-red-outline);
+    color: white;
+  }
+
+  .apply-button {
+    background-color: var(--color-green-fill);
+    color: var(--color-green-outline);
+  }
+
+  .apply-button:hover {
+    background-color: var(--color-green-outline);
+    color: white;
+  }
+
+  /* Ensure the buttons are positioned correctly to the left and right */
+  .skip-button {
+    position: absolute;
+    left: -100px;  /* Adjust this value to move left button farther */
+  }
+
+  .apply-button {
+    position: absolute;
+    right: -100px; /* Adjust this value to move right button farther */
+  }
+}

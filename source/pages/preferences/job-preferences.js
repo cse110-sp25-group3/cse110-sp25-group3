@@ -325,7 +325,6 @@ class SectionManager {
   }
 }
 
-// ── Header Management ──
 class HeaderManager {
   static createHeader(menus, container) {
     const header = document.createElement('div');
@@ -388,7 +387,24 @@ class HeaderManager {
 
     btn.addEventListener('click', () => {
       allMenus.forEach(m => m.el.classList.remove('open'));
-      menu.el.classList.toggle('open');
+
+      // Determine if it's a desktop or mobile view
+      const isDesktop = window.innerWidth >= 768;
+      if (isDesktop) {
+        // Center menu on desktop
+        menu.el.style.transition = 'none'; // Remove animation for smooth transition
+        menu.el.classList.toggle('open');
+        menu.el.style.transform = 'translate(-50%, -50%)'; // Centered on desktop
+      } else {
+        // Apply sliding effect on mobile
+        menu.el.style.transition = 'transform 0.3s ease-out'; // Slide animation
+        menu.el.classList.toggle('open');
+        if (menu.el.classList.contains('open')) {
+          menu.el.style.transform = 'translateY(0)'; // Slide up when opening
+        } else {
+          menu.el.style.transform = 'translateY(100%)'; // Slide down when closing
+        }
+      }
     });
 
     updateLabel();
@@ -425,6 +441,7 @@ class HeaderManager {
     return closeBtn;
   }
 }
+
 
 // ── Public API ──
 export async function renderFeedPreferences(container) {

@@ -192,6 +192,44 @@
   width: 100%
 }
 
+/* Media Query for Desktop */
+/* Media Query for Desktop */
+@media (min-width: 768px) {
+  .quick-menu {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Centering horizontally and vertically */
+    width: 90%;
+    max-width: 600px;
+    height: auto;
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    display: none; /* Initially hidden */
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+  }
+
+  .quick-menu.open {
+    display: block;
+    opacity: 1;
+  }
+
+  /* Optional: Adding a backdrop */
+  .menu-overlay {
+    display: block;
+    background: rgba(0, 0, 0, 0.5);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 999;
+  }
+}
+
 .quick-menu.open {
   transform: translateY(0);
   pointer-events: auto;
