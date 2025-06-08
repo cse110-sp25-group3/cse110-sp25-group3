@@ -20,11 +20,6 @@
   font-family: 'Open-Sans', sans-serif;
 }
 
-/* Upload area */
-.upload-area {
-  margin-bottom: 1rem;
-}
-
 .upload-area button {
   cursor: pointer;
   background-color: #2563eb;

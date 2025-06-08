@@ -1,28 +1,42 @@
 /* Styling for the main feed container */
+#app{
+  overflow-y: hidden !important;
+}
+
+
+.container{
+  overflow: hidden !important;
+}
+
 #job-cards-container {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-sizing: border-box;
-  width: 100%;
-  height: 100vh;
-  overflow: hidden;
+  margin-top: 60px;
 }
 
 /* Base card container - positioned absolutely for stacking */
 .job-card {
   position: absolute;
-  width: 320px;
-  height: 500px;
+  width: 300px;
+  height: 350px;
   perspective: 1000px;
   cursor: pointer;
-  transition: transform 0.3s ease, opacity 0.3s ease;
-  transform-origin: center center;
+  margin: 15px;
+}
+
+.behindCard{
+  position: absolute;
+  width: 300px;
+  height: 350px;
+  perspective: 1000px;
+  cursor: pointer;
+  margin: 15px;
+  background-color: #d9e6ff;
+  transform: rotate(7deg);
+  border-radius: 1em;
+}
+
+.buttonContainer{
+  margin-top: 30px;
 }
 
 /* Stacking styles */
@@ -63,6 +77,10 @@
   position: relative;
   width: 100%;
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   transition: transform 0.6s;
   transform-style: preserve-3d;
 }
@@ -82,20 +100,21 @@
   border: 1px solid #ddd;
   border-radius: 1em;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  padding: 16px;
+  padding: 12px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  align-items: center;
   overflow-y: auto; /* Allow vertical scrolling within the card */
   overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
+.card-face::-webkit-scrollbar { 
+    display: none;  /* Safari and Chrome */
+}
+
 .card-front {
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  padding: 12px;
   text-align: center;
 }
 
@@ -111,19 +130,22 @@ p {
   margin: 0 0 8px 0;
 }
 
+.job-details-content{
+  margin: 10px;
+}
+
 /* Header styles for the back of the card */
 .card-back header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.8em;
+  margin-bottom: 8%;
 }
 
 .company-meta {
   display: flex;
   align-items: center;
   gap: 1em;
-  max-width: 75%;
 }
 
 .company-meta .logo {
@@ -139,7 +161,8 @@ p {
 .company-name {
   color: var(--color-dark-blue-outline);
   font-weight: 500;
-  font-size: 1.1em;
+  font-size: 1.3em;
+  width: 100%;
 }
 
 .industry {
@@ -148,9 +171,9 @@ p {
 }
 
 .job-title-back {
-  font-size: 1.2em;
+  font-size: 1.5em;
   font-weight: 600;
-  margin: 0.5em 0;
+  margin: 0.8em 0;
 }
 
 .meta {
@@ -159,7 +182,7 @@ p {
   gap: 1.5em;
   font-size: 0.75em;
   color: #555;
-  margin-bottom: 1em;
+  margin-bottom: 1.5em;
 }
 
 .meta .column {
@@ -217,7 +240,7 @@ p {
   color: var(--color-dark-blue-outline);
   padding: 0.3em 0.7em;
   border-radius: 0.5em;
-  font-size: 0.75em;
+  font-size: 0.9em;
   white-space: nowrap;
 }
 
@@ -232,6 +255,7 @@ p {
   font-weight: bold;
   font-size: 0.85em;
   transition: opacity 0.3s ease;
+  margin-bottom: 1em;;
 }
 
 .apply-link:hover {
@@ -287,13 +311,13 @@ p {
 
 /* Skill match specific styles (for the front of the card) */
 .skill-match-display {
+  flex: 1;                         /* fill height of the face */
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  height: 100%;
+  align-items: center;
+  padding: 16px 0;                 /* vertical breathing room */
   box-sizing: border-box;
-  padding-bottom: 70px;
 }
 
 .skill-match-score {
@@ -303,9 +327,9 @@ p {
 }
 
 .skill-match-text {
-  font-size: 1.2em;
-  color: #555;
-  margin-top: 10px;
+  font-size: 1.3em;
+  color: black;
+  margin-top: 15px;
 }
 
 .skill-list {
@@ -363,22 +387,20 @@ p {
 }
 
 .donut {
-  width: 120px;
-  height: 120px;
+  width: 150px;
+  height: 150px;
   border-radius: 50%;
-  background: conic-gradient(#8b7dff var(--degree, 0deg), #eee 0deg);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 20px;
   position: relative;
 }
 
 .donut::before {
   content: "";
   position: absolute;
-  width: 65%;
-  height: 65%;
+  width: 75%;
+  height: 75%;
   background: white;
   border-radius: 50%;
   z-index: 1;
@@ -387,43 +409,110 @@ p {
 .donut-text {
   position: relative;
   z-index: 2;
-  font-size: 1.5em;
+  font-size: 1.8em;
   font-weight: bold;
-  color: #333;
+  color: black;
 }
 
-/* Skill display in two columns */
-.skills-2col {
+.skills-container {
+  margin-top: 15px;
   display: flex;
-  justify-content: space-between;
-  gap: 1em;
-  width: 100%;
-  text-align: left;
-  padding: 0 1em;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
 }
 
-.skills-left,
-.skills-right {
-  flex: 1;
-}
-
-.skills-left p,
-.skills-right p {
-  margin: 0.3em 0;
+/* base pill styling */
+.skill-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3em 0.8em;
+  border-radius: 9999px;
   font-size: 0.9em;
+  font-weight: 500;
 }
 
-.skill-icon {
-  font-weight: bold;
-  font-size: 1.1em;
-  margin-right: 6px;
-  vertical-align: middle;
-}
-
-.skill-icon.red {
+/* lost skills get a red tint */
+.skill-tag.lost {
+  background-color: rgba(211, 51, 51, 0.1);
   color: #d33;
 }
 
-.skill-icon.green {
+/* matched skills get a green tint */
+.skill-tag.matched {
+  background-color: rgba(40, 167, 69, 0.1);
   color: #28a745;
+}
+
+/* icon spacing */
+.skill-icon {
+  margin-right: 0.4em;
+  font-size: 1.1em;
+}
+
+/* ─── Swipe-out ─── */
+@keyframes swipeOutLeft {
+  to { transform: translateX(-120%) rotate(-30deg); opacity: 0; }
+}
+@keyframes swipeOutRight {
+  to { transform: translateX(120%) rotate(30deg);  opacity: 0; }
+}
+.swipe-out-left {
+  animation: swipeOutLeft 0.5s ease forwards;
+}
+.swipe-out-right {
+  animation: swipeOutRight 0.5s ease forwards;
+}
+
+@keyframes drawIn {
+  from { transform: rotate(2deg); }
+  to   { transform: rotate(0deg); }
+}
+
+/* apply the draw-in on the inner wrapper */
+.card-inner.draw-in {
+  /* anchor the pivot in the middle of the card */
+  transform-origin: center center;
+  animation: drawIn 0.5s ease-out forwards;
+}
+
+
+/* hide extra details by default */
+.extra-details {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  position: relative; /* ensure the pseudo-elements apply correctly */
+  overflow-y: hidden;
+
+  position: absolute;
+}
+
+/* Expanded: still scrollable, but scrollbar itself is invisible */
+.extra-details.open {
+  max-height: 500px;      /* or whatever fits your content */
+  overflow-y: scroll;     /* force a scroll context */
+}
+
+.extra-details::-webkit-scrollbar { 
+    display: none;  /* Safari and Chrome */
+}
+
+.toggle-details {
+    background: var(--color-light-blue-fill);
+    border: 1px solid var(--color-light-blue-outline);
+    color: var(--color-dark-blue-outline);
+    border-radius: 0.5em;
+    padding: 0.4em 1em;
+    font-size: 0.85em;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+.toggle-details:hover {
+    background: var(--color-dark-blue-fill);
+    border-color: rgba(196, 199, 254, 0.1);
+    color: rgba(19, 25, 192, 0.9);
+    cursor: pointer;
 }

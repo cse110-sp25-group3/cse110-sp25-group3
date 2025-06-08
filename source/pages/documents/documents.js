@@ -110,6 +110,7 @@ export async function renderDocuments(container) {
       <button id="clear-form" type="button" class="btn btn-gray">Clear Form</button>
     </div>
   `;
+  
 
   // References
   const uploadInput = container.querySelector('#resume-input');

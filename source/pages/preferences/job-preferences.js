@@ -1,306 +1,468 @@
-// pages/job-preferences/job-preferences.js
+// preferences.js
 import { getUniqueValues } from "../../functions/fetch-jobs.js";
 
-// ── Persistence setup ──
+// ── Constants ──
 const STORAGE_KEY = 'jobPreferences';
-const defaultPrefs = {
-  skills:    [],
-  locations: [],
-  industries:[],
-  roles:     [],
-  nature:    [],
-  workModel: [],
-  salary:    ''
+const CONSTANTS = {
+  NATURE_MAP: { 1: 'Full-time', 2: 'Part-time', 3: 'Intern' },
+  WORK_MODEL_MAP: { 1: 'Remote', 2: 'On-site', 3: 'Hybrid' },
+  SECTION_TITLES: {
+    skills: 'Preferred Skills',
+    locations: 'Locations', 
+    industries: 'Industries',
+    roles: 'Roles',
+    salary: 'Salary',
+    nature: 'Employment Type',
+    workModel: 'Work Model'
+  }
 };
 
-let savedPrefs;
-try {
-  const raw = localStorage.getItem(STORAGE_KEY);
-  savedPrefs = raw ? JSON.parse(raw) : { ...defaultPrefs };
-} catch {
-  savedPrefs = { ...defaultPrefs };
+const DEFAULT_PREFS = {
+  skills: [],
+  locations: [],
+  industries: [],
+  roles: [],
+  nature: [],
+  workModel: [],
+  salaryHourly: '',
+  salaryYearly: ''
+};
+
+// ── State Management ──
+class PreferencesManager {
+  constructor() {
+    this.prefs = this.loadPrefs();
+  }
+
+  loadPrefs() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? { ...DEFAULT_PREFS, ...JSON.parse(raw) } : { ...DEFAULT_PREFS };
+    } catch {
+      return { ...DEFAULT_PREFS };
+    }
+  }
+
+  savePrefs() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.prefs));
+      window.dispatchEvent(new CustomEvent('prefsUpdated', { detail: { ...this.prefs } }));
+    } catch {}
+  }
+
+  updatePref(key, value) {
+    this.prefs[key] = value;
+    this.savePrefs();
+  }
+
+  getPref(key) {
+    return this.prefs[key];
+  }
+
+  getAllPrefs() {
+    return { ...this.prefs };
+  }
 }
 
-function savePrefs() {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(savedPrefs));
-  } catch {}
-}
+const prefsManager = new PreferencesManager();
 
-//helper for making tag html elements
-function generateTags(items, initialSelected = [], prefKey) {
-  const selectedTags = [];
-  
-  //tag container
-  const container = document.createElement('div');
-  container.className = 'tag-selector';
+// ── Control Generators ──
+class ControlGenerator {
+  static createTagSelector(items, prefKey) {
+    const selectedTags = [...(prefsManager.getPref(prefKey) || [])];
+    const container = document.createElement('div');
+    container.className = 'tag-selector';
 
-  //container for selected tags 
-  const selectedContainer = document.createElement('div');
-  selectedContainer.className = 'selected-tags';
-  container.append(selectedContainer);
+    const elements = this.createTagElements(container);
+    const handlers = this.createTagHandlers(items, selectedTags, prefKey, elements);
+    
+    this.setupTagEventListeners(elements, handlers);
+    this.initializeSelectedTags(selectedTags, elements, handlers);
+    handlers.updateSuggestions();
 
-  //add button (show text input)
-  const addBtn = document.createElement('button');
-  addBtn.type = 'button';
-  addBtn.textContent = '+ add';
-  addBtn.className = 'add-button';
-  container.append(addBtn);
+    return {
+      element: container,
+      getState: () => [...selectedTags]
+    };
+  }
 
-  //text input (hidden on default)
-  const input = document.createElement('input');
-  input.type = 'text';
-  input.placeholder = 'Type to add…';
-  input.className = 'tag-input hidden';
-  container.append(input);
+  static createTagElements(container) {
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.placeholder = 'Type to add…';
+    input.className = 'tag-input';
 
-  //tag suggestions (also hidden on default)
-  const suggestedTag = document.createElement('div');
-  suggestedTag.className = 'tag-suggestions hidden';
-  container.append(suggestedTag);
+    const selectedContainer = document.createElement('div');
+    selectedContainer.className = 'selected-tags';
 
-  // Helpers ------------------------------------------------
+    const suggestedContainer = document.createElement('div');
+    suggestedContainer.className = 'tag-suggestions';
 
-  //helper function for suggesting tags 
-  function updateSuggestions() {
-    //matching according to input 
-    const q = input.value.trim().toLowerCase();
-    let list = q
-      ? items.filter(t =>
-          //excluding tags that were already selected
-          !selectedTags.includes(t) &&
-          //filtering by query/text input 
-          t.toLowerCase().startsWith(q)
-        )
-        .slice(0, 3) //only take the first three matches 
-      //when there's no query
-      : items.filter(t => !selectedTags.includes(t))
-        .sort(() => 0.5 - Math.random()) //three random tags 
-        .slice(0, 3);
+    container.append(input, selectedContainer, suggestedContainer);
 
-    //generating the html element for each tag 
-    suggestedTag.innerHTML = '';
-    list.forEach(tag => {
+    return { input, selectedContainer, suggestedContainer };
+  }
+
+  static createTagHandlers(items, selectedTags, prefKey, elements) {
+    const { input, selectedContainer, suggestedContainer } = elements;
+
+    const updateSuggestions = () => {
+      const query = input.value.trim().toLowerCase();
+      const available = items.filter(item => !selectedTags.includes(item));
+      const filtered = query 
+        ? available.filter(item => item.toLowerCase().startsWith(query))
+        : available.sort(() => 0.5 - Math.random());
+      
+      this.renderSuggestions(filtered.slice(0, 3), suggestedContainer, selectTag);
+    };
+
+    const selectTag = (tag) => {
+      if (selectedTags.includes(tag)) return;
+      
+      selectedTags.unshift(tag);
+      prefsManager.updatePref(prefKey, [...selectedTags]);
+      
+      this.renderSelectedTag(tag, selectedContainer, () => removeTag(tag));
+      input.value = '';
+      updateSuggestions();
+    };
+
+    const removeTag = (tag) => {
+      const index = selectedTags.indexOf(tag);
+      if (index > -1) {
+        selectedTags.splice(index, 1);
+        prefsManager.updatePref(prefKey, [...selectedTags]);
+        updateSuggestions();
+      }
+    };
+
+    return { updateSuggestions, selectTag, removeTag };
+  }
+
+  static renderSuggestions(suggestions, container, onSelect) {
+    container.innerHTML = '';
+    suggestions.forEach(tag => {
       const pill = document.createElement('button');
       pill.type = 'button';
       pill.className = 'tag-suggestion-pill';
-      pill.textContent = tag + ' +';
-      pill.addEventListener('click', () => selectTag(tag));
-      suggestedTag.append(pill);
+      pill.textContent = `${tag} +`;
+      pill.addEventListener('click', () => onSelect(tag));
+      container.append(pill);
     });
-    
-    suggestedTag.classList.toggle('hidden', list.length === 0);
   }
 
-  //function for selecting a tag 
-  function selectTag(tag) {
-    if (selectedTags.includes(tag)) return; //if already has tag, skip
-    selectedTags.unshift(tag); //add tag to the top of the list 
-
-    // update persistence
-    savedPrefs[prefKey] = [...selectedTags];
-    savePrefs();
-
-    //creating html ele for the tag 
+  static renderSelectedTag(tag, container, onRemove) {
     const pill = document.createElement('button');
     pill.type = 'button';
     pill.className = 'tag-pill';
-    pill.textContent = tag + ' –';
+    pill.textContent = `${tag} –`;
     pill.addEventListener('click', () => {
-      //can remove tag by clicking 
-      selectedTags.splice(selectedTags.indexOf(tag), 1);
-      selectedContainer.removeChild(pill);
-      // update persistence
-      savedPrefs[prefKey] = [...selectedTags];
-      savePrefs();
+      container.removeChild(pill);
+      onRemove();
     });
-
-    selectedContainer.prepend(pill);
-
-    //after tag has been added, rehide the text input and suggestions 
-    input.value = '';
-    suggestedTag.innerHTML = '';
-    input.classList.add('hidden');
-    suggestedTag.classList.add('hidden');
-    addBtn.classList.remove('hidden');
+    container.prepend(pill);
   }
 
-  // Event wiring ------------------------------------------
+  static setupTagEventListeners(elements, handlers) {
+    elements.input.addEventListener('input', handlers.updateSuggestions);
+  }
 
-  // show input when "+add" clicked
-  addBtn.addEventListener('click', () => {
-    addBtn.classList.add('hidden');
-    input.classList.remove('hidden');
-    suggestedTag.classList.remove('hidden');
-    input.focus();
-    updateSuggestions();
-  });
+  static initializeSelectedTags(selectedTags, elements, handlers) {
+    selectedTags.forEach(tag => {
+      this.renderSelectedTag(tag, elements.selectedContainer, () => handlers.removeTag(tag));
+    });
+  }
 
-  // on each keystroke, update suggestions
-  input.addEventListener('input', updateSuggestions);
+  static createCheckboxGroup(options, prefKey) {
+    const container = document.createElement('div');
+    container.className = 'checkbox-group';
+    const initialSelected = prefsManager.getPref(prefKey) || [];
 
-  // clicking outside closes input/suggestions
-  document.addEventListener('click', e => {
-    if (!container.contains(e.target)) {
-      input.classList.add('hidden');
-      suggestedTag.classList.add('hidden');
-      addBtn.classList.remove('hidden');
-    }
-  });
+    const updatePrefs = () => {
+      const selected = Array.from(container.querySelectorAll('input:checked')).map(cb => cb.value);
+      prefsManager.updatePref(prefKey, selected);
+    };
 
-  // pre-select any saved tags
-  initialSelected.forEach(tag => {
-    if (items.includes(tag)) selectTag(tag);
-  });
+    options.forEach(({ value, label }) => {
+      const wrapper = this.createCheckboxItem(value, label, initialSelected.includes(String(value)), updatePrefs);
+      container.append(wrapper);
+    });
 
-  return {
-    element: container,
-    getSelectedTags: () => [...selectedTags]
-  };
-}
+    return {
+      element: container,
+      getState: () => Array.from(container.querySelectorAll('input:checked')).map(cb => cb.value)
+    };
+  }
 
-//helper for generating text box entries 
-function generateCheckboxes(options, initialSelected = [], prefKey) {
-  //html container for the checkboxes
-  const container = document.createElement('div');
-  container.className = 'checkbox-group';
-
-  //for each option (in parameter array), generate a checkbox and label
-  options.forEach(({ value, label }) => {
+  static createCheckboxItem(value, label, checked, onChange) {
     const id = `chk-${label.replace(/\s+/g, '-').toLowerCase()}`;
-
     const wrapper = document.createElement('div');
     wrapper.className = 'checkbox-item';
 
     const input = document.createElement('input');
-    input.type  = 'checkbox';
-    input.id    = id;
-    input.value = String(value);
+    Object.assign(input, {
+      type: 'checkbox',
+      id,
+      value: String(value),
+      checked
+    });
+    input.addEventListener('change', onChange);
 
-    // set initial checked state
-    input.checked = initialSelected.includes(String(value));
-    // auto-save on change
-    input.addEventListener('change', () => {
-      const vals = Array.from(container.querySelectorAll('input:checked'))
-                        .map(cb => cb.value);
-      savedPrefs[prefKey] = vals;
-      savePrefs();
+    const labelEl = document.createElement('label');
+    labelEl.htmlFor = id;
+    labelEl.textContent = label;
+
+    wrapper.append(input, labelEl);
+    return wrapper;
+  }
+
+  static createSalaryControl() {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'salary-wrapper';
+
+    const createSalaryInput = (type, placeholder) => {
+      const input = document.createElement('input');
+      Object.assign(input, {
+        className: 'salary-input',
+        type: 'number',
+        placeholder,
+        value: prefsManager.getPref(`salary${type}`) || ''
+      });
+      
+      input.addEventListener('input', () => {
+        prefsManager.updatePref(`salary${type}`, input.value);
+      });
+      
+      return input;
+    };
+
+    const hourInput = createSalaryInput('Hourly', 'Hourly');
+    const yearInput = createSalaryInput('Yearly', 'Yearly');
+
+    wrapper.append(
+      hourInput,
+      this.createLabel('/hour'),
+      yearInput,
+      this.createLabel('/year')
+    );
+
+    return {
+      element: wrapper,
+      getState: () => {
+        const states = [];
+        const hourly = prefsManager.getPref('salaryHourly');
+        const yearly = prefsManager.getPref('salaryYearly');
+        if (hourly) states.push(`$${hourly}/hour`);
+        if (yearly) states.push(`$${yearly}/year`);
+        return states;
+      }
+    };
+  }
+
+  static createLabel(text) {
+    const span = document.createElement('span');
+    span.textContent = text;
+    return span;
+  }
+}
+
+// ── Section Management ──
+class SectionManager {
+  static async createSections() {
+    const data = await this.fetchSectionData();
+    const options = this.createSectionOptions();
+    
+    return [
+      { key: 'skills', control: ControlGenerator.createTagSelector(data.skills, 'skills') },
+      { key: 'locations', control: ControlGenerator.createTagSelector(data.locations, 'locations') },
+      { key: 'industries', control: ControlGenerator.createTagSelector(data.industries, 'industries') },
+      { key: 'roles', control: ControlGenerator.createTagSelector(data.roles, 'roles') },
+      { key: 'salary', control: ControlGenerator.createSalaryControl() },
+      { key: 'nature', control: ControlGenerator.createCheckboxGroup(options.nature, 'nature') },
+      { key: 'workModel', control: ControlGenerator.createCheckboxGroup(options.workModel, 'workModel') }
+    ];
+  }
+
+  static async fetchSectionData() {
+    const [skills, locations, industries, roles] = await Promise.all([
+      getUniqueValues('relevantSkills', { flatten: true }),
+      getUniqueValues('location'),
+      getUniqueValues('industry'),
+      getUniqueValues('jobRole')
+    ]);
+    
+    return { skills, locations, industries, roles };
+  }
+
+  static createSectionOptions() {
+    const mapToOptions = (map) => Object.entries(map).map(([value, label]) => ({ value, label }));
+    
+    return {
+      nature: mapToOptions(CONSTANTS.NATURE_MAP),
+      workModel: mapToOptions(CONSTANTS.WORK_MODEL_MAP)
+    };
+  }
+
+  static createSection(title, element) {
+    const section = document.createElement('section');
+    section.className = 'pref-section';
+    section.innerHTML = `<h3>${title}</h3>`;
+    section.append(element);
+    return section;
+  }
+
+  static createQuickMenu(key, controlEl, getState) {
+    const quickMenu = document.createElement('div');
+    quickMenu.className = 'quick-menu';
+    quickMenu.dataset.section = key;
+    
+    const h3 = document.createElement('h3');
+    h3.textContent = CONSTANTS.SECTION_TITLES[key];
+    quickMenu.append(h3, controlEl);
+    
+    return { key, el: quickMenu, getState };
+  }
+}
+
+// ── Header Management ──
+class HeaderManager {
+  static createHeader(menus, container) {
+    const header = document.createElement('div');
+    header.className = 'preferences-header';
+    Object.assign(header.style, {
+      display: 'flex',
+      overflowX: 'auto',
+      whiteSpace: 'nowrap',
+      gap: '8px',
+      cursor: 'grab'
     });
 
-    const lbl = document.createElement('label');
-    lbl.htmlFor = id;
-    lbl.textContent = label;
+    this.setupDragScroll(header);
+    this.createMenuButtons(menus, header, container);
+    
+    return header;
+  }
 
-    wrapper.append(input, lbl);
-    container.append(wrapper);
-  });
+  static setupDragScroll(header) {
+    let isDown = false, startX, scrollLeft;
+    
+    header.addEventListener('mousedown', e => {
+      isDown = true;
+      startX = e.pageX - header.offsetLeft;
+      scrollLeft = header.scrollLeft;
+    });
 
-  return {
-    element: container,
-    getSelectedValues: () =>
-      Array.from(container.querySelectorAll('input:checked'))
-           .map(cb => cb.value)
-  };
+    ['mouseleave', 'mouseup'].forEach(event => 
+      header.addEventListener(event, () => isDown = false)
+    );
+
+    header.addEventListener('mousemove', e => {
+      if (!isDown) return;
+      e.preventDefault();
+      header.scrollLeft = scrollLeft - (e.pageX - header.offsetLeft - startX);
+    });
+  }
+
+  static createMenuButtons(menus, header, container) {
+    menus.forEach(menu => {
+      const btn = this.createMenuButton(menu, menus);
+      const closeBtn = this.createCloseButton(menu);
+      
+      menu.el.prepend(closeBtn);
+      header.append(btn);
+      container.append(menu.el);
+    });
+  }
+
+  static createMenuButton(menu, allMenus) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'section-btn';
+
+    const updateLabel = () => {
+      const vals = menu.getState();
+      const preview = this.getPreviewText(menu.key, vals);
+      btn.textContent = `${preview} ▼`;
+    };
+
+    btn.addEventListener('click', () => {
+      allMenus.forEach(m => m.el.classList.remove('open'));
+      menu.el.classList.toggle('open');
+    });
+
+    updateLabel();
+    window.addEventListener('prefsUpdated', updateLabel);
+    
+    return btn;
+  }
+
+  static getPreviewText(key, values) {
+    if (values.length === 0) {
+      return CONSTANTS.SECTION_TITLES[key];
+    }
+
+    let preview;
+    if (key === 'nature') {
+      preview = CONSTANTS.NATURE_MAP[+values[0]];
+    } else if (key === 'workModel') {
+      preview = CONSTANTS.WORK_MODEL_MAP[+values[0]];
+    } else {
+      preview = values[0];
+    }
+
+    return values.length > 1 ? `${preview} +${values.length - 1}` : preview;
+  }
+
+  static createCloseButton(menu) {
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'close-menu';
+    closeBtn.textContent = '×';
+    closeBtn.addEventListener('click', () => {
+      menu.el.classList.remove('open');
+      window.location.reload();
+    });
+    return closeBtn;
+  }
 }
 
-//renderer 
-export async function renderPreferences(container) {
-  //clear old content and add your section title
-  container.innerHTML = ``;
-
-  //all the cols we need preferences for 
-  const skills     = await getUniqueValues('relevantSkills', { flatten: true });
-  const locations  = await getUniqueValues('location');
-  const industries = await getUniqueValues('industry');
-  const roles      = await getUniqueValues('jobRole');
-
-  //building the tag selectors, using savedPrefs
-  const { element: skillsEl, getSelectedTags: getSkills     } =
-    generateTags(skills,     savedPrefs.skills,     'skills');
-  const { element: locEl,    getSelectedTags: getLocations  } =
-    generateTags(locations,  savedPrefs.locations,  'locations');
-  const { element: indEl,    getSelectedTags: getIndustries} =
-    generateTags(industries, savedPrefs.industries, 'industries');
-  const { element: roleEl,   getSelectedTags: getRoles      } =
-    generateTags(roles,      savedPrefs.roles,      'roles');
-
-  // Preferred salary input
-  const salaryInput = document.createElement('input');
-  salaryInput.type        = 'number';
-  salaryInput.placeholder = 'Preferred salary';
-  salaryInput.value       = savedPrefs.salary;
-  // auto-save salary on input
-  salaryInput.addEventListener('input', () => {
-    savedPrefs.salary = salaryInput.value;
-    savePrefs();
-  });
-
-  // checkbox vocabularies
-  const natureMap = {
-    1: 'Full-time',
-    2: 'Part-time',
-    3: 'Intern'
-  };
-  const workModelMap = {
-    1: 'Remote',
-    2: 'On-site',
-    3: 'Hybrid'
-  };
-
-  const natureOptions = Object.entries(natureMap)
-    .map(([value, label]) => ({ value, label }));
-  const workModelOptions = Object.entries(workModelMap)
-    .map(([value, label]) => ({ value, label }));
+// ── Public API ──
+export async function renderFeedPreferences(container) {
+  container.innerHTML = '';
   
-  const { element: natureEl, getSelectedValues: getNatures     } =
-    generateCheckboxes(natureOptions,   savedPrefs.nature,    'nature');
-  const { element: workEl,   getSelectedValues: getWorkModels } =
-    generateCheckboxes(workModelOptions, savedPrefs.workModel, 'workModel');
-
-  // helper to wrap sections
-  const makeSection = (title, el) => {
-    const sec = document.createElement('section');
-    sec.className = 'pref-section';
-    sec.innerHTML = `<h3>${title}</h3>`;
-    sec.append(el);
-    return sec;
-  };
-
-  // append all your preference controls (no save button needed)
-  container.append(
-    makeSection('Preferred Skills',      skillsEl),
-    makeSection('Preferred Locations',   locEl),
-    makeSection('Preferred Industries',  indEl),
-    makeSection('Preferred Roles',       roleEl),
-    makeSection('Preferred Salary',      salaryInput),
-    makeSection('Employment Type',       natureEl),
-    makeSection('Work Model',            workEl)
+  const sections = await SectionManager.createSections();
+  const menus = sections.map(({ key, control }) =>
+    SectionManager.createQuickMenu(key, control.element, control.getState)
   );
+  
+  const header = HeaderManager.createHeader(menus, container);
+  container.append(header);
 }
 
-/**
- * loadUserPreferences()
- *
- * Reads from `savedPrefs` (which was initialized from localStorage)
- * and returns an object keyed exactly for CardDeck’s constructor:
- *   {
- *     userSkills:  [...],
- *     industries:  [...],
- *     locations:   [...],
- *     workModels:  [...],
- *     natures:     [...],
- *     roles:       [...]
- *   }
- *
- * (We ignore `salary` here because CardDeck doesn’t use it.)
- */
+export async function renderPreferences(container) {
+  container.innerHTML = '';
+  
+  const sections = await SectionManager.createSections();
+  
+  sections.forEach(({ key, control }) => {
+    const section = SectionManager.createSection(
+      CONSTANTS.SECTION_TITLES[key],
+      control.element
+    );
+    container.append(section);
+  });
+}
+
 export function loadUserPreferences() {
+  const prefs = prefsManager.getAllPrefs();
+  
   return {
-    userSkills:  Array.isArray(savedPrefs.skills)     ? savedPrefs.skills     : [],
-    industries:  Array.isArray(savedPrefs.industries) ? savedPrefs.industries : [],
-    locations:   Array.isArray(savedPrefs.locations)  ? savedPrefs.locations  : [],
-    workModels:  Array.isArray(savedPrefs.workModel)  ? savedPrefs.workModel  : [],
-    natures:     Array.isArray(savedPrefs.nature)     ? savedPrefs.nature     : [],
-    roles:       Array.isArray(savedPrefs.roles)      ? savedPrefs.roles      : []
+    userSkills: Array.isArray(prefs.skills) ? prefs.skills : [],
+    industries: Array.isArray(prefs.industries) ? prefs.industries : [],
+    locations: Array.isArray(prefs.locations) ? prefs.locations : [],
+    workModels: Array.isArray(prefs.workModel) ? prefs.workModel : [],
+    natures: Array.isArray(prefs.nature) ? prefs.nature : [],
+    roles: Array.isArray(prefs.roles) ? prefs.roles : [],
+    salaryHourly: prefs.salaryHourly,
+    salaryYearly: prefs.salaryYearly
   };
 }
