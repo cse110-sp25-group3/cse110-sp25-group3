@@ -30,12 +30,16 @@ class AppCard extends HTMLElement {
             article {
                 border: 1px solid #ddd;
                 border-radius: 1em;
-                padding: 16px;
                 background: white;
                 box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-                transition: all 0.3s ease;
                 margin-bottom: 1.2em;
+                max-height: 1000px;
+                overflow: hidden;
+                transition: all 1s ease;
+                padding: 16px;
+                opacity: 1;
             }
+
             
             /* Header styles */
             header{
@@ -189,8 +193,13 @@ class AppCard extends HTMLElement {
                 white-space: nowrap;
             }
 
+            .buttons {
+                display: flex;
+                justify-content: space-between;
+            }
+
             /* Application link */
-            a.apply-link {
+            a.apply-link, button.remove-app, button.confirm-remove, button.cancel-remove {
                 display: inline-block;
                 margin-top: 1em;
                 padding: 0.5em 1em;
@@ -206,6 +215,111 @@ class AppCard extends HTMLElement {
             a.apply-link:hover {
                 // background: var(--color-dark-blue-fill);
                 opacity: 0.8;
+            }
+
+            /* Remove Application Button */
+            button.remove-app, button.confirm-remove {
+                background: #ff4d4f;
+                border: 1px solid #ff4d4f;
+                padding: 0.6em 1em;
+                box-sizing: border-box;
+            }
+
+            button.remove-app:hover, button.confirm-remove:hover, button.cancel-remove:hover {
+                opacity: 0.8;
+                cursor: pointer;
+            }
+
+            .shrink-out {
+                transition: all 0.5s ease;
+                overflow: hidden;
+                max-height: 0;
+                opacity: 0;
+                padding-top: 0;
+                padding-bottom: 0;
+                margin-top: 0;
+                margin-bottom: 0;
+            }
+            
+            /* Delete Confirmation Dialog */
+            dialog {
+                position: fixed;
+                inset: 0;
+                margin: auto;
+                padding: 0;
+                border: none;
+                border-radius: 20px;
+                background: transparent;
+                z-index: 1000;
+            }
+            
+            fieldset {
+                border: none;
+            }
+
+
+            .modal-content {
+                background: white;
+                padding: 1.5em;
+                border-radius: 20px;
+                box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+                text-align: center;
+                width: 90%;
+                max-width: 400px;
+                transform: scale(0.8);
+                opacity: 0;
+                animation: growIn 0.3s forwards;
+            }
+
+            .modal-content h3 {
+                font-size: 1.2em;
+                color: var(--color-dark-blue-outline);
+                margin: auto;
+            }
+            
+            form p {
+                max-width: 70%;
+                justify-self: center;
+                font-weight: medium;
+            }
+
+            .modal-buttons {
+                display: flex;
+                margin-top: 1.5em;
+                gap: 3em;
+                justify-content: center;
+            }
+
+            .modal-buttons button {
+                padding: 0.5em 1.2em;
+                border-radius: 0.5em;
+                font-weight: bold;
+                border: none;
+                cursor: pointer;
+                font-size: 0.85em;
+            }
+
+            /* Keyframes */
+            @keyframes growIn {
+                from {
+                    transform: scale(0.8);
+                    opacity: 0;
+                }
+                to {
+                    transform: scale(1);
+                    opacity: 1;
+                }
+            }
+
+            @keyframes shrinkOut {
+                from {
+                    transform: scale(1);
+                    opacity: 1;
+                }
+                to {
+                    transform: scale(0.8);
+                    opacity: 0;
+                }
             }
         `;
 
@@ -288,8 +402,23 @@ class AppCard extends HTMLElement {
                 <div class="skills">
                     ${data.relevantSkills.map(skill => `<span class="skill">${skill}</span>`).join('')}
                 </div>
-                <a class="apply-link" href="${data.applicationLink}" target="_blank" rel="noopener">Link to Application</a>
+                <div class="buttons">
+                    <a class="apply-link" href="${data.applicationLink}" target="_blank" rel="noopener">Link to Application</a>
+                    <button class="remove-app">Remove</button>
+                </div>
             </section>
+            <dialog id="confirm-modal">
+                <form method="dialog" class="modal-content">
+                    <fieldset>
+                    <legend><h3>Confirm Removal</h3></legend>
+                    <p>Are you sure you want to remove this application?</p>
+                    <div class="modal-buttons">
+                        <button type="submit" value="cancel" class="cancel-remove">Cancel</button>
+                        <button type="submit" value="confirm" class="confirm-remove">Confirm</button>
+                    </div>
+                    </fieldset>
+                </form>
+            </dialog>
         `;
 
         const toggleBtn = this.article.querySelector(`#toggle-${detailId}`);
@@ -301,6 +430,48 @@ class AppCard extends HTMLElement {
             detailSection.classList.toggle('expanded', !isExpanded);
             toggleBtn.setAttribute('aria-expanded', !isExpanded);
             toggleBtn.textContent = isExpanded ? 'Details' : 'Hide';
+        });
+
+        const removeBtn = this.article.querySelector('.remove-app');
+        const modal = this.article.querySelector('#confirm-modal');
+        const form = modal.querySelector('form');
+
+        const cancelBtn = form.querySelector('.cancel-remove');
+        cancelBtn.addEventListener('click', (e) => {
+            e.preventDefault(); // Prevent immediate dialog close
+            const content = modal.querySelector('.modal-content');
+            content.style.animation = 'shrinkOut 0.2s forwards';
+            setTimeout(() => modal.close('cancel'), 200);
+        });
+
+
+        removeBtn.addEventListener('click', () => {
+            modal.showModal();
+            const content = modal.querySelector('.modal-content');
+            content.style.animation = 'growIn 0.3s forwards';
+        });
+
+        modal.addEventListener('close', () => {
+            if (modal.returnValue === 'confirm') {
+                this.article.classList.add('shrink-out');
+        
+                setTimeout(() => {
+                    const event = new CustomEvent('remove-app', {
+                        bubbles: true,
+                        detail: data
+                    });
+                    this.dispatchEvent(event);
+                }, 1000);
+            }
+        });
+
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                const content = modal.querySelector('.modal-content');
+                content.style.animation = 'shrinkOut 0.2s forwards';
+                setTimeout(() => modal.close('cancel'), 200);
+            }
         });
     }
 }
