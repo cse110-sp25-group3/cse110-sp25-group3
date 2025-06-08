@@ -99,4 +99,20 @@ describe("Job Preferences Page", () => {
     expect(prefs.salaryHourly).toBe("25");
     expect(prefs.salaryYearly).toBe("70000");
   });
+
+  test("renderPreferences does not throw", async () => {
+    await expect(renderPreferences(container)).resolves.not.toThrow();
+  });
+
+  test("loadUserPreferences returns an object with expected keys", () => {
+    const prefs = loadUserPreferences();
+    expect(prefs).toHaveProperty("userSkills");
+    expect(prefs).toHaveProperty("locations");
+    expect(prefs).toHaveProperty("industries");
+    expect(prefs).toHaveProperty("roles");
+    expect(prefs).toHaveProperty("workModels");
+    expect(prefs).toHaveProperty("natures");
+    expect(prefs).toHaveProperty("salaryHourly");
+    expect(prefs).toHaveProperty("salaryYearly");
+  });
 });
