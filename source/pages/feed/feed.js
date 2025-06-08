@@ -158,7 +158,6 @@ function attachCardListeners(card, container) {
     if (currentJobIndex < jobsData.length) {
       const currentCard = document.querySelector(".job-card.active");
       if (currentCard) {
-        currentCard.classList.add("skip-animation");
         setTimeout(() => {
           currentJobIndex++;
           updateCardVisibility();
@@ -183,7 +182,6 @@ function attachCardListeners(card, container) {
           }
         },1500);
       if (currentCard) {
-        currentCard.classList.add("apply-animation");
         setTimeout(() => {
           currentJobIndex++;
           updateCardVisibility();
