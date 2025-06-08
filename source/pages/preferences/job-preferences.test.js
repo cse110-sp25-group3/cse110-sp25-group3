@@ -2,7 +2,11 @@
  * @jest-environment jsdom
  */
 import "@testing-library/jest-dom";
-import { renderPreferences, loadUserPreferences } from "./job-preferences.js";
+import {
+  renderPreferences,
+  loadUserPreferences,
+  renderFeedPreferences,
+} from "./job-preferences.js";
 
 // ✅ CORRECT PATH: mocks the getUniqueValues function from source/functions/fetch-jobs.js
 jest.mock("../../functions/fetch-jobs.js", () => ({
@@ -123,5 +127,18 @@ describe("Job Preferences Page", () => {
   test("DOM container is not empty after renderPreferences runs", async () => {
     await renderPreferences(container);
     expect(container.innerHTML.length).toBeGreaterThan(0);
+  });
+
+  test("renderFeedPreferences shows quick menu on button click", async () => {
+    await renderFeedPreferences(container);
+
+    const buttons = container.querySelectorAll(".section-btn");
+    expect(buttons.length).toBeGreaterThan(0);
+
+    const firstBtn = buttons[0];
+    firstBtn.click();
+
+    const openMenus = container.querySelectorAll(".quick-menu.open");
+    expect(openMenus.length).toBe(1);
   });
 });
