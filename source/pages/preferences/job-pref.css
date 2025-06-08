@@ -42,7 +42,7 @@
   box-sizing: border-box;
   font-size: 0.95rem;
   margin-bottom: 10px;
-  width: 200px;
+  width: 175px;
 }
 
 .salary-input{
@@ -54,6 +54,12 @@
   font-size: 0.95rem;
   margin-bottom: 10px;
   width: 70px;
+
+}
+
+.salary-wrapper{
+  display: flex;
+  flex-direction: column;
 }
 
 /* Add button */
