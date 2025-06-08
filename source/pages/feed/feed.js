@@ -295,3 +295,26 @@ function showEndMessage() {
     </div>
   `;
 }
+
+/**
+ * Reset the feed’s internal state.
+ * Tests should call this before pushing test jobs.
+ */
+export function resetFeedState() {
+  jobsData.length = 0;
+  currentJobIndex = 0;
+}
+
+export {
+  getMatchedSkills,
+  getLostSkills,
+  getMatchPercent,
+  getMatchDegree,
+  createCardElement,
+  saveJobToLocalStorage,
+  renderCurrentCard,
+  // for testing renderCurrentCard
+  jobsData,
+  userSkills,
+  currentJobIndex
+};
