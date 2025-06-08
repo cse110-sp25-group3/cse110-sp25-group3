@@ -175,7 +175,6 @@ function attachCardListeners(card, container) {
             newWindow.close();
           }
         },1500);
-      saveJobToLocalStorage(job);
       if (currentCard) {
         currentCard.classList.add("apply-animation");
         setTimeout(() => {
@@ -247,7 +246,15 @@ export async function renderFeed(container) {
     const rawJobs = await fetchJobs();
     const prefs   = loadUserPreferences();
     userSkills    = Array.isArray(prefs.userSkills) ? prefs.userSkills : [];
-    jobsData      = runFeedAlgorithm(rawJobs, prefs);
+    const appliedJobs = JSON.parse(localStorage.getItem('appliedJobs')) || [];
+
+    const filteredJobs = rawJobs.filter(job =>
+      !appliedJobs.some(applied =>
+        applied.companyName === job.companyName &&
+        applied.jobRole === job.jobRole
+      )
+    );
+    jobsData      = runFeedAlgorithm(filteredJobs, prefs);
     currentJobIndex = 0;
     renderCurrentCard(jobCardsContainer);
   } catch (error) {
