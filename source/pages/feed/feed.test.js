@@ -1,4 +1,3 @@
-// feed.test.js
 /**
  * @jest-environment jsdom
  */
