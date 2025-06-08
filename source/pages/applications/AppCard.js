@@ -189,8 +189,13 @@ class AppCard extends HTMLElement {
                 white-space: nowrap;
             }
 
+            .buttons {
+                display: flex;
+                justify-content: space-between;
+            }
+
             /* Application link */
-            a.apply-link {
+            a.apply-link, button.remove-app{
                 display: inline-block;
                 margin-top: 1em;
                 padding: 0.5em 1em;
@@ -206,6 +211,28 @@ class AppCard extends HTMLElement {
             a.apply-link:hover {
                 // background: var(--color-dark-blue-fill);
                 opacity: 0.8;
+            }
+
+            /* Remove Application Button */
+            button.remove-app {
+                background: #ff4d4f;
+                border: 1px solid #ff4d4f;
+                padding: 0.6em 1em;
+                box-sizing: border-box;
+            }
+
+            button.remove-app:hover {
+                opacity: 0.8;
+                cursor: pointer;
+            }
+
+            .shrink-out {
+                max-height: 0 !important;
+                opacity: 0;
+                margin: 0;
+                padding: 0;
+                transition: all 0.4s ease;
+                overflow: hidden;
             }
         `;
 
@@ -288,8 +315,10 @@ class AppCard extends HTMLElement {
                 <div class="skills">
                     ${data.relevantSkills.map(skill => `<span class="skill">${skill}</span>`).join('')}
                 </div>
-                <a class="apply-link" href="${data.applicationLink}" target="_blank" rel="noopener">Link to Application</a>
-                <button class="remove-app">Remove Application</button>
+                <div class="buttons">
+                    <a class="apply-link" href="${data.applicationLink}" target="_blank" rel="noopener">Link to Application</a>
+                    <button class="remove-app">Remove</button>
+                </div>
             </section>
         `;
 
