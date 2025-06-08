@@ -147,6 +147,13 @@ function attachCardListeners(card, container) {
     renderCurrentCard(container);
   }
 
+  // updates the visible card after a skip or apply animation completes 
+  function updateCardVisibility() {
+    const container = document.getElementById("job-cards-container");
+    if (!container) return;
+    renderCurrentCard(container);
+  }
+
   function skipCurrentJob() {
     if (currentJobIndex < jobsData.length) {
       const currentCard = document.querySelector(".job-card.active");
@@ -175,7 +182,6 @@ function attachCardListeners(card, container) {
             newWindow.close();
           }
         },1500);
-      saveJobToLocalStorage(job);
       if (currentCard) {
         currentCard.classList.add("apply-animation");
         setTimeout(() => {
@@ -247,7 +253,15 @@ export async function renderFeed(container) {
     const rawJobs = await fetchJobs();
     const prefs   = loadUserPreferences();
     userSkills    = Array.isArray(prefs.userSkills) ? prefs.userSkills : [];
-    jobsData      = runFeedAlgorithm(rawJobs, prefs);
+    const appliedJobs = JSON.parse(localStorage.getItem('appliedJobs')) || [];
+
+    const filteredJobs = rawJobs.filter(job =>
+      !appliedJobs.some(applied =>
+        applied.companyName === job.companyName &&
+        applied.jobRole === job.jobRole
+      )
+    );
+    jobsData      = runFeedAlgorithm(filteredJobs, prefs);
     currentJobIndex = 0;
     renderCurrentCard(jobCardsContainer);
   } catch (error) {

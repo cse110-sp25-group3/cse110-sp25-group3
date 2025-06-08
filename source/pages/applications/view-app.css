@@ -24,6 +24,7 @@
     background: white;
     border-radius: 1em;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    animation: growIn 0.3s forwards;
     transform: translateY(80%);
 }
 
@@ -55,4 +56,16 @@
 
 button:hover {
     opacity: 0.8;
+}
+
+/* Keyframes */
+@keyframes growIn {
+    from {
+        transform: translateY(80%) scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(80%) scale(1);
+        opacity: 1;
+    }
 }
