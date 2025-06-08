@@ -22,9 +22,5 @@
     "transform": {
       "^.+\\.jsx?$": "babel-jest"
     }
-  },
-  "dependencies": {
-    "express": "^5.1.0",
-    "selenium-webdriver": "^4.33.0"
   }
 }

@@ -170,10 +170,3 @@ function datePostedScore(dateString, maxDays = 30) {
   // if older than maxDays, score = 0; if fresh (0 days), score = 100
   return raw <= 0 ? 0 : Math.round(Math.min(raw,1)*100);
 }
-
-export {
-  sanitizeSalary,
-  parsePay,
-  payScore,
-  datePostedScore
-};
