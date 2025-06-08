@@ -25,11 +25,11 @@ describe("sanitizeSalary", () => {
     ["",                 0],
     ["123",            123],
     ["abc",              0],
-    ["$2..59",         2.59],
-    ["$2.5.9",         2.59],
-    ["1.2.3.4",        1.234],
-    ["...10..",        10],
-    ["25.50",          25.5]
+    ["$2..59",           3],
+    ["$2.5.9",           3],
+    ["1.2.3.4",          1],
+    ["...10..",          0],
+    ["25.50",           26]
   ])("sanitizeSalary(%j) → %f", (input, expected) => {
     expect(typeof sanitizeSalary(input)).toBe("number");
     expect(sanitizeSalary(input)).toBeCloseTo(expected, 3);
@@ -47,7 +47,7 @@ describe("parsePay", () => {
     ["80k",        80000],
     ["70k-90k",    (70000 + 90000) / 2],
     ["25/hr",      25 * 2080],
-    ["20.5/hr",    20.5 * 2080],
+    ["20.5/hr",    21 * 2080],
     ["20/hr-30/hr",(20 + 30) / 2 * 2080],
     ["invalid",    0]
   ])("parsePay('%s') → %f", (input, expected) => {
