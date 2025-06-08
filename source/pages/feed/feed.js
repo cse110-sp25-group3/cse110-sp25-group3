@@ -147,12 +147,51 @@ function attachCardListeners(card, container) {
     renderCurrentCard(container);
   }
 
+  function skipCurrentJob() {
+    if (currentJobIndex < jobsData.length) {
+      const currentCard = document.querySelector(".job-card.active");
+      if (currentCard) {
+        currentCard.classList.add("skip-animation");
+        setTimeout(() => {
+          currentJobIndex++;
+          updateCardVisibility();
+        }, 500);
+      }
+    }
+  }
+
+  function applyToCurrentJob() {
+    if (currentJobIndex < jobsData.length) {
+      const currentCard = document.querySelector(".job-card.active");
+      const job = jobsData[currentJobIndex];
+      const data = localStorage.getItem('userData');
+      const jobs = encodeURIComponent(JSON.stringify(job));
+      // Encode data to safely pass via URL
+      const encodedData = encodeURIComponent(data);
+      const newWindow = window.open(`http://localhost:3000/?data=${encodedData}&jobs=${jobs}`, '_blank', 'width=600,height=400');
+      // Wait 3 seconds, then close the new window
+      setTimeout(() => {
+          if (newWindow && !newWindow.closed) {
+            newWindow.close();
+          }
+        },1500);
+      saveJobToLocalStorage(job);
+      if (currentCard) {
+        currentCard.classList.add("apply-animation");
+        setTimeout(() => {
+          currentJobIndex++;
+          updateCardVisibility();
+        }, 500);
+      }
+  }
+}
   // Skip button
   card.querySelector(".skip-button").addEventListener("click", e => {
     e.stopPropagation();
     disableButtons();
     inner.classList.add("swipe-out-left");
     inner.addEventListener("animationend", () => nextCard(), { once: true });
+    skipCurrentJob();
   });
 
   // Apply button
@@ -162,6 +201,7 @@ function attachCardListeners(card, container) {
     disableButtons();
     inner.classList.add("swipe-out-right");
     inner.addEventListener("animationend", () => nextCard(), { once: true });
+    applyToCurrentJob();
   });
 }
 
@@ -178,7 +218,7 @@ function renderCurrentCard(container) {
   behindCard.className = "behindCard";
   container.appendChild(behindCard);
 
-  // Main card
+    // Main card
   const card = createCardElement(jobsData[currentJobIndex], currentJobIndex);
   container.appendChild(card);
   attachCardListeners(card, container);
@@ -192,7 +232,7 @@ function renderCurrentCard(container) {
 // Entry point
 export async function renderFeed(container) {
   // Clear
-  container.innerHTML = "";
+  container.innerHTML = ""; 
 
   // Render preferences header (which wires showOverlay/removeOverlay)
   renderFeedPreferences(container);
