@@ -16,3 +16,43 @@
     color: rgba(19, 25, 192, 0.9);
     cursor: pointer;
 }
+
+/* End message styling */
+.end-message {
+    text-align: center;
+    padding: 2em;
+    background: white;
+    border-radius: 1em;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(80%);
+}
+
+.end-message h3 {
+    color: var(--color-dark-blue-outline);
+    margin-bottom: 1em;
+}
+
+.end-message p {
+    color: #666;
+    margin-bottom: 1.5em;
+}
+
+#noapp {
+    background: var(--color-dark-blue-outline);
+    color: blue;
+    border: none;
+    padding: 0.8em 1.5em;
+    border-radius: 0.5em;
+    font-size: 1em;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+
+    & a {
+        color: white;
+        text-decoration: none;
+    }
+}
+
+button:hover {
+    opacity: 0.8;
+}
