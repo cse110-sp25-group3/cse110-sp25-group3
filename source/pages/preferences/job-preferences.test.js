@@ -115,4 +115,13 @@ describe("Job Preferences Page", () => {
     expect(prefs).toHaveProperty("salaryHourly");
     expect(prefs).toHaveProperty("salaryYearly");
   });
+
+  test("DOM container is empty before renderPreferences runs", () => {
+    expect(container.innerHTML).toBe("");
+  });
+
+  test("DOM container is not empty after renderPreferences runs", async () => {
+    await renderPreferences(container);
+    expect(container.innerHTML.length).toBeGreaterThan(0);
+  });
 });
