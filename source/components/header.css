@@ -86,40 +86,68 @@
 
 /* Media Query for Desktop View (>= 768px) */
 @media screen and (min-width: 768px) {
+    /* Hide hamburger button on desktop */
     .hamburger-btn {
-        display: none;  /* Hide hamburger button on desktop */
+        display: none; /* Hide hamburger button on desktop */
     }
 
-    /* Adjust header for side menu layout */
+    /* Adjust header for desktop layout */
     .site-header {
-        position: static;   /* Remove the absolute positioning */
+        position: static;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 1rem 2rem;  /* More space for desktop */
+        padding: 1rem 2rem;
+        padding-top: 1.5rem; /* Add space at the top */
     }
 
-    /* Side Menu - Make nav visible on desktop */
+    /* Make the sidebar (nav menu) fixed to the side on desktop */
     #nav-menu {
         position: fixed;  /* Fix it to the side */
         top: 0;
         left: 0;
-        height: 100%;
-        width: 250px;  /* Adjust width as needed */
-        background: white;
-        box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+        height: calc(100% - 30px);
+        bottom: 10px;
+        width: 250px;  /* Sidebar width */
+        background: var(--color-white);
+        box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1); /* Soft shadow */
         z-index: 10;
         max-height: none;  /* Menu is always visible on desktop */
-        display: block;  /* Make the menu always visible */
+        display: block;
         overflow: auto;
+        padding-top: 2rem;  /* Space at the top of the sidebar */
+        border-radius: 0 15px 15px 0;  /* Rounded right corners */
     }
 
+    #nav-menu ul {
+        list-style: none;
+        padding-left: 0;
+    }
+
+    /* Modify link appearance for desktop */
     #nav-menu a {
         display: block;
-        padding: 1rem 2rem;
+        padding: 1rem 2rem;  /* Add padding to make links larger */
+        color: var(--color-dark-blue);
+        font-size: 1.1rem;  /* Slightly larger font size */
     }
 
-    /* Make site title visible and aligned */
+    /* Highlight links on hover */
+    #nav-menu a:hover {
+        background: var(--color-light-blue-fill);
+        color: var(--color-dark-blue);
+        padding-left: 2rem;  /* Indent the text on hover for effect */
+    }
+
+    /* Active link styles on desktop */
+    #nav-menu a.active {
+        color: var(--color-white);
+        background: var(--color-dark-blue);  /* Dark background for active link */
+        font-weight: bold;
+        border-radius: 5px; /* Add rounded corners to active link */
+    }
+
+    /* Site Title for Desktop */
     .site-title {
         font-size: 1.5rem;
         font-weight: bold;
