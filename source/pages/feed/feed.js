@@ -147,7 +147,7 @@ function attachCardListeners(card, container) {
     renderCurrentCard(container);
   }
 
-  // Updates the visible card after a skip or apply animation completes
+  // updates the visible card after a skip or apply animation completes 
   function updateCardVisibility() {
     const container = document.getElementById("job-cards-container");
     if (!container) return;
