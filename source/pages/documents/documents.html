@@ -1,23 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link rel="stylesheet" href="../../global.css" />
-  <link rel="stylesheet" href="../../components/header.css" />
-  <link rel="stylesheet" href="documents.css" />
-  <title>Documents</title>
-</head>
-<body>
-  <div class="phone">
-    <div id="app">
-      <!-- content will be injected here -->
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../../global.css" />
+    <link rel="stylesheet" href="../../components/header.css" />
+    <link rel="stylesheet" href="documents.css" />
+    <!-- Tagify for tag-based input -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css"
+    />
+
+    <title>Documents</title>
+  </head>
+  <body>
+    <div class="phone">
+      <div id="app">
+        <!-- content will be injected here -->
+      </div>
     </div>
-  </div>
-  
-  <!-- Load browser resume parser -->
-  <script src="../../functions/browser-pdf-scrape.js"></script>
-  <!-- Load main app -->
-  <script type="module" src="../../app.js"></script>
-</body>
+
+    <!-- Load browser resume parser -->
+    <script src="../../functions/browser-pdf-scrape.js"></script>
+    <!-- Load main app -->
+    <script type="module" src="../../app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
+  </body>
 </html>

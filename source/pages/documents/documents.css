@@ -17,7 +17,7 @@
   font-weight: 600;
   color: #1d4ed8;
   margin-bottom: 1rem;
-  font-family: 'Open-Sans', sans-serif;
+  font-family: "Open-Sans", sans-serif;
 }
 
 .upload-area button {
@@ -29,7 +29,7 @@
   border-radius: 8px;
   font-weight: 600;
   font-size: 1rem;
-  font-family: 'Open-Sans', sans-serif;
+  font-family: "Open-Sans", sans-serif;
   transition: background-color 0.3s ease;
 }
 
@@ -50,7 +50,7 @@
   border-radius: 8px;
   border: 1px solid #fecaca;
   margin-bottom: 1rem;
-  font-family: 'Open-Sans', sans-serif;
+  font-family: "Open-Sans", sans-serif;
   font-size: 0.9rem;
 }
 
@@ -60,28 +60,32 @@
 }
 
 /* Status messages */
-.upload-status, .auto-fill-status {
+.upload-status,
+.auto-fill-status {
   margin-top: 0.5rem;
   padding: 0.5rem;
   border-radius: 6px;
   font-size: 0.9rem;
-  font-family: 'Open-Sans', sans-serif;
+  font-family: "Open-Sans", sans-serif;
   font-weight: 500;
 }
 
-.upload-status.success, .auto-fill-status.success {
+.upload-status.success,
+.auto-fill-status.success {
   background-color: #dcfce7;
   color: #166534;
   border: 1px solid #bbf7d0;
 }
 
-.upload-status.error, .auto-fill-status.error {
+.upload-status.error,
+.auto-fill-status.error {
   background-color: #fef2f2;
   color: #dc2626;
   border: 1px solid #fecaca;
 }
 
-.upload-status.processing, .auto-fill-status.processing {
+.upload-status.processing,
+.auto-fill-status.processing {
   background-color: #fef3c7;
   color: #d97706;
   border: 1px solid #fed7aa;
@@ -102,7 +106,7 @@
   background-color: #eff6ff;
   border-radius: 10px;
   border: 1px solid #bfdbfe;
-  font-family: 'Open-Sans', sans-serif;
+  font-family: "Open-Sans", sans-serif;
   font-size: 0.95rem;
   color: #1e40af;
 }
@@ -188,7 +192,7 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  font-family: 'Open-Sans', sans-serif;
+  font-family: "Open-Sans", sans-serif;
   color: #1e293b;
   font-size: 0.95rem;
 }
@@ -209,13 +213,13 @@
   border-radius: 8px;
   border: 1.8px solid #bfdbfe;
   font-size: 1rem;
-  font-family: 'Open-Sans', sans-serif;
+  font-family: "Open-Sans", sans-serif;
   transition: all 0.3s ease;
   box-sizing: border-box;
 }
 
 .info-form input:focus,
-.info-form textarea:focus ,
+.info-form textarea:focus,
 .info-form select:focus {
   outline: none;
   border-color: #2563eb;
@@ -224,7 +228,8 @@
 
 /* Auto-filled input styling */
 .info-form input.auto-filled,
-.info-form textarea.auto-filled , .info-form select.auto-filled {
+.info-form textarea.auto-filled,
+.info-form select.auto-filled {
   border-color: #22c55e;
   background-color: #f0fdf4;
   animation: highlight 3s ease-out;
@@ -258,7 +263,7 @@
   border: none;
   border-radius: 8px;
   transition: background-color 0.3s ease;
-  font-family: 'Open-Sans', sans-serif;
+  font-family: "Open-Sans", sans-serif;
   margin-right: 0.5rem;
   min-width: 172px;
 }
