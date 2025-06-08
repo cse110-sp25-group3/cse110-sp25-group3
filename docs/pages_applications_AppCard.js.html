@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: pages/applications/AppCard.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: pages/applications/AppCard.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>// AppCard.js
+
+/**
+ * A custom HTML element representing a job application card in the
+ * View Applications Page. It uses the Shadow DOM for style encapsulation and
+ * accepts a `data` object to populate the content. The card displays a company
+ * (logo, name, industry), job title, location, pay, date of application with
+ * an option to view more details about the company and skill assessment.
+ */
+class AppCard extends HTMLElement {
+    /**
+     * Constructor for the AppCard component.
+     * Initialized the Shadow DOM, adds styling, and create an &lt;article> to
+     * hold the card content.
+     */
+    constructor() {
+        super(); // Inherit everything from HTMLElement
+        
+        // Attach the shadow DOM (open so JS outside can access it if needed)
+        let shadow = this.attachShadow({ mode: 'open' });
+
+        // Create root container for component's visual content
+        this.article = document.createElement('article');
+
+        // Create a &lt;style> tag to encapsulate component-specific styles
+        let style = document.createElement('style');
+
+        // Add styles to the &lt;style> tag
+        style.textContent = `
+            article {
+                border: 1px solid #ddd;
+                border-radius: 1em;
+                padding: 16px;
+                background: white;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+                transition: all 0.3s ease;
+                margin-bottom: 1.2em;
+            }
+            
+            /* Header styles */
+            header{
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .text-info {
+                display: flex;
+                flex-direction: column;
+                margin-right: 0%
+                width: 10px;
+            }
+
+            .company-meta {
+                display: flex;
+                align-items: center;
+                gap: 1em;
+                margin-right: 0%;
+                padding-right: 0%;
+                max-width: 75%;
+            }
+
+            img {
+                max-width: 15%;
+            }
+
+            .name {
+                color: var(--color-dark-blue-outline);
+                font-weight: medium;
+                font-size: 1.1em;
+                flex: none;
+            }
+            
+            button {
+                background: var(--color-light-blue-fill);
+                border: 1px solid var(--color-light-blue-outline);
+                box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+                border-radius: 0.5em;
+                max-width: 30%;
+                padding: 0.3em 0.8em;
+                font-size: 0.8em;
+                transition: all 0.3s ease;
+                color: var(--color-dark-blue-outline);
+            }
+            
+            button:hover {
+                background: var(--color-dark-blue-fill);
+                border-color: rgba(196, 199, 254, 0.1);
+                cursor: pointer;
+            }
+
+            /* Job title styles */
+            h2 {
+                font-size: 1.1em;
+            }
+
+            /* Meta styling */
+            .meta {
+                display: flex;
+                flex-direction: row;
+                gap: 1em;
+                font-size: 0.7em;
+            }
+
+            .meta column {
+                display: flex;
+                gap: 20%;
+                align-items: center;
+            }
+
+            .meta span {
+                display: flex;
+                align-items: center;
+                gap: 0.5em;
+                margin-bottom: 0.7em;
+            }
+
+            span img {
+                width: 16px;
+                height: 16px;
+            }
+
+            /* Details section */
+            .details {
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.4s ease;
+            }
+
+            .details.expanded {
+                max-height: 1000px; /* large enough to show content */
+            }
+            
+            .details {
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.4s ease, opacity 0.3s ease;
+                opacity: 0;
+                margin-top: 1em;
+                font-size: 0.85em;
+                line-height: 1.5;
+                color: #333;
+            }
+
+            .details.expanded {
+                max-height: 1000px;
+                opacity: 1;
+            }
+
+            /* Section spacing */
+            .details p {
+                margin: 0.6em 0;
+            }
+
+            .details strong {
+                font-weight: 600;
+                color: var(--color-dark-blue-outline);
+            }
+
+            /* Requirement list */
+            .details ul {
+                padding-left: 1.2em;
+                margin: 0.4em 0 1em;
+            }
+
+            .details ul li {
+                margin-bottom: 0.3em;
+                list-style: disc;
+            }
+
+            .details ul li::marker {
+                color: var(--color-dark-blue-outline); /* Or any specific color like #1d4ed8 */
+            } 
+
+            /* Skills */
+            .skills {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.5em;
+                margin-top: 0.5em;
+            }
+
+            .skill {
+                background: var(--color-light-blue-fill);
+                color: var(--color-dark-blue-outline);
+                padding: 0.3em 0.7em;
+                border-radius: 0.5em;
+                font-size: 0.75em;
+                white-space: nowrap;
+            }
+
+            /* Application link */
+            a.apply-link {
+                display: inline-block;
+                margin-top: 1em;
+                padding: 0.5em 1em;
+                background: var(--color-dark-blue-outline);
+                color: white;
+                text-decoration: none;
+                border-radius: 0.5em;
+                font-weight: bold;
+                font-size: 0.85em;
+                transition: opacity 0.3s ease;
+            }
+
+            a.apply-link:hover {
+                // background: var(--color-dark-blue-fill);
+                opacity: 0.8;
+            }
+        `;
+
+        // Append the &lt;style> and &lt;article> elements to the shadow DOM
+        this.shadowRoot.append(style);
+        this.shadowRoot.appendChild(this.article);
+    }
+
+    /**
+     * Sets application and card data. Called when the .data property is
+     * set on this element.
+     * 
+     * @param {Object} data - The data to pass into the &lt;app-card> must be of
+     *                        following format:
+     * {
+     *   "companyName": "string",               // Name of the company
+     *   "companyLogo": "string",               // URL to the company logo image
+     *   "industry": "string",                  // Industry sector of company
+     *   "jobRole": "string",                   // Job title
+     *   "nature": number,                      // 1 = Full-time, 2 = Part-time, 3 = Intern
+     *   "workModel": number                    // 1 = Remote, 2 = On-site, 3 = Hybrid
+     *   "location": "string",                  // Job location
+     *   "pay": "string",                       // Pay information
+     *   "datePosted": "string",                // Date the job was posted
+     *   "dateSubmitted": "string",             // Date the application was submitted
+     *   "companyInfo": "string",               // Date the user applied
+     *   "jobDescription": "string"             // Overview of job responsibilities
+     *   "jobRequirements": [ "string", ... ],  // Array of job requirements
+     *   "relevantSkills": [ "string", ... ],   // Array of relevant skills
+     *   "applicationLink": "string"            // External link to apply to job
+     *   "htmlFile": "string"                   // (Optional) HTML file name for internal routing
+     * }
+     */
+    set data(data) {
+        if (!data) return;
+
+        const natureMap = { 1: 'Full-time', 2: 'Part-time', 3: 'Intern' };
+        const workModelMap = { 1: 'Remote', 2: 'On-site', 3: 'Hybrid'};
+
+        const nature = natureMap[data.nature] || 'Unknown';
+        const workModel = workModelMap[data.workModel] || 'Unknown';
+        const detailId = `details-${Math.random().toString(36).substring(2, 9)}`;
+
+        this.article.innerHTML = `
+            &lt;header>
+                &lt;div class="company-meta">
+                    &lt;img class="logo" src="${data.companyLogo}" alt="${data.companyName} logo">
+                    &lt;div class="text-info">
+                        &lt;span class="name">${data.companyName}&lt;/span>
+                        &lt;span class="industry">${data.industry}&lt;/span>
+                    &lt;/div>
+                &lt;/div>
+
+                &lt;button class="toggle" id="toggle-${detailId}" aria-expanded="false" aria-controls="${detailId}">
+                    Details
+                &lt;/button>
+            &lt;/header>
+
+            &lt;h2 class="job-title">${data.jobRole}&lt;/h2>
+
+            &lt;div class="meta">
+                &lt;div class="column">
+                    &lt;span>&lt;img src='assets/location.svg'>${data.location}&lt;/span>
+                    &lt;span>&lt;img src='assets/${workModelMap[data.workModel]}.svg'>${workModelMap[data.workModel]}&lt;/span>
+                &lt;/div>
+                &lt;div class="column">
+                    &lt;span>&lt;img src='assets/pay.svg'>${data.pay}&lt;/span>
+                    &lt;span>&lt;img src='assets/check.svg'>Applied on &lt;time datetime="${data.dateSubmitted}">${data.dateSubmitted}&lt;/time>&lt;/span>
+                &lt;/div>
+            &lt;/div>
+
+            &lt;section class="details" id="${detailId}">
+                &lt;p>&lt;strong>About:&lt;/strong> ${data.companyInfo}&lt;/p>
+                &lt;p>&lt;strong>Description:&lt;/strong> ${data.jobDescription}&lt;/p>
+                &lt;p>&lt;strong>Requirements:&lt;/strong>&lt;/p>
+                &lt;ul>
+                    ${data.jobRequirements.map(req => `&lt;li>${req}&lt;/li>`).join('')}
+                &lt;/ul>
+                &lt;p>&lt;strong>Skills:&lt;/strong>&lt;/p>
+                &lt;div class="skills">
+                    ${data.relevantSkills.map(skill => `&lt;span class="skill">${skill}&lt;/span>`).join('')}
+                &lt;/div>
+                &lt;a class="apply-link" href="${data.applicationLink}" target="_blank" rel="noopener">Link to Application&lt;/a>
+            &lt;/section>
+        `;
+
+        const toggleBtn = this.article.querySelector(`#toggle-${detailId}`);
+        const detailSection = this.article.querySelector(`#${detailId}`);
+
+        toggleBtn.addEventListener('click', () => {
+            const isExpanded = toggleBtn.getAttribute('aria-expanded') === 'true';
+
+            detailSection.classList.toggle('expanded', !isExpanded);
+            toggleBtn.setAttribute('aria-expanded', !isExpanded);
+            toggleBtn.textContent = isExpanded ? 'Details' : 'Hide';
+        });
+    }
+}
+
+customElements.define('app-card', AppCard);</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AppCard.html">AppCard</a></li></ul><h3>Global</h3><ul><li><a href="global.html#computeJobScore">computeJobScore</a></li><li><a href="global.html#datePostedScore">datePostedScore</a></li><li><a href="global.html#fetchJobs">fetchJobs</a></li><li><a href="global.html#getColumnValues">getColumnValues</a></li><li><a href="global.html#getUniqueValues">getUniqueValues</a></li><li><a href="global.html#parsePay">parsePay</a></li><li><a href="global.html#payScore">payScore</a></li><li><a href="global.html#runFeedAlgorithm">runFeedAlgorithm</a></li><li><a href="global.html#sanitizeSalary">sanitizeSalary</a></li><li><a href="global.html#skillAssessment">skillAssessment</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a>
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

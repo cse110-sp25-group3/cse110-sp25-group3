@@ -1,4 +1,11 @@
+/**
+ * Browser-based resume parser that extracts structured data from PDF resumes.
+ * Uses PDF.js for client-side PDF processing and text extraction.
+ */
 class BrowserResumeParser {
+    /**
+     * Initialize the resume parser with patterns, keywords, and classifiers.
+     */
     constructor() {
         this.initializePatterns();
         this.initializeKeywords();
@@ -6,6 +13,10 @@ class BrowserResumeParser {
         this.extractedData = new Set(); // Track extracted information to prevent duplicates
     }
 
+    /**
+     * Initialize regex patterns for extracting various data types from resume text.
+     * Includes patterns for emails, phones, URLs, dates, locations, and more.
+     */
     initializePatterns() {
         this.patterns = {
             email: /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/gi,
@@ -45,6 +56,10 @@ class BrowserResumeParser {
         };
     }
 
+    /**
+     * Initialize keyword collections for identifying job titles, companies, degrees, etc.
+     * Used for intelligent parsing and classification of resume sections.
+     */
     initializeKeywords() {
         this.keywords = {
             jobTitles: [
@@ -98,6 +113,10 @@ class BrowserResumeParser {
         };
     }
 
+    /**
+     * Initialize section classification patterns for identifying resume sections.
+     * Maps text patterns to section types like experience, education, skills, etc.
+     */
     initializeClassifiers() {
         this.sectionPatterns = {
             contact: [
@@ -149,6 +168,11 @@ class BrowserResumeParser {
         };
     }
 
+    /**
+     * Parse a resume PDF file and extract structured data.
+     * @param {File} file - The PDF file to parse
+     * @returns {Promise<Object>} - Structured resume data including contact info, experience, education, skills, etc.
+     */
     async parseResumeFromFile(file) {
         try {
             console.log(`Parsing resume: ${file.name}`);
@@ -232,17 +256,31 @@ class BrowserResumeParser {
         }
     }
 
+    /**
+     * Mark data as extracted to prevent duplication in subsequent extractions.
+     * @param {string} data - The data to mark as extracted
+     */
     markAsExtracted(data) {
         if (data && typeof data === 'string' && data.trim().length > 0) {
             this.extractedData.add(data.toLowerCase().trim());
         }
     }
 
+    /**
+     * Check if data has already been extracted to avoid duplicates.
+     * @param {string} data - The data to check
+     * @returns {boolean} - True if data was already extracted
+     */
     isAlreadyExtracted(data) {
         if (!data || typeof data !== 'string') return false;
         return this.extractedData.has(data.toLowerCase().trim());
     }
 
+    /**
+     * Preprocess raw PDF text to fix common extraction issues.
+     * @param {string} text - Raw text from PDF extraction
+     * @returns {string} - Cleaned and normalized text
+     */
     preprocessText(text) {
         if (!text) return '';
         
@@ -269,12 +307,22 @@ class BrowserResumeParser {
             .trim();
     }
 
+    /**
+     * Split text into clean lines, removing empty lines.
+     * @param {string} text - Text to split
+     * @returns {Array<string>} - Array of non-empty, trimmed lines
+     */
     splitIntoLines(text) {
         return text.split('\n')
             .map(line => line.trim())
             .filter(line => line.length > 0);
     }
 
+    /**
+     * Identify and categorize resume sections from text lines.
+     * @param {Array<string>} lines - Array of text lines
+     * @returns {Object} - Object mapping section types to their content lines
+     */
     identifySections(lines) {
         const sections = {};
         let currentSection = 'unknown';
@@ -299,6 +347,13 @@ class BrowserResumeParser {
         return sections;
     }
  
+    /**
+     * Classify a text line as a section header or content.
+     * @param {string} line - The line to classify
+     * @param {number} index - Line index in the document
+     * @param {Array<string>} allLines - All lines in the document
+     * @returns {string|null} - Section type or null if not a header
+     */
     classifyLine(line, index, allLines) {
         if (!line || line.length === 0) return null;
         
@@ -316,6 +371,12 @@ class BrowserResumeParser {
         return 'content';
     }
 
+    /**
+     * Determine if a line looks like a section header based on formatting.
+     * @param {string} line - The line to check
+     * @param {number} index - Line index in the document
+     * @returns {boolean} - True if line appears to be a header
+     */
     looksLikeHeader(line, index) {
         if (!line || line.length > 60) return false;
         
@@ -328,6 +389,11 @@ class BrowserResumeParser {
         return isAllCaps || hasColonOrDash || isShortAndCentered || hasUnderline;
     }
 
+    /**
+     * Identify the type of resume section from text content.
+     * @param {string} line - Text line to analyze
+     * @returns {string|null} - Section type or null if not recognized
+     */
     identifySectionType(line) {
         const text = line.toLowerCase().replace(/[^\w\s]/g, '').trim();
         
@@ -340,6 +406,12 @@ class BrowserResumeParser {
         return null;
     }
 
+    /**
+     * Extract contact information from resume text.
+     * @param {string} text - Full resume text
+     * @param {Array<string>} lines - Array of text lines
+     * @returns {Object} - Contact information including name, email, phone, etc.
+     */
     extractContactInfo(text, lines) {
         const contact = {
             name: null,
@@ -421,6 +493,11 @@ class BrowserResumeParser {
         return contact;
     }
 
+    /**
+     * Extract location from contact header area, avoiding institutional locations.
+     * @param {Array<string>} lines - Array of text lines
+     * @returns {string|null} - Personal location or null if not found
+     */
     extractContactLocation(lines) {
         // Only look for location in the first 10 lines (contact header area)
         const headerLines = lines.slice(0, 10);
@@ -472,6 +549,11 @@ class BrowserResumeParser {
         return null;
     }
 
+    /**
+     * Check if a line contains education-related keywords.
+     * @param {string} line - Text line to check
+     * @returns {boolean} - True if line contains education keywords
+     */
     containsEducationKeywords(line) {
         const educationKeywords = [
             'university', 'college', 'school', 'institute', 'academy', 'polytechnic',
@@ -482,6 +564,11 @@ class BrowserResumeParser {
         return educationKeywords.some(keyword => lowerLine.includes(keyword));
     }
  
+    /**
+     * Check if a line contains experience-related keywords.
+     * @param {string} line - Text line to check
+     * @returns {boolean} - True if line contains experience keywords
+     */
     containsExperienceKeywords(line) {
         const experienceKeywords = [
             'experience', 'work', 'employment', 'career', 'professional',
@@ -492,6 +579,11 @@ class BrowserResumeParser {
         return experienceKeywords.some(keyword => lowerLine.includes(keyword));
     }
  
+    /**
+     * Check if location contains institution name indicators.
+     * @param {string} location - Location string to check
+     * @returns {boolean} - True if location appears to be institutional
+     */
     containsInstitutionName(location) {
         // Check if location contains common institution indicators
         const institutionIndicators = [
@@ -503,6 +595,11 @@ class BrowserResumeParser {
         return institutionIndicators.some(indicator => lowerLocation.includes(indicator));
     }
  
+    /**
+     * Check if location contains company name indicators.
+     * @param {string} location - Location string to check
+     * @returns {boolean} - True if location appears to be company-related
+     */
     containsCompanyName(location) {
         // Check if location contains common company indicators
         const companyIndicators = [
@@ -514,6 +611,11 @@ class BrowserResumeParser {
         return companyIndicators.some(indicator => lowerLocation.includes(indicator));
     }
  
+    /**
+     * Extract domain from URL string.
+     * @param {string} url - URL to extract domain from
+     * @returns {string} - Domain name or empty string if extraction fails
+     */
     extractDomainFromUrl(url) {
         try {
             const cleaned = url.replace(/^(https?:\/\/)?(www\.)?/, '');
@@ -524,6 +626,11 @@ class BrowserResumeParser {
         }
     }
  
+    /**
+     * Extract name from the first few lines of the resume.
+     * @param {Array<string>} lines - Array of text lines
+     * @returns {string|null} - Extracted name or null if not found
+     */
     extractName(lines) {
         // Look for name in first 5 lines
         for (let i = 0; i < Math.min(5, lines.length); i++) {
@@ -541,6 +648,11 @@ class BrowserResumeParser {
         return null;
     }
  
+    /**
+     * Determine if a line is likely to be a person's name.
+     * @param {string} line - Text line to check
+     * @returns {boolean} - True if line appears to be a name
+     */
     isLikelyName(line) {
         if (!line || line.length > 60 || line.length < 2) return false;
         
@@ -565,6 +677,11 @@ class BrowserResumeParser {
         return isValidFormat;
     }
  
+    /**
+     * Normalize phone number to a standard format.
+     * @param {string} phone - Raw phone number string
+     * @returns {string} - Formatted phone number
+     */
     normalizePhone(phone) {
         const digits = phone.replace(/\D/g, '');
         if (digits.length === 10) {
@@ -575,11 +692,21 @@ class BrowserResumeParser {
         return phone;
     }
  
+    /**
+     * Extract summary section from identified sections.
+     * @param {Object} sections - Categorized resume sections
+     * @returns {string} - Combined summary text
+     */
     extractSummary(sections) {
         const summaryContent = sections.summary || sections.objective || sections.profile || [];
         return summaryContent.join(' ').trim();
     }
  
+    /**
+     * Extract work experience entries from experience section.
+     * @param {Object} sections - Categorized resume sections
+     * @returns {Array<Object>} - Array of experience entries with title, company, location, duration
+     */
     extractExperience(sections) {
         const experienceLines = sections.experience || sections.work || [];
         if (experienceLines.length === 0) return [];
@@ -611,6 +738,11 @@ class BrowserResumeParser {
         return experiences;
     }
  
+    /**
+     * Remove date fragments that may remain in job titles after date extraction.
+     * @param {string} title - Job title to clean
+     * @returns {string} - Cleaned job title
+     */
     cleanTitleFromDateFragments(title) {
         if (!title) return title;
         
@@ -627,6 +759,11 @@ class BrowserResumeParser {
             .trim();
     }
  
+    /**
+     * Determine if a line is an experience entry header.
+     * @param {string} line - Text line to check
+     * @returns {boolean} - True if line appears to be an experience header
+     */
     isExperienceHeader(line) {
         const hasJobTitle = this.keywords.jobTitles.some(title => 
             line.toLowerCase().includes(title.toLowerCase())
@@ -652,6 +789,11 @@ class BrowserResumeParser {
         return (hasJobTitle || hasCompanyIndicators || hasAtPattern) && (hasDatePattern || hasDelimiters);
     }
  
+    /**
+     * Parse an experience header line to extract job details.
+     * @param {string} line - Experience header line
+     * @returns {Object} - Experience object with title, company, location, duration
+     */
     parseExperienceHeader(line) {
         const experience = {
             title: '',
@@ -745,26 +887,51 @@ class BrowserResumeParser {
         return experience;
     }
  
+    /**
+     * Check if text looks like a job title.
+     * @param {string} text - Text to check
+     * @returns {boolean} - True if text appears to be a job title
+     */
     looksLikeJobTitle(text) {
         return this.keywords.jobTitles.some(title => 
             text.toLowerCase().includes(title.toLowerCase())
         );
     }
  
+    /**
+     * Check if text looks like a company name.
+     * @param {string} text - Text to check
+     * @returns {boolean} - True if text appears to be a company name
+     */
     looksLikeCompany(text) {
         return this.keywords.companies.some(company => 
             text.toLowerCase().includes(company.toLowerCase())
         ) || /\b(inc|corp|llc|ltd|co)\b/i.test(text);
     }
  
+    /**
+     * Check if text looks like a location.
+     * @param {string} text - Text to check
+     * @returns {boolean} - True if text appears to be a location
+     */
     looksLikeLocation(text) {
         return this.patterns.location.test(text) && text.length < 50;
     }
  
+    /**
+     * Finalize experience object (currently just returns as-is).
+     * @param {Object} experience - Experience object to finalize
+     * @returns {Object} - Finalized experience object
+     */
     finalizeExperience(experience) {
         return experience;
     }
  
+    /**
+     * Remove date fragments from institution names after date extraction.
+     * @param {string} institution - Institution name to clean
+     * @returns {string} - Cleaned institution name
+     */
     cleanInstitutionFromDateFragments(institution) {
         if (!institution) return institution;
         
@@ -780,6 +947,11 @@ class BrowserResumeParser {
             .trim();
     }
  
+    /**
+     * Extract the most relevant year from a date string.
+     * @param {string} dateString - Date string to parse
+     * @returns {string} - Extracted year or empty string
+     */
     extractYearFromDate(dateString) {
         // Extract the most recent/relevant year from date string
         const years = dateString.match(/\b(19|20)\d{2}\b/g);
@@ -790,6 +962,11 @@ class BrowserResumeParser {
         return '';
     }
  
+    /**
+     * Extract education entries from education section.
+     * @param {Object} sections - Categorized resume sections
+     * @returns {Array<Object>} - Array of education entries with degree, institution, year, etc.
+     */
     extractEducation(sections) {
         const educationLines = sections.education || [];
         if (educationLines.length === 0) return [];
@@ -836,6 +1013,11 @@ class BrowserResumeParser {
         return educationEntries;
     }
  
+    /**
+     * Finalize education object by joining details into a string.
+     * @param {Object} education - Education object to finalize
+     * @returns {Object} - Finalized education object
+     */
     finalizeEducation(education) {
         return {
             ...education,
@@ -843,6 +1025,11 @@ class BrowserResumeParser {
         };
     }
  
+    /**
+     * Check if a line looks like a degree.
+     * @param {string} line - Text line to check
+     * @returns {boolean} - True if line appears to describe a degree
+     */
     looksLikeDegree(line) {
         const degreePatterns = [
             /\b(?:bachelor|master|phd|doctorate|associate|diploma)\b/i,
@@ -862,6 +1049,11 @@ class BrowserResumeParser {
         return matchesDegree && !isCoursework;
     }
  
+    /**
+     * Determine if a line is an education entry header.
+     * @param {string} line - Text line to check
+     * @returns {boolean} - True if line appears to be an education header
+     */
     isEducationHeader(line) {
         const hasDegree = this.keywords.degrees.some(degree => 
             line.toLowerCase().includes(degree.toLowerCase())
@@ -881,6 +1073,11 @@ class BrowserResumeParser {
         return (hasDegree || hasInstitution) && hasDate;
     }
  
+    /**
+     * Parse an education header line to extract education details.
+     * @param {string} line - Education header line
+     * @returns {Object} - Education object with degree, institution, year, etc.
+     */
     parseEducationHeader(line) {
         const education = {
             degree: '',
@@ -956,18 +1153,34 @@ class BrowserResumeParser {
         return education;
     }
  
+    /**
+     * Check if text contains degree keywords.
+     * @param {string} text - Text to check
+     * @returns {boolean} - True if text contains degree keywords
+     */
     containsDegree(text) {
         return this.keywords.degrees.some(degree => 
             text.toLowerCase().includes(degree.toLowerCase())
         );
     }
  
+    /**
+     * Check if text contains institution keywords.
+     * @param {string} text - Text to check
+     * @returns {boolean} - True if text contains institution keywords
+     */
     containsInstitution(text) {
         return this.keywords.institutions.some(inst => 
             text.toLowerCase().includes(inst.toLowerCase())
         );
     }
  
+    /**
+     * Extract skills from resume sections and full text.
+     * @param {Object} sections - Categorized resume sections
+     * @param {string} text - Full resume text
+     * @returns {Array<string>} - Array of extracted and validated skills
+     */
     extractSkills(sections, text) {
         const skillsLines = sections.skills || sections.technical || sections.competencies || [];
         const skills = new Set();
@@ -991,6 +1204,11 @@ class BrowserResumeParser {
         return skillsArray;
     }
  
+    /**
+     * Parse skills from structured skills text with categories and proficiency levels.
+     * @param {string} text - Skills section text
+     * @param {Set} skills - Skills set to populate
+     */
     parseSkillsFromText(text, skills) {
         // Handle the specific format: "Programming/Scripting Languages: (Proficient) Java; (Familiar) Python, C, SQL"
         
@@ -1010,6 +1228,11 @@ class BrowserResumeParser {
         }
     }
  
+    /**
+     * Extract skills from categorized text, handling proficiency indicators.
+     * @param {string} text - Categorized skills text
+     * @param {Set} skills - Skills set to populate
+     */
     extractSkillsFromCategorizedText(text, skills) {
         // Remove proficiency indicators like "(Proficient)", "(Familiar)"
         let cleanText = text.replace(/\([^)]*\)/g, '');
@@ -1030,6 +1253,11 @@ class BrowserResumeParser {
         }
     }
  
+    /**
+     * Check if text is a category header rather than a skill.
+     * @param {string} text - Text to check
+     * @returns {boolean} - True if text appears to be a category header
+     */
     isCategoryHeader(text) {
         if (!text || text.length === 0) return true;
         
@@ -1068,6 +1296,11 @@ class BrowserResumeParser {
         return categoryPatterns.some(pattern => pattern.test(text));
     }
  
+    /**
+     * Extract skills from full text using contextual keyword matching.
+     * @param {string} text - Full resume text
+     * @param {Set} skills - Skills set to populate
+     */
     extractContextualSkills(text, skills) {
         // Look for skills mentioned in context, but be more selective
         const allSkills = Object.values(this.keywords.skills).flat();
@@ -1102,6 +1335,11 @@ class BrowserResumeParser {
         }
     }
  
+    /**
+     * Remove duplicate skills while preserving preferred capitalization.
+     * @param {Array<string>} skills - Array of skills that may contain duplicates
+     * @returns {Array<string>} - Array of unique skills
+     */
     deduplicateSkills(skills) {
         const uniqueSkills = [];
         const seenSkills = new Map(); // Store lowercase -> preferred case mapping
@@ -1130,6 +1368,11 @@ class BrowserResumeParser {
         return uniqueSkills;
     }
  
+    /**
+     * Validate that a skill is legitimate and not noise.
+     * @param {string} skill - Skill to validate
+     * @returns {boolean} - True if skill is valid
+     */
     isValidSkill(skill) {
         if (!skill || skill.length < 2 || skill.length > 30) return false; // Reduced max length
         
@@ -1206,6 +1449,11 @@ class BrowserResumeParser {
         return true;
     }
  
+    /**
+     * Format skill name with proper capitalization for known technologies.
+     * @param {string} skill - Skill to format
+     * @returns {string} - Properly formatted skill name
+     */
     formatSkill(skill) {
         const specialCases = {
             'javascript': 'JavaScript',
@@ -1222,6 +1470,11 @@ class BrowserResumeParser {
         return specialCases[skill.toLowerCase()] || skill;
     }
  
+    /**
+     * Extract certifications from certifications section.
+     * @param {Object} sections - Categorized resume sections
+     * @returns {Array<Object>} - Array of certification objects with name, issuer, date
+     */
     extractCertifications(sections) {
         const certLines = sections.certifications || sections.certificates || sections.licenses || [];
         const certifications = certLines.map(line => {
@@ -1240,6 +1493,11 @@ class BrowserResumeParser {
         return certifications;
     }
  
+    /**
+     * Extract achievements from achievements/awards section.
+     * @param {Object} sections - Categorized resume sections
+     * @returns {Array<Object>} - Array of achievement objects with title, date, description
+     */
     extractAchievements(sections) {
         const achievementLines = sections.achievements || sections.awards || sections.honors || [];
         const achievements = achievementLines.map(line => {
@@ -1258,6 +1516,11 @@ class BrowserResumeParser {
         return achievements;
     }
  
+    /**
+     * Extract languages from languages section.
+     * @param {Object} sections - Categorized resume sections
+     * @returns {Array<Object>} - Array of language objects with language and proficiency
+     */
     extractLanguages(sections) {
         const languageLines = sections.languages || [];
         const languages = languageLines.map(line => {
@@ -1277,6 +1540,11 @@ class BrowserResumeParser {
         return languages;
     }
  
+    /**
+     * Extract date information from a text line using various date patterns.
+     * @param {string} line - Text line to extract date from
+     * @returns {string} - Extracted date string or empty string if none found
+     */
     extractDateFromLine(line) {
         // Try different date patterns in order of preference
         const datePatterns = [
@@ -1299,6 +1567,10 @@ class BrowserResumeParser {
         return '';
     }
  
+    /**
+     * Final cleanup to remove any remaining data overlaps between sections.
+     * @param {Object} resumeData - Complete resume data object to clean
+     */
     cleanupOverlaps(resumeData) {
         // Additional cleanup to remove any remaining overlaps
         
@@ -1315,6 +1587,11 @@ class BrowserResumeParser {
         }
     }
  
+    /**
+     * Calculate confidence score for the parsing quality.
+     * @param {Object} resumeData - Complete resume data object
+     * @returns {number} - Confidence score from 0-100
+     */
     calculateConfidence(resumeData) {
         let score = 0;
         
