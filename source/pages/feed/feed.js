@@ -1,3 +1,4 @@
+// feed.js
 import { fetchJobs } from "../../functions/fetch-jobs.js";
 import { loadUserPreferences, renderFeedPreferences } from "../preferences/job-preferences.js";
 import { runFeedAlgorithm } from "./feed-algorithm.js";
@@ -293,3 +294,26 @@ function showEndMessage() {
     </div>
   `;
 }
+
+/**
+ * Reset the feed’s internal state.
+ * Tests should call this before pushing test jobs.
+ */
+export function resetFeedState() {
+  jobsData.length = 0;
+  currentJobIndex = 0;
+}
+
+export {
+  getMatchedSkills,
+  getLostSkills,
+  getMatchPercent,
+  getMatchDegree,
+  createCardElement,
+  saveJobToLocalStorage,
+  renderCurrentCard,
+  // for testing renderCurrentCard
+  jobsData,
+  userSkills,
+  currentJobIndex
+};
