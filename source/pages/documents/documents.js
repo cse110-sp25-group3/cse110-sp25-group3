@@ -17,6 +17,41 @@ async function initializePDFParser() {
   }
 }
 
+function createConfirmationModal() {
+  const modal = document.createElement('div');
+  modal.id = 'confirmation-modal';
+  modal.className = 'confirmation-modal hidden';
+
+  const box = document.createElement('div');
+  box.className = 'confirmation-box';
+
+  const message = document.createElement('p');
+  message.id = 'confirmation-message';
+
+  box.appendChild(message);
+  modal.appendChild(box);
+  document.body.appendChild(modal);
+}
+
+createConfirmationModal();
+
+function showConfirmation(message) {
+  const modal = document.getElementById('confirmation-modal');
+  const messageBox = document.getElementById('confirmation-message');
+  if (!modal || !messageBox) return;
+
+  messageBox.textContent = message;
+  modal.classList.remove('hidden');
+  modal.classList.add('show');
+
+  setTimeout(() => {
+    modal.classList.remove('show');
+    modal.classList.add('hidden');
+  }, 1500);
+}
+
+
+
 function loadPDFJS() {
   return new Promise((resolve, reject) => {
     if (typeof pdfjsLib !== 'undefined') return resolve();
