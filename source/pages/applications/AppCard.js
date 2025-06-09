@@ -496,7 +496,7 @@ class AppCard extends HTMLElement {
                 }
 
                 .buttons a.apply-link, .buttons button.remove-app {
-                    padding: 1rem 2rem;
+                    padding: 0.4rem 1rem;
                     font-size: 1.1rem;
                 }
 

@@ -47,7 +47,6 @@ button {
     max-height: 100vh;
     box-shadow: 0 0 0 1px var(--color-icon-gray);
     border-radius: 20px;
-    overflow: hidden;
     display: flex;
     flex-direction: column;
 }
