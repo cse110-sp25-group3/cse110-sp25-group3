@@ -20,10 +20,6 @@
     --color-star:             #F59E0B;
 }
 
-#content {
-    padding-top: 40px;
-}
-
 html, body {
     font-family: 'Open-Sans', sans-serif;
     margin: 0;
@@ -60,13 +56,12 @@ button {
         height: 100%;
         max-width: 100vw;
         max-height: 100vh;
-        margin-left: 25%; /* Center the phone */
-        margin-right: 20%; /* Center the phone */
-        
     }
 
     #content {
         padding-top: 0 !important;
+        margin-left: 22rem;
+        margin-right: 4rem;
     }
 }
 

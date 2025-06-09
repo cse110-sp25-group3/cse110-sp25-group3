@@ -523,7 +523,7 @@ p {
   #job-cards-container {
     position: absolute;
     top: 50%;
-    left: 50%;
+    left: 300px;
     transform: translate(-50%, -50%);
     margin-top: 3%;
     width: 80%;
