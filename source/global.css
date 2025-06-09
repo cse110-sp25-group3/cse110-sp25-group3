@@ -2,8 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Open-Sans:wght@300;400;500;700&display=swap');
 
 :root {
-    --color-icon-gray:        #6B7280;
-  
+
     /*button colors*/
     --color-green-outline:    #80C775;
     --color-green-fill:       #E6F4E3;
@@ -19,6 +18,10 @@
   
     /* accent */
     --color-star:             #F59E0B;
+}
+
+#content {
+    padding-top: 40px;
 }
 
 html, body {
@@ -50,6 +53,21 @@ button {
 }
 
 /* LAYERING SYSTEM(onboarding needed)*/
+@media screen and (min-width: 850px) {
+    /* Desktop view */
+    .phone {
+        width: 100%;
+        height: 100%;
+        max-width: 100vw;
+        max-height: 100vh;
+        margin-left: 25%;
+        margin-right: 5%;
+    }
+
+    #content {
+        padding-top: 0 !important;
+    }
+}
 
 /* 1. Intro container - highest visible */
 #intro-container {

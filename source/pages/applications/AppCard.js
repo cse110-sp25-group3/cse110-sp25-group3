@@ -110,6 +110,7 @@ class AppCard extends HTMLElement {
                 display: flex;
                 gap: 20%;
                 align-items: center;
+                flex-direction: column;
             }
 
             .meta span {
@@ -319,6 +320,79 @@ class AppCard extends HTMLElement {
                 to {
                     transform: scale(0.8);
                     opacity: 0;
+                }
+            }
+
+            /* Media Query for screens at least 850px */
+            @media (min-width: 850px) {
+                html {
+                    font-size: 16px; /* 1rem = 16px */
+                }
+
+                article {
+                    padding: 1rem;
+                }
+
+                .name {
+                    font-size: 1.4rem; /* Larger font for desktop */
+                }
+
+                button {
+                    padding: 0.5rem 1rem;
+                    font-size: 1rem; /* Larger button font */
+                }
+
+                h2 {
+                    font-size: 1.4rem; /* Larger font for job title */
+                }
+
+                .meta {
+                    flex-direction: row;
+                    font-size: 1rem;
+                    gap: 1.5rem; /* More space between meta info */
+                    
+                }
+
+                .meta .column {
+                    flex-direction: row;  /* Arrange items within each column horizontally */
+                    gap: 1.5rem;  /* Space between items within each column */
+                }
+
+                /* Ensure text doesn't overflow */
+                .meta span {
+                    white-space: nowrap;  /* Prevent text from wrapping */
+                }
+
+                .details {
+                    font-size: 1rem;
+                    margin-top: 1.2rem;
+                }
+
+                .details ul {
+                    padding-left: 1.5rem;
+                    margin: 1rem 0;
+                }
+
+                .skills {
+                    gap: 1rem;
+                    margin-top: 1rem;
+                }
+
+                .skill {
+                    font-size: 1rem;
+                }
+
+                .buttons a.apply-link, .buttons button.remove-app {
+                    padding: 1rem 2rem;
+                    font-size: 1.1rem;
+                }
+
+                .modal-content h3 {
+                    font-size: 1.6rem;
+                }
+
+                .modal-buttons button {
+                    font-size: 1.1rem;
                 }
             }
         `;
