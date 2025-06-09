@@ -23,6 +23,8 @@ export function runFeedAlgorithm(jobs, prefs) {
            prefs.industries.includes(job.industry);
   });
 
+  console.log(filtered);
+
   // 2) Score each job
   filtered.forEach(job => {
     // a) Base composite via your heuristic
@@ -72,6 +74,7 @@ export function runFeedAlgorithm(jobs, prefs) {
   // 4) Sort descending
   filtered.sort((a, b) => b.compositeScore - a.compositeScore);
 
+  console.log(filtered, 'POST');
   return filtered;
 }
 

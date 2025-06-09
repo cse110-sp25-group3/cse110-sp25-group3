@@ -154,19 +154,29 @@ function attachCardListeners(card, container) {
     renderCurrentCard(container);
   }
 
-  function skipCurrentJob() {
+  // Skip button
+  card.querySelector(".skip-button").addEventListener("click", e => {
+    e.stopPropagation();
+    disableButtons();
+    inner.classList.add("swipe-out-left");
+    inner.addEventListener("animationend", () => nextCard(), { once: true });
     if (currentJobIndex < jobsData.length) {
       const currentCard = document.querySelector(".job-card.active");
       if (currentCard) {
         setTimeout(() => {
-          currentJobIndex++;
           updateCardVisibility();
         }, 500);
       }
     }
-  }
+  });
 
-  function applyToCurrentJob() {
+  // Apply button
+  card.querySelector(".apply-button").addEventListener("click", e => {
+    e.stopPropagation();
+    saveJobToLocalStorage(jobsData[currentJobIndex]);
+    disableButtons();
+    inner.classList.add("swipe-out-right");
+    inner.addEventListener("animationend", () => nextCard(), { once: true });
     if (currentJobIndex < jobsData.length) {
       const currentCard = document.querySelector(".job-card.active");
       const job = jobsData[currentJobIndex];
@@ -183,29 +193,10 @@ function attachCardListeners(card, container) {
         },1500);
       if (currentCard) {
         setTimeout(() => {
-          currentJobIndex++;
           updateCardVisibility();
         }, 500);
       }
   }
-}
-  // Skip button
-  card.querySelector(".skip-button").addEventListener("click", e => {
-    e.stopPropagation();
-    disableButtons();
-    inner.classList.add("swipe-out-left");
-    inner.addEventListener("animationend", () => nextCard(), { once: true });
-    skipCurrentJob();
-  });
-
-  // Apply button
-  card.querySelector(".apply-button").addEventListener("click", e => {
-    e.stopPropagation();
-    saveJobToLocalStorage(jobsData[currentJobIndex]);
-    disableButtons();
-    inner.classList.add("swipe-out-right");
-    inner.addEventListener("animationend", () => nextCard(), { once: true });
-    applyToCurrentJob();
   });
 }
 
@@ -259,7 +250,8 @@ export async function renderFeed(container) {
         applied.jobRole === job.jobRole
       )
     );
-    jobsData      = runFeedAlgorithm(filteredJobs, prefs);
+    jobsData = runFeedAlgorithm(filteredJobs, prefs);
+    console.log(jobsData);
     currentJobIndex = 0;
     renderCurrentCard(jobCardsContainer);
   } catch (error) {
