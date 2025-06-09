@@ -2,14 +2,13 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ main ]  # Change this if your default branch is different
+    branches: [ gh-pages-attempt ]  # placeholder branch for testing
   pull_request:
-    branches: [ main ]
+    branches: [ gh-pages-attempt ]
 
 # Allow one concurrent deployment
 concurrency:
   group: "pages"
-  cancel-in-progress: true
 
 jobs:
   build-and-deploy:
