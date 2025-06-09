@@ -6,7 +6,7 @@ export function createHeader(){
         { path: '/source/pages/documents/documents.html', label: 'Your Documents', icon: '📁' },
     ];
 
-    let isDesktop = window.innerWidth > 850;
+    let isDesktop = window.innerWidth >= 768;
     let mobileMenuOpened = false;
     let activeLink = '';
 
@@ -209,7 +209,7 @@ export function createHeader(){
     // Handle window resize
     function handleResize() {
         const wasDesktop = isDesktop;
-        isDesktop = window.innerWidth > 850;
+        isDesktop = window.innerWidth >= 768;
         
         if (wasDesktop !== isDesktop) {
             // Update mobile header visibility

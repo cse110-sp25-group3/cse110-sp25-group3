@@ -49,7 +49,8 @@ function loadPage() {
   
   const content = document.createElement('div');
   content.id = 'content';
-  content.style.paddingTop = '50px';
+  content.style.margin = '25px';
+  content.style.paddingTop = '40px';
 
 
 
