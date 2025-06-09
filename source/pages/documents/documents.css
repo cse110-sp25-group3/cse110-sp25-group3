@@ -308,3 +308,36 @@
   gap: 0.5rem;
   margin-top: 0.5rem;
 }
+
+@media (min-width: 850px) {
+  /* Make section titles and form text larger */
+  .section-title,
+  .info-form,
+  .resume-card,
+  .error-message,
+  .upload-status,
+  .auto-fill-status {
+    font-size: 1.15rem;
+  }
+
+  /* Make form inputs and textareas larger */
+  .info-form input,
+  .info-form textarea,
+  .info-form select {
+    font-size: 1.15rem;
+  }
+
+  /* Make buttons larger */
+  .info-form button,
+  .upload-area button,
+  .btn-gray,
+  .resume-actions button {
+    font-size: 1.15rem;
+    padding: 0.8rem 1.3rem;
+  }
+
+  .section-title, .resume-card h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+}

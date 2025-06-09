@@ -1,56 +1,114 @@
-/* Onboarding Overlay System */
+/* Onboarding Container  */
+#onboarding-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  pointer-events: none;
+  display: none;
+}
+
+
 .onboarding-overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(120, 142, 236, 0.08);
+  background: rgba(0, 0, 0, 0.02); 
   z-index: 1000;
   pointer-events: none;
   transition: none;
 }
 
-
-/* Rectangular cutout for tip2-5 */
-.onboarding-overlay.rect-cutout {
-  z-index: 1001;
-  background: rgba(16, 22, 185, 0.0);
-  clip-path: inset(
-    var(--rect-top, 0%) 
-    calc(100% - var(--rect-right, 100%)) 
-    calc(100% - var(--rect-bottom, 100%)) 
-    var(--rect-left, 0%)
-  );
-}
-
-/* rectangle highlighter */
-.highlight-rect {
+/* Circle highlight for hamburger button */
+.highlight-circle {
   position: absolute;
-  border: 3px solid rgba(183, 175, 26, 0.1);      
+  border: 3px solid #ffffff !important;
   box-sizing: border-box;
   pointer-events: none;
-  z-index: 1001;
-  border-radius: 3px;                            
-  animation: blue-pulse 2s infinite;
-  box-shadow: 0 0 0 6px rgba(120, 142, 236, 0.3);
+  z-index: 1002;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+  background: transparent !important;
 }
 
+/*  rectangle highlight button*/
+.highlight-rect {
+  position: absolute !important;
+  border: 4px solid #2563EB !important;
+  background: rgba(37, 99, 235, 0.15) !important;
+  box-sizing: border-box !important;
+  pointer-events: none !important;
+  z-index: 1003 !important; 
+  border-radius: 8px !important;
+  animation: blue-pulse 2s infinite !important;
+  box-shadow: 
+    0 0 0 2px rgba(37, 99, 235, 0.4),
+    0 0 15px rgba(37, 99, 235, 0.3),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
+  
+ 
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+  overflow: visible !important;
+}
+
+/* Animation for circle highlight */
 @keyframes pulse {
   0% {
-    border-color: rgb(101, 175, 249);
-    box-shadow: 0 0 0 6px rgba(120, 142, 236, 0.5);
+    border-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5);
+    transform: scale(1);
   }
   50% {
-    border-color: rgba(0, 120, 255, 0.5);
-    box-shadow: 0 0 0 12px rgba(120, 142, 236, 0.2);
+    border-color: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
   }
   100% {
-    border-color: rgba(120, 142, 236, 1);
-    box-shadow: 0 0 0 6px rgba(101, 175, 249, 0.5);
+    border-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5);
+    transform: scale(1);
   }
 }
-/* Tooltip Base */
+
+
+@keyframes blue-pulse {
+  0% {
+    border-color: #2563EB;
+    background: rgba(37, 99, 235, 0.15);
+    box-shadow: 
+      0 0 0 2px rgba(37, 99, 235, 0.4),
+      0 0 15px rgba(37, 99, 235, 0.3),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+    transform: scale(1);
+  }
+  50% {
+    border-color: #1d4ed8;
+    background: rgba(37, 99, 235, 0.25);
+    box-shadow: 
+      0 0 0 4px rgba(37, 99, 235, 0.5),
+      0 0 20px rgba(37, 99, 235, 0.4),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+    transform: scale(1.03);
+  }
+  100% {
+    border-color: #2563EB;
+    background: rgba(37, 99, 235, 0.15);
+    box-shadow: 
+      0 0 0 2px rgba(37, 99, 235, 0.4),
+      0 0 15px rgba(37, 99, 235, 0.3),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+    transform: scale(1);
+  }
+}
+
+/* Tooltip Base - responsitive*/
 .onboarding-tooltip {
   position: absolute;
   background-color: #ffffff;
@@ -58,7 +116,7 @@
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  z-index: 1002;
+  z-index: 1004; 
   
   display: none;
   flex-direction: column;
@@ -119,40 +177,119 @@
   opacity: 0.6;
 }
 
-/* Highlight Elements */
-.highlight-circle,
-.highlight-rect {
-  position: absolute;
-  border: 3px solid #ffffff;
-  box-sizing: border-box;
-  pointer-events: none;
-  z-index: 1001;
-  animation: pulse 2s infinite;
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
-}
-
-.highlight-circle {
-  border-radius: 50%;
-}
-
-.highlight-rect {
-  border-radius: 10px;
-}
-
-/* Responsive Design */
+/* for mobile */
 @media (max-width: 375px) {
   .onboarding-tooltip {
-    max-width: 260px;
+    max-width: calc(100vw - 32px);
+    min-width: calc(100vw - 32px);
     padding: 16px;
+    margin: 16px;
   }
 
   .tooltip-text {
-    font-size: 12px;
+    font-size: 13px;
+    line-height: 1.4;
   }
 
   .tooltip-prev,
   .tooltip-next {
-    font-size: 12px;
-    padding: 6px 12px;
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+
+  /* highlight for mobile */
+  .highlight-rect {
+    border-width: 3px !important;
   }
 }
+
+/* responsitive design -ipad */
+@media (min-width: 376px) and (max-width: 768px) {
+  .onboarding-tooltip {
+    max-width: 320px;
+  }
+}
+
+/* responsitive design -PC */
+@media (min-width: 769px) {
+  .onboarding-tooltip {
+    max-width: 350px;
+    padding: 24px;
+  }
+
+  .tooltip-text {
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  .tooltip-prev,
+  .tooltip-next {
+    font-size: 15px;
+    padding: 10px 20px;
+  }
+
+  
+  .onboarding-tooltip[style*="left: 0"] {
+    left: 270px !important;
+  }
+
+  
+  .highlight-rect {
+    border-width: 5px !important;
+    box-shadow: 
+      0 0 0 3px rgba(37, 99, 235, 0.4),
+      0 0 20px rgba(37, 99, 235, 0.3),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
+  }
+}
+
+
+@media (prefers-contrast: high) {
+  .onboarding-tooltip {
+    border: 2px solid #000000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  }
+
+  .highlight-circle,
+  .highlight-rect {
+    border-width: 6px !important;
+    box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.8) !important;
+  }
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  .highlight-circle,
+  .highlight-rect {
+    animation: none !important;
+  }
+
+  .onboarding-tooltip {
+    transition: none;
+  }
+}
+
+/* Intro container */
+#intro-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 10000;
+  background: white;
+  display: none;
+}
+
+/*  */
+.overlay-light .onboarding-overlay { background: rgba(0, 0, 0, 0.1); }
+.overlay-medium .onboarding-overlay { background: rgba(0, 0, 0, 0.3); }
+.overlay-dark .onboarding-overlay { background: rgba(0, 0, 0, 0.5); }
+
+/* for debugging*/
+.debug-highlight .highlight-rect {
+  border: 5px solid red !important;
+  background: rgba(255, 0, 0, 0.3) !important;
+  animation: none !important;
+}
+

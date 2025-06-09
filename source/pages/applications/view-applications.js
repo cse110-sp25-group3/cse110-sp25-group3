@@ -18,7 +18,7 @@ export function renderApplications(container) {
     }
 
     container.innerHTML = `
-        <h2>Your Applications</h2>
+        <h2>Applications</h2>
         <div style="margin-bottom: 1em;">
             <button id="expand-all" class="toggle-all">Show All Details</button>
             <button id="collapse-all" class="toggle-all">Hide All Details</button>

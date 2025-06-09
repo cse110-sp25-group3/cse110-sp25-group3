@@ -17,23 +17,24 @@ function loadPage() {
   const path = window.location.pathname;  
   console.log('Current path:', path);
   
-  // 2) Special handling for index.html - redirect to feed if onboarding is complete
+  // 2) Special handling for index.html
   if (path === '/source/index.html' || path.endsWith('index.html')) {
     const hasSeenIntro = localStorage.getItem('hasSeenIntro') === 'true';
     const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding') === 'true';
     
     if (hasSeenIntro && hasSeenOnboarding) {
-      // Redirect to feed page instead of rendering in-place
       console.log('Redirecting completed user to feed page');
-      //window.location.href = '/source/pages/feed/feed.html';
       window.location.href = '/source/pages/documents/documents.html';
-
       return;
     }
     
-    // For users in onboarding process, don't render anything
-    // Let onboarding system handle the UI
-    console.log('User in onboarding process, skipping page render');
+    if (hasSeenIntro && !hasSeenOnboarding) {
+      // if the user has seen the intro but not completed onboarding
+      console.log('User completed intro, redirecting to continue onboarding');
+      window.location.href = '/source/pages/feed/feed.html';
+      return;
+    }
+    console.log('New user, letting intro system handle');
     return;
   }
   
@@ -51,6 +52,9 @@ function loadPage() {
   content.id = 'content';
   content.style.margin = '25px';
   content.style.paddingTop = '40px';
+
+
+
   app.append(content);
   
   console.log(`Calling render for ${key}`);
