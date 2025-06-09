@@ -34,9 +34,6 @@ jobs:
     - name: Install dependencies
       run: npm ci  # Install existing dependencies from package-lock.json
     
-    - name: Run jobs script
-      run: node jobs.js
-    
     - name: Setup Pages
       uses: actions/configure-pages@v4
     
