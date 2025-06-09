@@ -106,18 +106,19 @@ class AppCard extends HTMLElement {
                 font-size: 0.7em;
             }
 
-            .meta column {
-                display: flex;
+            .meta .column {
                 gap: 20%;
                 align-items: center;
+                display: flex;
+                flex-direction: column;
             }
 
             .meta span {
                 display: flex;
                 align-items: center;
-                gap: 0.5em;
-                margin-bottom: 0.7em;
+                gap: 0.5rem; /* or 1rem if you want more spacing */
             }
+
 
             span img {
                 width: 16px;
@@ -319,6 +320,192 @@ class AppCard extends HTMLElement {
                 to {
                     transform: scale(0.8);
                     opacity: 0;
+                }
+            }
+
+            .meta column {
+                    display: flex;
+                    gap: 20%;
+                    // align-items: center;
+                    flex-direction: column;
+                }
+
+                .meta span {
+                    display: flex;
+                    // align-items: center;
+                    gap: 0.5em;
+                    margin-bottom: 0.7em;
+                }
+            /* Media Query for screens at least 850px */
+            @media (min-width: 850px) {
+                html {
+                    font-size: 16px; /* 1rem = 16px */
+                }
+
+                article {
+                    padding: 1rem;
+                }
+
+                .name {
+                    font-size: 1.4rem; /* Larger font for desktop */
+                }
+
+                button {
+                    padding: 0.5rem 1rem;
+                    font-size: 1rem; /* Larger button font */
+                }
+
+                h2 {
+                    font-size: 1.4rem; /* Larger font for job title */
+                }
+
+                .meta {
+                    flex-direction: row;
+                    font-size: 1rem;
+                    gap: 0.4rem; /* More space between meta info */
+                    
+                }
+
+                .meta .column {
+                    flex-direction: row;  /* Arrange items within each column horizontally */
+                    gap: 1rem;  /* Space between items within each column */
+                    align-items: center;
+                    justify-content: center;
+                    align-content: center;
+                }
+
+                /* Ensure text doesn't overflow */
+                .meta span {
+                    white-space: nowrap;  /* Prevent text from wrapping */
+                    margin: 0;
+                    gap: 0.4rem;
+                }
+
+                .details {
+                    font-size: 1rem;
+                    margin-top: 1.2rem;
+                }
+
+                .details ul {
+                    padding-left: 1.5rem;
+                    margin: 1rem 0;
+                }
+
+                .skills {
+                    gap: 1rem;
+                    margin-top: 1rem;
+                }
+
+                .skill {
+                    font-size: 1rem;
+                }
+
+                .buttons a.apply-link, .buttons button.remove-app {
+                    padding: 1rem 2rem;
+                    font-size: 1.1rem;
+                }
+
+                .modal-content h3 {
+                    font-size: 1.6rem;
+                }
+
+                .modal-buttons button {
+                    font-size: 1.1rem;
+                }
+            }
+            
+            @media (max-width: 1070px) {
+                .meta .column {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.7rem;
+                    align-items: flex-start; /* Align items to the left instead of center */
+                }
+
+                .meta span {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5em;
+                    margin-bottom: 0.4em;
+                }
+            }
+
+
+            /* Media Query for screens at least 850px */
+            @media (min-width: 1070px) {
+                html {
+                    font-size: 16px; /* 1rem = 16px */
+                }
+
+                article {
+                    padding: 1rem;
+                }
+
+                .name {
+                    font-size: 1.4rem; /* Larger font for desktop */
+                }
+
+                button {
+                    padding: 0.5rem 1rem;
+                    font-size: 1rem; /* Larger button font */
+                }
+
+                h2 {
+                    font-size: 1.4rem; /* Larger font for job title */
+                }
+
+                .meta {
+                    flex-direction: row;
+                    font-size: 1rem;
+                    gap: 0.4rem; /* More space between meta info */
+                    
+                }
+
+                .meta .column {
+                    flex-direction: row;  /* Arrange items within each column horizontally */
+                    gap: 1rem;  /* Space between items within each column */
+                    align-items: center;
+                    justify-content: center;
+                    align-content: center;
+                }
+
+                /* Ensure text doesn't overflow */
+                .meta span {
+                    white-space: nowrap;  /* Prevent text from wrapping */
+                    margin: 0;
+                    gap: 0.4rem;
+                }
+
+                .details {
+                    font-size: 1rem;
+                    margin-top: 1.2rem;
+                }
+
+                .details ul {
+                    padding-left: 1.5rem;
+                    margin: 1rem 0;
+                }
+
+                .skills {
+                    gap: 1rem;
+                    margin-top: 1rem;
+                }
+
+                .skill {
+                    font-size: 1rem;
+                }
+
+                .buttons a.apply-link, .buttons button.remove-app {
+                    padding: 0.4rem 1rem;
+                    font-size: 1.1rem;
+                }
+
+                .modal-content h3 {
+                    font-size: 1.6rem;
+                }
+
+                .modal-buttons button {
+                    font-size: 1.1rem;
                 }
             }
         `;

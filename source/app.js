@@ -24,6 +24,7 @@ const pageMap = {
 };
 
 function loadPage() {
+<<<<<<< HEAD
   const path = window.location.pathname;
   console.log("Current path:", path);
 
@@ -45,6 +46,29 @@ function loadPage() {
     // For users in onboarding process, don't render anything
     // Let onboarding system handle the UI
     console.log("User in onboarding process, skipping page render");
+=======
+  const path = window.location.pathname;  
+  console.log('Current path:', path);
+  
+  // 2) Special handling for index.html
+  if (path === '/source/index.html' || path.endsWith('index.html')) {
+    const hasSeenIntro = localStorage.getItem('hasSeenIntro') === 'true';
+    const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding') === 'true';
+    
+    if (hasSeenIntro && hasSeenOnboarding) {
+      console.log('Redirecting completed user to feed page');
+      window.location.href = '/source/pages/documents/documents.html';
+      return;
+    }
+    
+    if (hasSeenIntro && !hasSeenOnboarding) {
+      // if the user has seen the intro but not completed onboarding
+      console.log('User completed intro, redirecting to continue onboarding');
+      window.location.href = '/source/pages/feed/feed.html';
+      return;
+    }
+    console.log('New user, letting intro system handle');
+>>>>>>> origin/main
     return;
   }
 
@@ -55,11 +79,22 @@ function loadPage() {
   const app = document.getElementById("app");
   app.innerHTML = "";
   app.prepend(createHeader(title));
+<<<<<<< HEAD
 
   const content = document.createElement("div");
   content.id = "content";
   content.style.margin = "25px";
   content.style.paddingTop = "40px";
+=======
+  
+  const content = document.createElement('div');
+  content.id = 'content';
+  content.style.margin = '25px';
+  content.style.paddingTop = '40px';
+
+
+
+>>>>>>> origin/main
   app.append(content);
 
   console.log(`Calling render for ${key}`);

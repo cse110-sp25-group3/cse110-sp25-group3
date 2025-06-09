@@ -1,5 +1,5 @@
 // skill-assessment.test.js
-import { skillAssessment } from './skill-assessment.js';
+import { skillAssessment } from '../source/functions/skill-assessment.js';
 
 test('perfect match', () => {
     expect(skillAssessment(['A','B','C'], ['A','B','C'])).toBe(100);

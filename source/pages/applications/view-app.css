@@ -1,3 +1,9 @@
+h2 {
+    color: var(--color-dark-blue-outline);
+    font-size: 1.5em;
+    margin-bottom: 0.5em;
+}
+
 .toggle-all {
     background: var(--color-light-blue-fill);
     border: 1px solid var(--color-light-blue-outline);
@@ -19,14 +25,19 @@
 
 /* End message styling */
 .end-message {
-    text-align: center;
-    padding: 2em;
+    position: relative; /* required for margin-left trick */
+    margin-left: calc(10% + 50% - 25%); /* 20% for sidebar, 50% of remaining, -25% to center it */
+    transform: translateY(80%);
     background: white;
     border-radius: 1em;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 2em;
     animation: growIn 0.3s forwards;
-    transform: translateY(80%);
+    max-width: 50%;
+    min-width: 200px;
+    text-align: center;
 }
+
 
 .end-message h3 {
     color: var(--color-dark-blue-outline);
@@ -56,6 +67,36 @@
 
 button:hover {
     opacity: 0.8;
+}
+
+@media (max-width: 767px) {
+    .end-message {
+        position: relative; /* required for margin-left trick */
+        margin-left: 20%;
+        transform: translateY(80%);
+        background: white;
+        border-radius: 1em;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        /* padding: 2em; */
+        animation: growIn 0.3s forwards;
+        max-width: 50%;
+        min-width: 200px;
+        text-align: center;
+    }
+}
+
+@media (min-width: 768px) {
+    .toggle-all {
+        background: var(--color-light-blue-fill);
+        border: 1px solid var(--color-light-blue-outline);
+        color: var(--color-dark-blue-outline);
+        border-radius: 0.5em;
+        padding: 0.4em 1em;
+        font-size: 1em;
+        font-weight: 500;
+        margin-right: 0.5em;
+        transition: all 0.3s ease;
+    }
 }
 
 /* Keyframes */

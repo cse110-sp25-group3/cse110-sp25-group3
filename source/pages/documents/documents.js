@@ -471,3 +471,13 @@ function findBestSkillMatches(parsedSkills, knownSkills, threshold = 0.5) {
     })
     .filter(Boolean); // Remove nulls
 }
+
+
+export {
+  formatFileSize,
+  setInputValue,
+  populateForm,
+  createResumeCard,
+  showUploadStatus,
+
+};

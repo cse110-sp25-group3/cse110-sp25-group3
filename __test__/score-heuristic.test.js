@@ -1,13 +1,13 @@
 // __tests__/computeJobScore.test.js
 /** @jest-environment node */
 
-import { computeJobScore } from './score-heuristic.js';
+import { computeJobScore } from '../source/functions/score-heuristic.js';
 
 // Mock skillAssessment so we can control its output
-jest.mock('./skill-assessment.js', () => ({
+jest.mock('../source/functions/skill-assessment.js', () => ({
 	skillAssessment: jest.fn()
 }));
-import { skillAssessment } from './skill-assessment.js';
+import { skillAssessment } from '../source/functions/skill-assessment.js';
 
 describe('computeJobScore', () => {
 	const baseJob = {
