@@ -2,8 +2,9 @@
 import { createHeader }       from './components/header.js';
 import { renderFeed }         from './pages/feed/feed.js';
 import { renderApplications } from './pages/applications/view-applications.js';
-import { renderPreferences }  from './pages/preferences/job-preferences.js'; 
+import { renderPreferences, PreferencesManager   } from "./pages/preferences/job-preferences.js";
 import { renderDocuments }    from './pages/documents/documents.js';
+import { getUniqueValues } from './functions/fetch-jobs.js';
 
 //1) Now using the **exact** pathname as keys
 const pageMap = {
@@ -58,7 +59,21 @@ function loadPage() {
   app.append(content);
   
   console.log(`Calling render for ${key}`);
-  render(content);
+  const prefsManager = new PreferencesManager();
+  
+  if (key === '/source/pages/documents/documents.html') {
+    getUniqueValues('relevantSkills', { flatten: true })
+      .then((skills) => {
+        // skills is now an Array of every unique skill in your jobs data
+        render(content, skills);
+      })
+      .catch((err) => {
+        console.error('Failed to load skills from jobs API:', err);
+        render(content, []);
+      });
+  } else {
+    render(content);
+  }
   
   checkAndStartOnboarding();
 }
