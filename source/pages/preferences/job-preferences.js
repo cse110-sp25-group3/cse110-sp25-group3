@@ -7,7 +7,6 @@ const CONSTANTS = {
   NATURE_MAP: { 1: 'Full-time', 2: 'Part-time', 3: 'Intern' },
   WORK_MODEL_MAP: { 1: 'Remote', 2: 'On-site', 3: 'Hybrid' },
   SECTION_TITLES: {
-    skills: 'Preferred Skills',
     locations: 'Locations', 
     industries: 'Industries',
     roles: 'Roles',
@@ -18,7 +17,6 @@ const CONSTANTS = {
 };
 
 const DEFAULT_PREFS = {
-  skills: [],
   locations: [],
   industries: [],
   roles: [],
@@ -29,7 +27,7 @@ const DEFAULT_PREFS = {
 };
 
 // ── State Management ──
-class PreferencesManager {
+export class PreferencesManager {
   constructor() {
     this.prefs = this.loadPrefs();
   }
@@ -177,6 +175,7 @@ class ControlGenerator {
     const container = document.createElement('div');
     container.className = 'checkbox-group';
     const initialSelected = prefsManager.getPref(prefKey) || [];
+    console.log(initialSelected, 'hi');
 
     const updatePrefs = () => {
       const selected = Array.from(container.querySelectorAll('input:checked')).map(cb => cb.value);
@@ -274,7 +273,6 @@ class SectionManager {
     const options = this.createSectionOptions();
     
     return [
-      { key: 'skills', control: ControlGenerator.createTagSelector(data.skills, 'skills') },
       { key: 'locations', control: ControlGenerator.createTagSelector(data.locations, 'locations') },
       { key: 'industries', control: ControlGenerator.createTagSelector(data.industries, 'industries') },
       { key: 'roles', control: ControlGenerator.createTagSelector(data.roles, 'roles') },

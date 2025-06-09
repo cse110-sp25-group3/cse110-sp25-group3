@@ -1,9 +1,10 @@
 // pages/app.js
 import { createHeader } from "./components/header.js";
 import { renderFeed } from "./pages/feed/feed.js";
-import { renderApplications } from "./pages/applications/view-applications.js";
-import { renderPreferences } from "./pages/preferences/job-preferences.js";
+import { renderApplications} from "./pages/applications/view-applications.js";
+import { renderPreferences, PreferencesManager   } from "./pages/preferences/job-preferences.js";
 import { renderDocuments } from "./pages/documents/documents.js";
+import { getUniqueValues } from './functions/fetch-jobs.js';
 
 //1) Now using the **exact** pathname as keys
 const pageMap = {
@@ -63,19 +64,22 @@ function loadPage() {
 
   console.log(`Calling render for ${key}`);
 
+  const prefsManager = new PreferencesManager();
+
   // 👉 Special handling for documents page to load JSON dynamically
-  if (key === "/source/pages/documents/documents.html") {
-    fetch("../../assets/datasets/job_skills.json")
-      .then((res) => res.json())
+  if (key === '/source/pages/documents/documents.html') {
+    // instead of fetch('../../assets/datasets/job_skills.json')…
+    getUniqueValues('relevantSkills', { flatten: true })
       .then((skills) => {
-        render(content, skills); // ⬅ Pass skills into renderDocuments
+        // skills is now an Array of every unique skill in your jobs data
+        render(content, skills);
       })
       .catch((err) => {
-        console.error("Failed to load job skills JSON:", err);
-        render(content, []); // Fallback: render with empty skills
+        console.error('Failed to load skills from jobs API:', err);
+        render(content, []);
       });
   } else {
-    render(content); // all other pages stay the same
+    render(content);
   }
 
   checkAndStartOnboarding();
