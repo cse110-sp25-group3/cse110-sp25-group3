@@ -215,7 +215,7 @@
     .quick-menu.open {
       display: block;
       opacity: 1;
-      transform: translate(-50%, -50%) scale(1); /* <- Pop open */
+      transform: translate(-50%, -50%);
     }
   
     .menu-overlay {
@@ -231,7 +231,6 @@
 }  
 
 .quick-menu.open {
-  transform: translateY(0);
   pointer-events: auto;
   border-radius: 1rem;
 }
