@@ -8,7 +8,7 @@ let jobsPromise = null;
  */
 export function fetchJobs() {
   if (!jobsPromise) {
-    jobsPromise = fetch('/cse110-sp25-group3/source/assets/datasets/dummy_job_positions.json')
+    jobsPromise = fetch('/source/assets/datasets/dummy_job_positions.json')
       .then(res => {
         if (!res.ok) throw new Error(`Failed to load jobs: ${res.status}`);
         return res.json();
