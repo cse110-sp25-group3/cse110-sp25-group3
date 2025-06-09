@@ -1,10 +1,7 @@
-import { PreferencesManager } from "../preferences/job-preferences.js";
-
 let resumeCounter = 0;
 let resumeParser = null;
 let isProcessing = false;
 let processedFiles = new Set();
-const prefsManager = new PreferencesManager();
 
 async function initializePDFParser() {
   try {
@@ -128,24 +125,13 @@ export async function renderDocuments(container, jobSkills) {
   const skillWhitelist = Array.isArray(jobSkills) ? jobSkills : [];
   const tagify = new window.Tagify(document.querySelector("#skills-input"), {
     whitelist: skillWhitelist,
-    dropdown: { enabled: 0, fuzzySearch: true, position: "text", highlightFirst: true },
+    dropdown: {
+      enabled: 0,
+      fuzzySearch: true,
+      position: "text",
+      highlightFirst: true,
+    },
   });
-
-  // persist on add/remove
-  const persistSkills = () => {
-    const current = tagify.value.map(item => item.value);
-    prefsManager.updatePref('skills', current);
-    showAutoFillStatus("Skills auto-saved!", "info");
-  };
-  tagify.on('add', persistSkills).on('remove', persistSkills);
-
-  // ——— REHYDRATE SAVED TAGS ON LOAD ———
-  const savedSkills = prefsManager.getPref('skills');
-  if (Array.isArray(savedSkills) && savedSkills.length > 0) {
-    tagify.removeAllTags();
-    tagify.addTags(savedSkills);
-  }
-
 
   // Resume handlers (unchanged)
   if (initSuccess) {
