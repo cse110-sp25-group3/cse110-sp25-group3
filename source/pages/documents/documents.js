@@ -241,13 +241,13 @@ export async function renderDocuments(container, jobSkills) {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(form).entries());
     localStorage.setItem("userData", JSON.stringify(data));
-    showAutoFillStatus("Information saved!", "success");
+    showConfirmation('Saved!');
   });
 
   clearBtn.addEventListener("click", () => {
     form.reset();
     localStorage.removeItem("userData");
-    showAutoFillStatus("Form and data cleared.", "info");
+    showConfirmation('Saved!');
   });
   if (exportBtn) {
     exportBtn.addEventListener("click", () => {
