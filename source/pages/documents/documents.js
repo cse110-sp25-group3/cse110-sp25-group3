@@ -247,6 +247,8 @@ export async function renderDocuments(container, jobSkills) {
   clearBtn.addEventListener("click", () => {
     form.reset();
     localStorage.removeItem("userData");
+    tagify.removeAllTags(true); 
+    prefsManager.updatePref('skills', []);
     showConfirmation('Saved!');
   });
   if (exportBtn) {
