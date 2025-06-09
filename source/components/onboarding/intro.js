@@ -158,8 +158,8 @@
 
     startOnboarding() {
      localStorage.setItem('shouldStartOnboarding', 'true');//new
-    window.location.href = '/source/pages/feed/feed.html';
-
+     window.location.href = '/source/pages/feed/feed.html';
+ 
     //if (typeof window.startOnboarding === 'function') {
     //  window.startOnboarding();//old
     //} 
