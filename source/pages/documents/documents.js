@@ -1,7 +1,10 @@
+import { PreferencesManager } from "../preferences/job-preferences.js";
+
 let resumeCounter = 0;
 let resumeParser = null;
 let isProcessing = false;
 let processedFiles = new Set();
+const prefsManager = new PreferencesManager();
 
 async function initializePDFParser() {
   try {
@@ -28,7 +31,7 @@ function loadPDFJS() {
   });
 }
 
-export async function renderDocuments(container) {
+export async function renderDocuments(container, jobSkills) {
   const initSuccess = await initializePDFParser();
   resumeCounter = 0;
   processedFiles.clear();
@@ -69,7 +72,7 @@ export async function renderDocuments(container) {
         <label>Degree</label><input type="text" name="degree" id="degree-input">
         <label>Graduation Year</label><input type="number" name="gradYear" id="gradYear-input" min="1900" max="2100">
         <label>Work History</label><textarea name="history" id="history-input" rows="3"></textarea>
-        <label>Skills</label><textarea name="skills" id="skills-input" rows="2"></textarea>
+        <label>Skills</label><input name="skills" id="skills-input" placeholder="Type or select a skill..." />
         <label>Certifications</label><textarea name="certifications" id="certifications-input" rows="2"></textarea>
         <label>Languages</label><textarea name="languages" id="languages-input" rows="2"></textarea>
         <hr class="divider">
@@ -114,94 +117,123 @@ export async function renderDocuments(container) {
   
 
   // References
-  const uploadInput = container.querySelector('#resume-input');
-  const uploadBtn = container.querySelector('#upload-btn');
-  const resumeList = container.querySelector('#resume-list');
-  const form = container.querySelector('#info-form');
-  const clearBtn = container.querySelector('#clear-form');
-  const autoFillStatus = container.querySelector('#auto-fill-status');
-  const exportBtn = container.querySelector('#export-skills');
+  const uploadInput = container.querySelector("#resume-input");
+  const uploadBtn = container.querySelector("#upload-btn");
+  const resumeList = container.querySelector("#resume-list");
+  const form = container.querySelector("#info-form");
+  const clearBtn = container.querySelector("#clear-form");
+  const autoFillStatus = container.querySelector("#auto-fill-status");
+  const exportBtn = container.querySelector("#export-skills");
 
+  const skillWhitelist = Array.isArray(jobSkills) ? jobSkills : [];
+  const tagify = new window.Tagify(document.querySelector("#skills-input"), {
+    whitelist: skillWhitelist,
+    dropdown: { enabled: 0, fuzzySearch: true, position: "text", highlightFirst: true },
+  });
+
+  // persist on add/remove
+  const persistSkills = () => {
+    const current = tagify.value.map(item => item.value);
+    prefsManager.updatePref('skills', current);
+    showAutoFillStatus("Skills auto-saved!", "info");
+  };
+  tagify.on('add', persistSkills).on('remove', persistSkills);
+
+  // ——— REHYDRATE SAVED TAGS ON LOAD ———
+  const savedSkills = prefsManager.getPref('skills');
+  if (Array.isArray(savedSkills) && savedSkills.length > 0) {
+    tagify.removeAllTags();
+    tagify.addTags(savedSkills);
+  }
   // Resume handlers (unchanged)
   if (initSuccess) {
     const fileIn = uploadInput.cloneNode(true);
     const btn = uploadBtn.cloneNode(true);
     uploadInput.replaceWith(fileIn);
     uploadBtn.replaceWith(btn);
-    btn.addEventListener('click', () => fileIn.click());
-    fileIn.addEventListener('change', async e => {
+    btn.addEventListener("click", () => fileIn.click());
+    fileIn.addEventListener("change", async (e) => {
       const file = e.target.files[0];
-      if (!file || file.type !== 'application/pdf' || isProcessing) return;
+      if (!file || file.type !== "application/pdf" || isProcessing) return;
       const sig = `${file.name}-${file.size}-${file.lastModified}`;
       if (processedFiles.has(sig)) return;
       processedFiles.add(sig);
       isProcessing = true;
-      showUploadStatus('Processing…', 'processing');
+      showUploadStatus("Processing…", "processing");
       const card = createResumeCard(file, `resume-${resumeCounter++}`);
       resumeList.append(card);
       card.originalFile = file;
       try {
         const data = await resumeParser.parseResumeFromFile(file);
-        populateForm(data);
+        populateForm(data, skillWhitelist, tagify);
         card.dataset.resumeData = JSON.stringify(data);
-        showUploadStatus('Done!', 'success');
-        showAutoFillStatus('Form updated from resume.', 'success');
+        showUploadStatus("Done!", "success");
+        showAutoFillStatus("Form updated from resume.", "success");
       } catch {
         processedFiles.delete(sig);
         card.remove();
-        showUploadStatus('Error parsing.', 'error');
+        showUploadStatus("Error parsing.", "error");
       } finally {
         isProcessing = false;
-        e.target.value = '';
+        e.target.value = "";
       }
     });
   }
 
   // Auto-save logic
   function loadData() {
-    try { return JSON.parse(localStorage.getItem('userData')) || {}; } catch { return {}; }
+    try {
+      return JSON.parse(localStorage.getItem("userData")) || {};
+    } catch {
+      return {};
+    }
   }
 
   const saved = loadData();
-  Object.entries(saved).forEach(([k, v]) => { if (form.elements[k]) form.elements[k].value = v; });
+  Object.entries(saved).forEach(([k, v]) => {
+    if (form.elements[k]) form.elements[k].value = v;
+  });
 
-  form.querySelectorAll('[name]').forEach(el => el.addEventListener('input', () => {
-    const data = Object.fromEntries(new FormData(form).entries());
-    localStorage.setItem('userData', JSON.stringify(data));
-    showAutoFillStatus('Auto-saved!', 'info');
-  }));
+  form.querySelectorAll("[name]").forEach((el) =>
+    el.addEventListener("input", () => {
+      const data = Object.fromEntries(new FormData(form).entries());
+      localStorage.setItem("userData", JSON.stringify(data));
+      showAutoFillStatus("Auto-saved!", "info");
+    })
+  );
 
-  form.addEventListener('submit', e => {
+  form.addEventListener("submit", (e) => {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(form).entries());
-    localStorage.setItem('userData', JSON.stringify(data));
-    showAutoFillStatus('Information saved!', 'success');
+    localStorage.setItem("userData", JSON.stringify(data));
+    showAutoFillStatus("Information saved!", "success");
   });
 
-  clearBtn.addEventListener('click', () => {
+  clearBtn.addEventListener("click", () => {
     form.reset();
-    localStorage.removeItem('userData');
-    showAutoFillStatus('Form and data cleared.', 'info');
+    localStorage.removeItem("userData");
+    showAutoFillStatus("Form and data cleared.", "info");
   });
-
-  exportBtn.addEventListener('click', () => {
-    const data = loadData();
-    const skills = data.skills || '';
-    const items = skills.split(/,\s*/).filter(s => s);
-    const blob = new Blob([items.join('\n')], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'skills.txt';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  });
+  if (exportBtn) {
+    exportBtn.addEventListener("click", () => {
+      const data = loadData();
+      const skills = data.skills || "";
+      const items = skills.split(/,\s*/).filter((s) => s);
+      const blob = new Blob([items.join("\n")], { type: "text/plain" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "skills.txt";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+  }
 }
 
 function createResumeCard(file, resumeId) {
-  const div = document.createElement('div');
+  const div = document.createElement("div");
   div.className = "resume-card";
   div.id = resumeId;
 
@@ -219,131 +251,146 @@ function createResumeCard(file, resumeId) {
   `;
 
   // Star button
-  const starBtn = div.querySelector('.star-btn');
-  starBtn.addEventListener('click', function () {
-    this.classList.toggle('starred');
-    this.textContent = this.classList.contains('starred') ? '★' : '☆';
+  const starBtn = div.querySelector(".star-btn");
+  starBtn.addEventListener("click", function () {
+    this.classList.toggle("starred");
+    this.textContent = this.classList.contains("starred") ? "★" : "☆";
   });
 
   // Reload/re-parse button
-  const reloadBtn = div.querySelector('.reload-btn');
-  reloadBtn.addEventListener('click', async function() {
+  const reloadBtn = div.querySelector(".reload-btn");
+  reloadBtn.addEventListener("click", async function () {
     const resumeDataStr = div.dataset.resumeData;
     if (resumeDataStr) {
       try {
         const resumeData = JSON.parse(resumeDataStr);
-        populateForm(resumeData);
-        showAutoFillStatus('Form re-filled with resume data.', 'success');
+        populateForm(resumeData, skillWhitelist, tagify);
+        showAutoFillStatus("Form re-filled with resume data.", "success");
       } catch (error) {
-        console.error('Error re-parsing resume:', error);
-        showAutoFillStatus('Error re-loading resume data.', 'error');
+        console.error("Error re-parsing resume:", error);
+        showAutoFillStatus("Error re-loading resume data.", "error");
       }
     }
   });
 
   // View original PDF button
-  const viewBtn = div.querySelector('.view-btn');
-  viewBtn.addEventListener('click', function() {
+  const viewBtn = div.querySelector(".view-btn");
+  viewBtn.addEventListener("click", function () {
     // Check if we have the original file stored
     if (div.originalFile) {
       try {
         // Create a blob URL for the PDF file
         const fileURL = URL.createObjectURL(div.originalFile);
-        
+
         // Open the PDF in a new tab
-        window.open(fileURL, '_blank');
-        
+        window.open(fileURL, "_blank");
+
         // Clean up the blob URL after a short delay to free memory
         setTimeout(() => {
           URL.revokeObjectURL(fileURL);
         }, 1000);
-        
       } catch (error) {
-        console.error('Error opening PDF:', error);
-        showAutoFillStatus('Error opening PDF file', 'error');
+        console.error("Error opening PDF:", error);
+        showAutoFillStatus("Error opening PDF file", "error");
       }
     } else {
-      console.error('Original file not found');
-      showAutoFillStatus('PDF file not available', 'error');
+      console.error("Original file not found");
+      showAutoFillStatus("PDF file not available", "error");
     }
   });
 
   // Delete Button
-  const deleteBtn = div.querySelector('.delete-btn');
-  deleteBtn.addEventListener('click', () => {
+  const deleteBtn = div.querySelector(".delete-btn");
+  deleteBtn.addEventListener("click", () => {
     div.remove();
   });
 
   return div;
 }
 
-function populateForm(resumeData) {
+function populateForm(resumeData, skillWhitelist, tagify) {
   try {
     // Populate contact information
     if (resumeData.contact) {
-      setInputValue('name-input', (resumeData.contact.name).split(' ').slice(0, -1).join(' '));
-      setInputValue('lname-input', (resumeData.contact.name).split(' ').slice(-1).join(' '));
-      setInputValue('email-input', resumeData.contact.email);
-      setInputValue('phone-input', resumeData.contact.phone);
-      setInputValue('location-input', resumeData.contact.location);
-      setInputValue('linkedin-input', resumeData.contact.linkedin);
+      setInputValue(
+        "name-input",
+        resumeData.contact.name.split(" ").slice(0, -1).join(" ")
+      );
+      setInputValue(
+        "lname-input",
+        resumeData.contact.name.split(" ").slice(-1).join(" ")
+      );
+      setInputValue("email-input", resumeData.contact.email);
+      setInputValue("phone-input", resumeData.contact.phone);
+      setInputValue("location-input", resumeData.contact.location);
+      setInputValue("linkedin-input", resumeData.contact.linkedin);
     }
-    console.log("resumeData",resumeData)
+    console.log("resumeData", resumeData);
     // Populate education information
     if (resumeData.education && resumeData.education.length > 0) {
       const firstEducation = resumeData.education[0];
-      setInputValue('school-input', firstEducation.institution);
-      setInputValue('degree-input', firstEducation.degree);
-      setInputValue('gradYear-input', firstEducation.year);
+      setInputValue("school-input", firstEducation.institution);
+      setInputValue("degree-input", firstEducation.degree);
+      setInputValue("gradYear-input", firstEducation.year);
     }
 
     // Populate work history (comprehensive)
     if (resumeData.experience && resumeData.experience.length > 0) {
-      const workHistory = resumeData.experience.map(exp => {
-        const parts = [];
-        if (exp.title) parts.push(exp.title);
-        if (exp.company) parts.push(`at ${exp.company}`);
-        if (exp.duration) parts.push(`(${exp.duration})`);
-        if (exp.location) parts.push(`- ${exp.location}`);
-        return parts.join(' ');
-      }).join('\n');
-      
-      setInputValue('history-input', workHistory);
+      const workHistory = resumeData.experience
+        .map((exp) => {
+          const parts = [];
+          if (exp.title) parts.push(exp.title);
+          if (exp.company) parts.push(`at ${exp.company}`);
+          if (exp.duration) parts.push(`(${exp.duration})`);
+          if (exp.location) parts.push(`- ${exp.location}`);
+          return parts.join(" ");
+        })
+        .join("\n");
+
+      setInputValue("history-input", workHistory);
     }
 
     // Populate skills (comprehensive)
     if (resumeData.skills && resumeData.skills.length > 0) {
-      const skillsText = resumeData.skills.join(', ');
-      setInputValue('skills-input', skillsText);
+      const matchedSkills = findBestSkillMatches(
+        resumeData.skills,
+        skillWhitelist
+      );
+      tagify.removeAllTags();
+      tagify.addTags(matchedSkills);
     }
 
     // Populate certifications
     if (resumeData.certifications && resumeData.certifications.length > 0) {
-      const certificationsText = resumeData.certifications.map(cert => {
-        const parts = [cert.name];
-        if (cert.issuer) parts.push(`(${cert.issuer})`);
-        if (cert.date) parts.push(`- ${cert.date}`);
-        return parts.join(' ');
-      }).join('\n');
-      
-      setInputValue('certifications-input', certificationsText);
+      const certificationsText = resumeData.certifications
+        .map((cert) => {
+          const parts = [cert.name];
+          if (cert.issuer) parts.push(`(${cert.issuer})`);
+          if (cert.date) parts.push(`- ${cert.date}`);
+          return parts.join(" ");
+        })
+        .join("\n");
+
+      setInputValue("certifications-input", certificationsText);
     }
 
     // Populate languages
     if (resumeData.languages && resumeData.languages.length > 0) {
-      const languagesText = resumeData.languages.map(lang => {
-        const parts = [lang.language];
-        if (lang.proficiency) parts.push(`(${lang.proficiency})`);
-        return parts.join(' ');
-      }).join(', ');
-      
-      setInputValue('languages-input', languagesText);
+      const languagesText = resumeData.languages
+        .map((lang) => {
+          const parts = [lang.language];
+          if (lang.proficiency) parts.push(`(${lang.proficiency})`);
+          return parts.join(" ");
+        })
+        .join(", ");
+
+      setInputValue("languages-input", languagesText);
     }
 
-    console.log('Form populated with comprehensive resume data');
+    console.log("Form populated with comprehensive resume data");
   } catch (error) {
-    console.error('Error populating form:', error);
-    showAutoFillStatus('Error populating form with resume data.', 'error');
+    console.error("Error populating form:", error);
+    showAutoFillStatus("Error populating form with resume data.", "error");
   }
 }
 
@@ -352,59 +399,73 @@ function setInputValue(inputId, value) {
   if (input && value) {
     input.value = value;
     // Add a visual indicator that the field was auto-filled
-    input.classList.add('auto-filled');
-    
+    input.classList.add("auto-filled");
+
     // Remove the indicator after a few seconds
     setTimeout(() => {
-      input.classList.remove('auto-filled');
+      input.classList.remove("auto-filled");
     }, 3000);
   }
 }
 
 function showUploadStatus(message, type) {
-  const statusDiv = document.querySelector('#upload-status');
+  const statusDiv = document.querySelector("#upload-status");
   if (statusDiv) {
     statusDiv.textContent = message;
     statusDiv.className = `upload-status ${type}`;
-    
-    if (type === 'success' || type === 'error') {
+
+    if (type === "success" || type === "error") {
       setTimeout(() => {
-        statusDiv.textContent = '';
-        statusDiv.className = 'upload-status';
+        statusDiv.textContent = "";
+        statusDiv.className = "upload-status";
       }, 5000);
     }
   }
 }
 
 function showAutoFillStatus(message, type) {
-  const statusDiv = document.querySelector('#auto-fill-status');
+  const statusDiv = document.querySelector("#auto-fill-status");
   if (statusDiv) {
     statusDiv.textContent = message;
     statusDiv.className = `auto-fill-status ${type}`;
-    
-    if (type === 'success' || type === 'error' || type === 'info') {
+
+    if (type === "success" || type === "error" || type === "info") {
       setTimeout(() => {
-        statusDiv.textContent = '';
-        statusDiv.className = 'auto-fill-status';
+        statusDiv.textContent = "";
+        statusDiv.className = "auto-fill-status";
       }, 5000);
     }
   }
 }
 
 function formatFileSize(bytes) {
-  if (bytes === 0) return '0 Bytes';
+  if (bytes === 0) return "0 Bytes";
   const k = 1024;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  const sizes = ["Bytes", "KB", "MB", "GB"];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
 }
 
+function findBestSkillMatches(parsedSkills, knownSkills, threshold = 0.5) {
+  function similarity(a, b) {
+    const aWords = a.toLowerCase().split(/\s+/);
+    const bWords = b.toLowerCase().split(/\s+/);
+    const matchCount = aWords.filter((word) => bWords.includes(word)).length;
+    return matchCount / Math.max(aWords.length, bWords.length);
+  }
 
-export {
-  formatFileSize,
-  setInputValue,
-  populateForm,
-  createResumeCard,
-  showUploadStatus,
-
-};
+  return parsedSkills
+    .map((ps) => {
+      let best = null;
+      let bestScore = 0;
+      for (const known of knownSkills) {
+        const score = similarity(ps, known);
+        if (score > bestScore && score >= threshold) {
+          best = known;
+          bestScore = score;
+        }
+      }
+      return best;
+    })
+    .filter(Boolean); // Remove nulls
+}

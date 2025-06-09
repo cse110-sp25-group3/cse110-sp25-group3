@@ -7,7 +7,6 @@ const CONSTANTS = {
   NATURE_MAP: { 1: 'Full-time', 2: 'Part-time', 3: 'Intern' },
   WORK_MODEL_MAP: { 1: 'Remote', 2: 'On-site', 3: 'Hybrid' },
   SECTION_TITLES: {
-    skills: 'Preferred Skills',
     locations: 'Locations', 
     industries: 'Industries',
     roles: 'Roles',
@@ -18,7 +17,6 @@ const CONSTANTS = {
 };
 
 const DEFAULT_PREFS = {
-  skills: [],
   locations: [],
   industries: [],
   roles: [],
@@ -29,7 +27,7 @@ const DEFAULT_PREFS = {
 };
 
 // ── State Management ──
-class PreferencesManager {
+export class PreferencesManager {
   constructor() {
     this.prefs = this.loadPrefs();
   }
@@ -177,6 +175,7 @@ class ControlGenerator {
     const container = document.createElement('div');
     container.className = 'checkbox-group';
     const initialSelected = prefsManager.getPref(prefKey) || [];
+    console.log(initialSelected, 'hi');
 
     const updatePrefs = () => {
       const selected = Array.from(container.querySelectorAll('input:checked')).map(cb => cb.value);
@@ -274,7 +273,6 @@ class SectionManager {
     const options = this.createSectionOptions();
     
     return [
-      { key: 'skills', control: ControlGenerator.createTagSelector(data.skills, 'skills') },
       { key: 'locations', control: ControlGenerator.createTagSelector(data.locations, 'locations') },
       { key: 'industries', control: ControlGenerator.createTagSelector(data.industries, 'industries') },
       { key: 'roles', control: ControlGenerator.createTagSelector(data.roles, 'roles') },
@@ -325,6 +323,7 @@ class SectionManager {
   }
 }
 
+// ── Header Management ──
 class HeaderManager {
   static createHeader(menus, container) {
     const header = document.createElement('div');
@@ -387,24 +386,7 @@ class HeaderManager {
 
     btn.addEventListener('click', () => {
       allMenus.forEach(m => m.el.classList.remove('open'));
-
-      // Determine if it's a desktop or mobile view
-      const isDesktop = window.innerWidth > 850;
-      if (isDesktop) {
-        // Center menu on desktop
-        menu.el.style.transition = 'none'; // Remove animation for smooth transition
-        menu.el.classList.toggle('open');
-        menu.el.style.transform = 'translate(-50%, -50%)'; // Centered on desktop
-      } else {
-        // Apply sliding effect on mobile
-        menu.el.style.transition = 'transform 0.3s ease-out'; // Slide animation
-        menu.el.classList.toggle('open');
-        if (menu.el.classList.contains('open')) {
-          menu.el.style.transform = 'translateY(0)'; // Slide up when opening
-        } else {
-          menu.el.style.transform = 'translateY(100%)'; // Slide down when closing
-        }
-      }
+      menu.el.classList.toggle('open');
     });
 
     updateLabel();
@@ -441,7 +423,6 @@ class HeaderManager {
     return closeBtn;
   }
 }
-
 
 // ── Public API ──
 export async function renderFeedPreferences(container) {
