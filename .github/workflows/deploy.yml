@@ -40,7 +40,7 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
       with:
-        path: './docs'  # Change this to your build output directory
+        path: './source'  # Deploy from the /source folder
     
     - name: Deploy to GitHub Pages
       id: deployment
