@@ -52,6 +52,9 @@ function loadPage() {
   content.id = 'content';
   content.style.margin = '25px';
   content.style.paddingTop = '40px';
+
+
+
   app.append(content);
   
   console.log(`Calling render for ${key}`);
