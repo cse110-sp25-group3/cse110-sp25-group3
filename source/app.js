@@ -2,7 +2,7 @@
 import { createHeader }       from './components/header.js';
 import { renderFeed }         from './pages/feed/feed.js';
 import { renderApplications } from './pages/applications/view-applications.js';
-import { renderPreferences }  from './pages/preferences/job-preferences.js'; 
+import { renderPreferences, loadUserPreferences }  from './pages/preferences/job-preferences.js'; 
 import { renderDocuments }    from './pages/documents/documents.js';
 
 //1) Now using the **exact** pathname as keys
@@ -54,7 +54,17 @@ function loadPage() {
   app.append(content);
   
   console.log(`Calling render for ${key}`);
-  render(content);
+
+  // 👉 Special handling for documents page to load JSON dynamically
+  if (key === '/source/pages/documents/documents.html') {
+    // grab just the array of skills the user saved
+    const { userSkills } = loadUserPreferences();
+
+    // pass that straight into render
+    render(content, Array.isArray(userSkills) ? userSkills : []);
+  } else {
+    render(content);
+  }
   
   checkAndStartOnboarding();
 }

@@ -28,7 +28,7 @@ function loadPDFJS() {
   });
 }
 
-export async function renderDocuments(container) {
+export async function renderDocuments(container, jobSkills) {
   const initSuccess = await initializePDFParser();
   resumeCounter = 0;
   processedFiles.clear();
@@ -69,7 +69,7 @@ export async function renderDocuments(container) {
         <label>Degree</label><input type="text" name="degree" id="degree-input">
         <label>Graduation Year</label><input type="number" name="gradYear" id="gradYear-input" min="1900" max="2100">
         <label>Work History</label><textarea name="history" id="history-input" rows="3"></textarea>
-        <label>Skills</label><textarea name="skills" id="skills-input" rows="2"></textarea>
+        <label>Skills</label><input name="skills" id="skills-input" placeholder="Type or select a skill..." />
         <label>Certifications</label><textarea name="certifications" id="certifications-input" rows="2"></textarea>
         <label>Languages</label><textarea name="languages" id="languages-input" rows="2"></textarea>
         <hr class="divider">
@@ -114,13 +114,23 @@ export async function renderDocuments(container) {
   
 
   // References
-  const uploadInput = container.querySelector('#resume-input');
-  const uploadBtn = container.querySelector('#upload-btn');
-  const resumeList = container.querySelector('#resume-list');
-  const form = container.querySelector('#info-form');
-  const clearBtn = container.querySelector('#clear-form');
-  const autoFillStatus = container.querySelector('#auto-fill-status');
-  const exportBtn = container.querySelector('#export-skills');
+  const uploadInput = container.querySelector("#resume-input");
+  const uploadBtn = container.querySelector("#upload-btn");
+  const resumeList = container.querySelector("#resume-list");
+  const form = container.querySelector("#info-form");
+  const clearBtn = container.querySelector("#clear-form");
+  const autoFillStatus = container.querySelector("#auto-fill-status");
+
+  const skillWhitelist = Array.isArray(jobSkills) ? jobSkills : [];
+  const tagify = new window.Tagify(document.querySelector("#skills-input"), {
+    whitelist: skillWhitelist,
+    dropdown: {
+      enabled: 0,
+      fuzzySearch: true,
+      position: "text",
+      highlightFirst: true,
+    },
+  });
 
   // Resume handlers (unchanged)
   if (initSuccess) {
@@ -142,7 +152,7 @@ export async function renderDocuments(container) {
       card.originalFile = file;
       try {
         const data = await resumeParser.parseResumeFromFile(file);
-        populateForm(data);
+        populateForm(data, skillWhitelist, tagify);
         card.dataset.resumeData = JSON.stringify(data);
         showUploadStatus('Done!', 'success');
         showAutoFillStatus('Form updated from resume.', 'success');
@@ -183,21 +193,6 @@ export async function renderDocuments(container) {
     localStorage.removeItem('userData');
     showAutoFillStatus('Form and data cleared.', 'info');
   });
-
-  exportBtn.addEventListener('click', () => {
-    const data = loadData();
-    const skills = data.skills || '';
-    const items = skills.split(/,\s*/).filter(s => s);
-    const blob = new Blob([items.join('\n')], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'skills.txt';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  });
 }
 
 function createResumeCard(file, resumeId) {
@@ -232,7 +227,7 @@ function createResumeCard(file, resumeId) {
     if (resumeDataStr) {
       try {
         const resumeData = JSON.parse(resumeDataStr);
-        populateForm(resumeData);
+        populateForm(resumeData, skillWhitelist, tagify);
         showAutoFillStatus('Form re-filled with resume data.', 'success');
       } catch (error) {
         console.error('Error re-parsing resume:', error);
@@ -277,7 +272,7 @@ function createResumeCard(file, resumeId) {
   return div;
 }
 
-function populateForm(resumeData) {
+function populateForm(resumeData, skillWhitelist, tagify) {
   try {
     // Populate contact information
     if (resumeData.contact) {
@@ -313,8 +308,12 @@ function populateForm(resumeData) {
 
     // Populate skills (comprehensive)
     if (resumeData.skills && resumeData.skills.length > 0) {
-      const skillsText = resumeData.skills.join(', ');
-      setInputValue('skills-input', skillsText);
+      const matchedSkills = findBestSkillMatches(
+        resumeData.skills,
+        skillWhitelist
+      );
+      tagify.removeAllTags();
+      tagify.addTags(matchedSkills);
     }
 
     // Populate certifications
@@ -398,3 +397,27 @@ function formatFileSize(bytes) {
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
+
+function findBestSkillMatches(parsedSkills, knownSkills, threshold = 0.5) {
+  function similarity(a, b) {
+    const aWords = a.toLowerCase().split(/\s+/);
+    const bWords = b.toLowerCase().split(/\s+/);
+    const matchCount = aWords.filter((word) => bWords.includes(word)).length;
+    return matchCount / Math.max(aWords.length, bWords.length);
+  }
+
+  return parsedSkills
+    .map((ps) => {
+      let best = null;
+      let bestScore = 0;
+      for (const known of knownSkills) {
+        const score = similarity(ps, known);
+        if (score > bestScore && score >= threshold) {
+          best = known;
+          bestScore = score;
+        }
+      }
+      return best;
+    })
+    .filter(Boolean);
+  }
