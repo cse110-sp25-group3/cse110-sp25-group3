@@ -42,7 +42,7 @@ In VS Code’s Explorer, right-click source/index.html → Open with Live Server
 Your browser will open to something like:
 http://127.0.0.1:5500/source/index.html
 
-# 🐞 Troubleshooting
+## 🐞 Troubleshooting
 
 | Problem                                          | Fix                                                                                                                             |
 |--------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------|
