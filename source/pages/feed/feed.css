@@ -518,7 +518,7 @@ p {
 }
 
 /* ----- Desktop Layout Adjustment ----- */
-@media screen and (min-width: 768px) and (max-height: 768px) {
+@media screen and (min-width: 850px) {
   /* For desktop, center the cards container in the middle of the page */
   #job-cards-container {
     position: absolute;
@@ -542,8 +542,9 @@ p {
   }
 
   .behindCard {
-    transform: rotate(7deg);
-    z-index: 1;
+    width: 350px;
+    height: 400px;
+    /* keep other base styles, but don't override background or tilt */
   }
 
   .job-card.active {
@@ -642,4 +643,6 @@ p {
     position: absolute;
     right: -100px; /* Adjust this value to move right button farther */
   }
+
+  
 }

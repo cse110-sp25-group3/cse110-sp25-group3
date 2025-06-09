@@ -85,7 +85,7 @@
 }
 
 /* Media Query for Desktop View (>= 768px) */
-@media screen and (min-width: 768px) {
+@media screen and (min-width: 850px) {
     /* Hide hamburger button on desktop */
     .hamburger-btn {
         display: none; /* Hide hamburger button on desktop */
@@ -108,7 +108,7 @@
         left: 0;
         height: calc(100% - 30px);
         bottom: 10px;
-        width: 250px;  /* Sidebar width */
+        width: 200px;  /* Sidebar width */
         background: var(--color-white);
         box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1); /* Soft shadow */
         z-index: 10;
@@ -153,4 +153,4 @@
         font-weight: bold;
         padding-right: 20px;
     }
-}
+  }

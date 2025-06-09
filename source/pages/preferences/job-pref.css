@@ -187,7 +187,7 @@
 
 /* Media Query for Desktop */
 /* Media Query for Desktop */
-@media (min-width: 768px) {
+@media (min-width: 850px) {
   .quick-menu {
     position: fixed;
     top: 50%;

@@ -388,7 +388,7 @@ class HeaderManager {
       allMenus.forEach(m => m.el.classList.remove('open'));
 
       // Determine if it's a desktop or mobile view
-      const isDesktop = window.innerWidth >= 768;
+      const isDesktop = window.innerWidth > 850;
       if (isDesktop) {
         // Center menu on desktop
         menu.el.style.transition = 'none'; // Remove animation for smooth transition
