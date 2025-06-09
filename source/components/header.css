@@ -1,156 +1,166 @@
-/* Base styles (Mobile view by default) */
-.site-header {
-    position: absolute;          
-    display: flex;               
-    align-items: center;         
-    justify-content: flex-start; 
-    padding: 0.75rem 1rem;
-    z-index: 11;
-    gap: 10px;
-    border-bottom: solid;
-    border-width: 1px;
-    width: 100%;
+.desktop-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 280px;
+    height: 100vh;
+    background: white;
+    border-right: 1px solid #e9ecef;
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+    transition: transform 0.3s ease;
+}
+
+.desktop-sidebar.hidden {
+    transform: translateX(-100%);
+}
+
+.desktop-header {
+    padding: 1rem;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+}
+
+.desktop-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #228be6;
+    margin-left: 10px;
+}
+
+.desktop-main {
+    flex: 1;
+    padding: 1rem 0;
+    overflow-y: auto;
+}
+
+.mobile-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: white;
+    border-bottom: 1px solid #e9ecef;
+    display: none;
+    align-items: center;
+    justify-content: left;
+    padding: 0 1rem;
+    z-index: 1010;
+    transition: all 0.3s ease;
+}
+
+.mobile-header.visible {
+    display: flex;
 }
 
 .hamburger-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 2rem;
-    height: 2rem;
     background: none;
     border: none;
     font-size: 1.5rem;
     cursor: pointer;
-    transition: transform 0.4s ease;
-}
-
-.hamburger-btn.rotated {
-    transform: rotate(90deg);  /* Rotate button */
+    padding: 0.5rem;
+    border-radius: 4px;
+    transition: all 0.3s ease;
 }
 
 .hamburger-btn:hover {
-    color: var(--color-dark-blue);
+    background-color: #f8f9fa;
 }
 
-.site-title {
+.mobile-title {
     font-size: 1.25rem;
-    font-weight: 500;
+    font-weight: bold;
+    color: #228be6;
+    margin-left: 12px;
 }
 
-#nav-menu {
-    position: absolute; 
-    top: 100%;           
+.mobile-overlay {
+    position: fixed;
+    top: 60px;
     left: 0;
-    width: 100%;
+    right: 0;
+    bottom: 0;
     background: white;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-    z-index: 9;
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease;
+    z-index: 1005;
+    display: none;
+    flex-direction: column;
+    transition: transform 0.3s ease;
+    border-top: 1px solid #e9ecef;
+    transform: translateY(-100%);
 }
 
-#nav-menu.show {
-    max-height: 200px;  /* Show menu when active */
+.mobile-overlay.visible {
+    display: flex;
 }
 
-#nav-menu ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+.mobile-overlay.open {
+    transform: translateY(0);
 }
 
-#nav-menu li {
-    border-top: 1px solid var(--color-icon-gray);
+.mobile-main {
+    flex: 1;
+    padding: 1rem 0;
+    overflow-y: auto;
 }
 
-#nav-menu a {
-    display: block;
-    padding: 1rem 1.5rem;
-    color: black;
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    color: #495057;
     text-decoration: none;
+    border-radius: 4px;
+    margin: 0 0.5rem;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
 }
 
-#nav-menu a:hover {
-    background: var(--color-light-blue-fill);
-    border-color: var(--color-light-blue-outline);
-    transition: background 0.3s ease, border-color 0.3s ease;
+.nav-link:hover {
+    background-color: #f8f9fa;
 }
 
-#nav-menu a.active {
-    color: var(--color-dark-blue);
-    background: var(--color-light-blue-fill);
-    font-weight: 600;
+.nav-link.active {
+    background-color: #e7f5ff !important;
+    color: #228be6 !important;
+    border-left-color: #228be6 !important;
 }
 
-/* Media Query for Desktop View (>= 768px) */
-@media screen and (min-width: 850px) {
-    /* Hide hamburger button on desktop */
-    .hamburger-btn {
-        display: none; /* Hide hamburger button on desktop */
+.nav-icon {
+    font-size: 1.2rem;
+    width: 1.5rem;
+    text-align: center;
+}
+
+/* Responsive breakpoint */
+@media (min-width: 768px) {
+    .desktop-sidebar {
+        transform: translateX(0);
     }
+    
+    .mobile-header {
+        display: none !important;
+    }
+    
+    .mobile-overlay {
+        display: none !important;
+    }
+}
 
-    /* Adjust header for desktop layout */
-    .site-header {
-        position: static;
+@media (max-width: 767px) {
+    .desktop-sidebar {
+        transform: translateX(-100%);
+    }
+    
+    .mobile-header {
         display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1rem 2rem;
-        padding-top: 1.5rem; /* Add space at the top */
     }
-
-    /* Make the sidebar (nav menu) fixed to the side on desktop */
-    #nav-menu {
-        position: fixed;  /* Fix it to the side */
-        top: 0;
-        left: 0;
-        height: calc(100% - 30px);
-        bottom: 10px;
-        width: 200px;  /* Sidebar width */
-        background: var(--color-white);
-        box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1); /* Soft shadow */
-        z-index: 10;
-        max-height: none;  /* Menu is always visible on desktop */
-        display: block;
-        overflow: auto;
-        padding-top: 2rem;  /* Space at the top of the sidebar */
-        border-radius: 0 15px 15px 0;  /* Rounded right corners */
+    
+    .mobile-overlay {
+        display: flex;
     }
-
-    #nav-menu ul {
-        list-style: none;
-        padding-left: 0;
-    }
-
-    /* Modify link appearance for desktop */
-    #nav-menu a {
-        display: block;
-        padding: 1rem 2rem;  /* Add padding to make links larger */
-        color: var(--color-dark-blue);
-        font-size: 1.1rem;  /* Slightly larger font size */
-    }
-
-    /* Highlight links on hover */
-    #nav-menu a:hover {
-        background: var(--color-light-blue-fill);
-        color: var(--color-dark-blue);
-        padding-left: 2rem;  /* Indent the text on hover for effect */
-    }
-
-    /* Active link styles on desktop */
-    #nav-menu a.active {
-        color: var(--color-white);
-        background: var(--color-dark-blue);  /* Dark background for active link */
-        font-weight: bold;
-        border-radius: 5px; /* Add rounded corners to active link */
-    }
-
-    /* Site Title for Desktop */
-    .site-title {
-        font-size: 1.5rem;
-        font-weight: bold;
-        padding-right: 20px;
-    }
-  }
+}
