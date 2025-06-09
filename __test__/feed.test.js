@@ -13,7 +13,7 @@ import {
   renderCurrentCard,
   jobsData,
   resetFeedState
-} from "./feed.js";
+} from "../source/pages/feed/feed.js";
 
 describe("skill‐matching helpers", () => {
   beforeEach(() => {

@@ -20,7 +20,7 @@ global.pdfjsLib = {
 };
 
 // Import the file - this will set window.BrowserResumeParser
-require('./browser-pdf-scrape');
+require('../source/functions/browser-pdf-scrape');
 
 // Get the class from window
 const BrowserResumeParser = global.window.BrowserResumeParser;

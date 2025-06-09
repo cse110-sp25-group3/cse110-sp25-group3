@@ -6,7 +6,7 @@ import {    formatFileSize,
             setInputValue,
             populateForm,
             createResumeCard,
-            renderDocuments } from './documents.js';
+            renderDocuments } from '../source/pages/documents/documents.js';
 
 jest.useFakeTimers();
 
@@ -65,7 +65,7 @@ describe('populateForm', () => {
   });
 
   test('fills the form with parsed resume data', () => {
-    const { populateForm } = require('./documents.js');
+    const { populateForm } = require('../source/pages/documents/documents.js');
     const sampleResumeData = {
       contact: {
         name: 'Jane Doe', email: 'jane@example.com', phone: '1234567890', location: 'City', linkedin: 'linkedin.com/jane'
@@ -93,7 +93,7 @@ describe('populateForm', () => {
 
 describe('createResumeCard star button', () => {
   test('toggles star class and symbol', () => {
-    const { createResumeCard } = require('./documents.js');
+    const { createResumeCard } = require('../source/pages/documents/documents.js');
     const dummyFile = new File(['resume content'], 'resume.pdf', { type: 'application/pdf' });
     const card = createResumeCard(dummyFile, 'resume-0');
 
@@ -108,7 +108,7 @@ describe('createResumeCard star button', () => {
   });
 
   test('deletes resume card on delete button click', () => {
-    const { createResumeCard } = require('./documents.js');
+    const { createResumeCard } = require('../source/pages/documents/documents.js');
     const dummyFile = new File(['resume content'], 'resume.pdf', { type: 'application/pdf' });
     const card = createResumeCard(dummyFile, 'resume-1');
     document.body.appendChild(card);
@@ -122,7 +122,7 @@ describe('createResumeCard star button', () => {
 
 describe('showUploadStatus', () => {
   test('shows status message with correct class', () => {
-    const { showUploadStatus } = require('./documents.js');
+    const { showUploadStatus } = require('../source/pages/documents/documents.js');
     document.body.innerHTML = '<div id="upload-status"></div>';
     showUploadStatus('Processing…', 'processing');
 

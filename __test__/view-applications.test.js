@@ -2,8 +2,8 @@
  * @jest-environment jsdom
  */
 
-import { renderApplications  } from "./view-applications";
-import './AppCard.js';
+import { renderApplications  } from "../source/pages/applications/view-applications.js";
+import '../source/pages/applications/AppCard.js';
 
 describe('renderApplications()', () => {
     const mockJob = {

@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import './AppCard.js';
+import '../source/pages/applications/AppCard.js';
 
 describe('<app-card> component', () => {
     const mockJob = {
