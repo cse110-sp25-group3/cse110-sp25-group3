@@ -23,7 +23,7 @@
     }
   };
 
-  const STEPS = [
+const STEPS = [
   {
     name: 'tip1',
     targetSelector: '.hamburger-btn',
@@ -31,41 +31,40 @@
     placement: 'right',
     isCircle: true,
     requiresInteraction: true,
-    mobileOnly: true // 新增: 标记这个步骤只在移动端显示
+    mobileOnly: true
   },
   {
     name: 'tip2',
-    targetSelector: '#nav-menu a[href*="feed"]', 
+    targetSelector: '.nav-link[data-label="Job Feed"]',
     text: 'The Job Feed page shows your skill match percentage for each position. \nClick "view detail" to see specific job and company information. \n\nClick ✅ at the bottom to apply for a job in one click, and click ❌ to quickly browse the next job.',
     placement: 'bottom-right',
     positionOffset: { left: -50, top: 0 }
   },
   {
     name: 'tip3',
-    targetSelector: '#nav-menu a[href*="preferences"]', 
+    targetSelector: '.nav-link[data-label="Job Preferences"]', 
     text: 'By setting your desired criteria here, our system can refine its recommendations, ensuring you receive suggestions for more accurate and relevant positions',
     placement: 'bottom-right',
     positionOffset: { left: -50, top: 0 }
   },
   {
     name: 'tip4',
-    targetSelector: '#nav-menu a[href*="applications"]', 
+    targetSelector: '.nav-link[data-label="View Applications"]', 
     text: 'Here you can easily view all the jobs you have applied to and track their current status, keeping you informed every step of the way.',
     placement: 'bottom-right',
     positionOffset: { left: -50, top: 0 }
   },
   {
     name: 'tip5',
-    targetSelector: '#nav-menu a[href*="documents"]', 
+    targetSelector: '.nav-link[data-label="Your Documents"]', 
     text: 'Upload your resume in the Documents section. An updated profile greatly improves your skill matches. \nReady to see how well your skills align with top roles? \nClick finish button to upload your resume!',
     placement: 'bottom-right',
     positionOffset: { left: -50, top: -20 }
   }
 ];
 
-  // UTILITY FUNCTIONS - 修复响应式布局
+  // UTILITY FUNCTIONS 
   const Utils = {
-    // 检测是否为移动端
     isMobile: () => {
       return window.innerWidth < 768;
     },
@@ -288,17 +287,22 @@
 
   //make sure the menu is visible before rendering the highlight
   async ensureMenuVisible(targetEl) {
-    const navMenu = document.querySelector('#nav-menu');
+    const mobileOverlay = document.querySelector('.mobile-overlay'); 
     const isMobile = Utils.isMobile();
     
     console.log('🔧 [FIX] Ensuring menu visibility for:', targetEl);
     console.log('🔧 [FIX] Is mobile:', isMobile);
-    console.log('🔧 [FIX] Nav menu:', navMenu);
+    console.log('🔧 [FIX] Mobile overlay:', mobileOverlay);
     
-    if (isMobile && navMenu && !navMenu.classList.contains('show')) {
+    if (isMobile && mobileOverlay && !mobileOverlay.classList.contains('open')) { 
       console.log('🔧 [FIX] Mobile menu is hidden, opening it...');
       
-      navMenu.classList.add('show');
+     
+      const hamburgerBtn = document.querySelector('.hamburger-btn');
+      if (hamburgerBtn) {
+        hamburgerBtn.click();
+      }
+      
       await new Promise(resolve => setTimeout(resolve, 350));
       
       console.log('🔧 [FIX] Menu animation completed');
