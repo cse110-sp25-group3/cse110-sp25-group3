@@ -236,15 +236,16 @@ class ControlGenerator {
       return input;
     };
 
-    const hourInput = createSalaryInput('Hourly', 'Hourly');
-    const yearInput = createSalaryInput('Yearly', 'Yearly');
+    const hourInput = createSalaryInput('Hourly', '0');
+    const yearInput = createSalaryInput('Yearly', '0');
 
-    wrapper.append(
-      hourInput,
-      this.createLabel('/hour'),
-      yearInput,
-      this.createLabel('/year')
-    );
+   const hourSpan = document.createElement('span');
+    hourSpan.append(this.createLabel('$'), hourInput, this.createLabel('/hour'));
+
+    const yearSpan = document.createElement('span');
+    yearSpan.append(this.createLabel('$'), yearInput, this.createLabel('/year'));
+
+    wrapper.append(hourSpan, yearSpan);
 
     return {
       element: wrapper,

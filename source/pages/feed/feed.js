@@ -158,7 +158,6 @@ function attachCardListeners(card, container) {
     if (currentJobIndex < jobsData.length) {
       const currentCard = document.querySelector(".job-card.active");
       if (currentCard) {
-        currentCard.classList.add("skip-animation");
         setTimeout(() => {
           currentJobIndex++;
           updateCardVisibility();
@@ -183,7 +182,6 @@ function attachCardListeners(card, container) {
           }
         },1500);
       if (currentCard) {
-        currentCard.classList.add("apply-animation");
         setTimeout(() => {
           currentJobIndex++;
           updateCardVisibility();
@@ -295,3 +293,26 @@ function showEndMessage() {
     </div>
   `;
 }
+
+/**
+ * Reset the feed’s internal state.
+ * Tests should call this before pushing test jobs.
+ */
+export function resetFeedState() {
+  jobsData.length = 0;
+  currentJobIndex = 0;
+}
+
+export {
+  getMatchedSkills,
+  getLostSkills,
+  getMatchPercent,
+  getMatchDegree,
+  createCardElement,
+  saveJobToLocalStorage,
+  renderCurrentCard,
+  // for testing renderCurrentCard
+  jobsData,
+  userSkills,
+  currentJobIndex
+};
