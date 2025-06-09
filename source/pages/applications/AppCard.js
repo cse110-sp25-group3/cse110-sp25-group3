@@ -106,19 +106,19 @@ class AppCard extends HTMLElement {
                 font-size: 0.7em;
             }
 
-            .meta column {
-                display: flex;
+            .meta .column {
                 gap: 20%;
                 align-items: center;
+                display: flex;
                 flex-direction: column;
             }
 
             .meta span {
                 display: flex;
                 align-items: center;
-                gap: 0.5em;
-                margin-bottom: 0.7em;
+                gap: 0.5rem; /* or 1rem if you want more spacing */
             }
+
 
             span img {
                 width: 16px;
@@ -323,6 +323,37 @@ class AppCard extends HTMLElement {
                 }
             }
 
+            .meta column {
+                    display: flex;
+                    gap: 20%;
+                    // align-items: center;
+                    flex-direction: column;
+                }
+
+                .meta span {
+                    display: flex;
+                    // align-items: center;
+                    gap: 0.5em;
+                    margin-bottom: 0.7em;
+                }
+            
+            @media (max-width: 849px) {
+                .meta .column {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.7rem;
+                    align-items: flex-start; /* Align items to the left instead of center */
+                }
+
+                .meta span {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5em;
+                    margin-bottom: 0.4em;
+                }
+            }
+
+
             /* Media Query for screens at least 850px */
             @media (min-width: 850px) {
                 html {
@@ -349,18 +380,23 @@ class AppCard extends HTMLElement {
                 .meta {
                     flex-direction: row;
                     font-size: 1rem;
-                    gap: 1.5rem; /* More space between meta info */
+                    gap: 0.4rem; /* More space between meta info */
                     
                 }
 
                 .meta .column {
                     flex-direction: row;  /* Arrange items within each column horizontally */
-                    gap: 1.5rem;  /* Space between items within each column */
+                    gap: 1rem;  /* Space between items within each column */
+                    align-items: center;
+                    justify-content: center;
+                    align-content: center;
                 }
 
                 /* Ensure text doesn't overflow */
                 .meta span {
                     white-space: nowrap;  /* Prevent text from wrapping */
+                    margin: 0;
+                    gap: 0.4rem;
                 }
 
                 .details {
