@@ -6,17 +6,17 @@ import {
   sanitizeSalary,
   parsePay,
   payScore,
-  datePostedScore } from "./feed-algorithm.js";
+  datePostedScore } from "../source/pages/feed/feed-algorithm.js";
 
-jest.mock("../../functions/skill-assessment.js", () => ({
+jest.mock("../source/functions/skill-assessment.js", () => ({
   skillAssessment: jest.fn()
 }));
-import { skillAssessment } from "../../functions/skill-assessment.js";
+import { skillAssessment } from "../source/functions/skill-assessment.js";
 
-jest.mock("../../functions/score-heuristic.js", () => ({
+jest.mock("../source/functions/score-heuristic.js", () => ({
   computeJobScore: jest.fn()
 }));
-import { computeJobScore } from "../../functions/score-heuristic.js";
+import { computeJobScore } from "../source/functions/score-heuristic.js";
 
 describe("sanitizeSalary", () => {
   test.each([

@@ -11,7 +11,7 @@ const {
   Utils,
   CONFIG,
   STEPS
-} = require('./onboarding');
+} = require('../source/components/onboarding/onboarding');
 
 describe('OnboardingManager', () => {
   let manager;
