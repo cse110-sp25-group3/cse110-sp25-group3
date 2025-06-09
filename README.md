@@ -30,13 +30,13 @@
    cd cse110-sp25-group3
    npm I
 
-## 2. Launch the Selenium/Express autofill server
+2. Launch the Selenium/Express autofill server
 
 ```bash
 node jobs.js
 ```
 
-## 3. Serve the front-end
+3. Serve the front-end
 In VS Code’s Explorer, right-click source/index.html → Open with Live Server.
 
 Your browser will open to something like:
